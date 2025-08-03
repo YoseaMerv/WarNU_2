@@ -35,7 +35,6 @@ class RegisterSellerViewModel(
                         "phone" to phone,
                         "role" to "seller"
                     )
-
                     firestore.collection("users").document(userId)
                         .set(sellerData)
                         .addOnSuccessListener {
