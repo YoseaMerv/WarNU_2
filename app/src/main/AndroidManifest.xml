@@ -32,5 +32,4 @@
         <activity android:name=".ui.seller.MainSellerActivity" android:exported="false" />
 
     </application>
-
 </manifest>

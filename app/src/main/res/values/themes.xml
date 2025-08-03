@@ -16,10 +16,9 @@
             <item name="android:statusBarColor">@android:color/transparent</item>
         </style>
 
-
         <!-- Splash Theme -->
         <style name="Theme.WARNU.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
             <item name="android:windowBackground">@drawable/bg_gradient</item>
         </style>
 
-    </resources>
+</resources>

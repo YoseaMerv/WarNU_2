@@ -1,6 +1,7 @@
 package com.imersa.warnu.ui.login
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -10,19 +11,24 @@ import com.imersa.warnu.databinding.ActivityLoginBinding
 import com.imersa.warnu.ui.buyer.MainBuyerActivity
 import com.imersa.warnu.ui.seller.MainSellerActivity
 import dagger.hilt.android.AndroidEntryPoint
+import android.text.InputType
+import androidx.core.content.ContextCompat
+import com.imersa.warnu.R
+import com.imersa.warnu.ui.register.RegisterBuyerActivity
+import com.imersa.warnu.ui.register.RegisterSellerActivity
+
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
+    private var isPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setupListeners()
         observeLoginState()
     }
@@ -39,7 +45,38 @@ class LoginActivity : AppCompatActivity() {
 
             viewModel.login(email, password)
         }
+
+        // Toggle show/hide password
+        binding.showPassword.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+
+            if (isPasswordVisible) {
+                binding.password.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                binding.showPassword.setImageDrawable(
+                    ContextCompat.getDrawable(this, R.drawable.ic_open_eye)
+                )
+            } else {
+                binding.password.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                binding.showPassword.setImageDrawable(
+                    ContextCompat.getDrawable(this, R.drawable.ic_closed_eye)
+                )
+            }
+            binding.password.typeface = Typeface.DEFAULT
+            binding.password.setSelection(binding.password.text?.length ?: 0)
+        }
+
+        binding.signUpBuyer.setOnClickListener {
+            startActivity(Intent(this, RegisterBuyerActivity::class.java))
+        }
+
+        binding.signUpSeller.setOnClickListener {
+            startActivity(Intent(this, RegisterSellerActivity::class.java))
+        }
+
     }
+
 
     private fun observeLoginState() {
         viewModel.loginState.observe(this) { state ->
