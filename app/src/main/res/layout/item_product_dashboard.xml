@@ -1,48 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    app:cardElevation="4dp"
+    app:strokeColor="@android:color/darker_gray"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="12dp">
 
+        <!-- Gambar Produk -->
         <ImageView
             android:id="@+id/ivProduk"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="140dp"
             android:scaleType="centerCrop"
-            tools:src="@android:color/darker_gray" />
+            android:contentDescription="@string/product_name"
+            android:background="@android:color/darker_gray"
+            android:adjustViewBounds="true" />
 
+        <!-- Nama Produk -->
         <TextView
             android:id="@+id/tvNamaProduk"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"
             android:textStyle="bold"
-            tools:text="Kaos" />
+            android:maxLines="2"
+            android:ellipsize="end"
+            tools:text="Kaos Polos Premium" />
 
+        <!-- Harga Produk -->
         <TextView
             android:id="@+id/tvHargaProduk"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_green_dark"
             android:textSize="14sp"
-            tools:text="Rp 20000,00" />
+            android:textStyle="bold"
+            tools:text="Rp 20.000" />
 
+        <!-- Stok Produk -->
         <TextView
             android:id="@+id/tvStokProduk"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"
             android:textSize="12sp"
             tools:text="Stok: 10" />
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

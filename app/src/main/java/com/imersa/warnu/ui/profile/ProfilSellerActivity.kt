@@ -10,7 +10,7 @@ import com.imersa.warnu.R
 class ProfilSellerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.profil_seller)
+        setContentView(R.layout.fragment_profile_seller)
 
         // Mengisi data langsung ke setiap TextView dengan ID unik
         findViewById<TextView>(R.id.tvNamaValue).text = "Aldi Seller"

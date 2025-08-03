@@ -7,10 +7,6 @@
             android:icon="@drawable/ic_person"
             android:title="Profil Saya" />
         <item
-            android:id="@+id/nav_edit_profil"
-            android:icon="@drawable/ic_edit"
-            android:title="Edit Profil" />
-        <item
             android:id="@+id/nav_kelola_produk"
             android:icon="@drawable/ic_kelola"
             android:title="Kelola Produk" />
@@ -19,6 +15,7 @@
             android:icon="@drawable/ic_pesanan"
             android:title="Pesanan Masuk" />
     </group>
+
 
     <item android:title="">
         <menu>

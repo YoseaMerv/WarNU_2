@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
-    tools:context=".EditProdukActivity">
+    tools:context=".TambahProdukActivity">
 
     <!-- Toolbar Bagian Atas -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#1A8754"
+            android:background="#00AA13"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:title="Edit Produk"
+            app:title="Tambah Produk"
             app:titleTextColor="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Konten yang bisa di-scroll -->
+    <!-- Content yang bisa di-scroll -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,8 +48,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNamaProduk"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:text="Sepatu Nike" />
+                    android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -62,8 +63,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDeskripsi"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:text="Sepatu lari yang nyaman" />
+                    android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -79,8 +79,7 @@
                     android:id="@+id/etHarga"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    tools:text="1250000" />
+                    android:inputType="numberDecimal" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -96,8 +95,7 @@
                     android:id="@+id/etStok"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
-                    tools:text="10" />
+                    android:inputType="number" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -113,12 +111,11 @@
                     android:id="@+id/actvKategori"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none"
-                    tools:text="Sneakers" />
+                    android:inputType="none" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- ImageView untuk preview gambar kategori -->
+            <!-- [BARU] ImageView untuk preview gambar kategori -->
             <ImageView
                 android:id="@+id/ivKategoriPreview"
                 android:layout_width="match_parent"
@@ -127,17 +124,17 @@
                 android:scaleType="centerCrop"
                 android:visibility="gone"
                 tools:src="@drawable/placeholder_image"
-                tools:visibility="visible" />
+                tools:visibility="visible"/>
 
-            <!-- Tombol Pilih Gambar Baru -->
+            <!-- Tombol Pilih Gambar -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnPilihGambarBaru"
+                android:id="@+id/btnPilihGambar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:backgroundTint="#1A8754"
                 android:paddingVertical="12dp"
-                android:text="Pilih gambar baru"
+                android:text="Pilih gambar"
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_image"
                 app:iconGravity="textStart" />
@@ -159,4 +156,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

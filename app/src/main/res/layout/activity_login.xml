@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F9FAFB">
@@ -14,23 +13,25 @@
         <!-- Logo -->
         <ImageView
             android:id="@+id/logoImage"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_bike_logo"
             android:contentDescription="Logo"
             android:layout_marginTop="48dp"
-            android:layout_marginBottom="24dp" />
+            />
 
         <!-- Title -->
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign in to your"
-            android:textStyle="bold"
-            android:textSize="24sp"
+            android:layout_gravity="center_horizontal"
+            android:text="Login to your"
             android:textColor="#111827"
-            android:layout_gravity="center_horizontal"/>
+
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -53,26 +54,58 @@
             android:layout_marginBottom="24dp" />
 
         <!-- Email Input -->
-        <EditText
-            android:id="@+id/emailInput"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp">
 
-        <!-- Password Input -->
-        <EditText
-            android:id="@+id/passwordInput"
+            <EditText
+                android:id="@+id/emailInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"/>
+        </FrameLayout>
+
+        <!-- Password Input with Show/Hide -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:background="@drawable/edittext_background"
-            android:padding="12dp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Password"
+                    android:background="@android:color/transparent"
+                    android:inputType="textPassword"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:padding="0dp"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/showPassword"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_closed_eye"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="Toggle Password Visibility" />
+        </FrameLayout>
+
 
         <!-- Forgot Password -->
         <TextView
@@ -128,28 +161,70 @@
             android:elevation="2dp"
             android:layout_marginBottom="24dp" />
 
-        <!-- Sign Up -->
+        <ProgressBar
+            android:id="@+id/loginProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:indeterminate="true" />
+
+
+        <!-- Sign Up as Buyer or Seller -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center_horizontal">
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Don't have an account?"
                 android:textColor="#6B7280"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                android:gravity="center"/>
 
-            <TextView
-                android:id="@+id/signUpLink"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Sign Up"
-                android:textColor="#2563EB"
-                android:textSize="14sp"/>
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:gravity="center">
 
+                <TextView
+                    android:id="@+id/signUpBuyer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sign Up as Buyer"
+                    android:textColor="#2563EB"
+                    android:textSize="14sp"
+                    android:paddingEnd="8dp"/>
+
+                <TextView
+                    android:text="|"
+                    android:textColor="#9CA3AF"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    />
+
+                <TextView
+                    android:id="@+id/signUpSeller"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sign Up as Seller"
+                    android:textColor="#2563EB"
+                    android:textSize="14sp"
+                    android:paddingStart="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

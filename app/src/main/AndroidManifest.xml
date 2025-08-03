@@ -1,29 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.imersa.warnu">
 
     <application
+        android:name=".WarnuApp"
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
+        android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|keyboard|locale|layoutDirection|fontScale"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
+        android:label="@string/app_name"
         android:theme="@style/Theme.WARNU">
+
+        <!-- ✅ Splash Activity -->
         <activity
-            android:name=".ui.profile.ProfilSellerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true"
-            android:label="@string/app_name">
+            android:theme="@style/Theme.WARNU.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- ✅ Login & Register -->
+        <activity android:name=".ui.login.LoginActivity" android:exported="false" />
+        <activity android:name=".ui.register.RegisterBuyerActivity" android:exported="false" />
+        <activity android:name=".ui.register.RegisterSellerActivity" android:exported="false" />
+
+        <!-- ✅ Main Buyer dan Seller -->
+        <activity android:name=".ui.buyer.MainBuyerActivity" android:exported="false" />
+        <activity android:name=".ui.seller.MainSellerActivity" android:exported="false" />
+
     </application>
 
 </manifest>
