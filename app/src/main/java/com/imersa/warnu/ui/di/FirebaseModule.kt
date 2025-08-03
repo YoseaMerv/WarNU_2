@@ -1,4 +1,4 @@
-package com.imersa.warnu.di
+package com.imersa.warnu.ui.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
