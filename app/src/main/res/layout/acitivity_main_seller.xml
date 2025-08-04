@@ -69,20 +69,16 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- RecyclerView Produk Seller -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvProductSeller"
+        <!-- Fragment container for displaying ManageProductFragment -->
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_container_seller"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:clipToPadding="false"
-            android:padding="8dp"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
             app:layout_constraintTop_toBottomOf="@id/topRectangleSeller"
             app:layout_constraintBottom_toTopOf="@id/btnTambahProdukSeller"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:listitem="@layout/item_product_dashboard" />
+            android:name="com.imersa.warnu.ui.seller.product.ManageProductFragment" />
 
         <!-- Tombol Tambah Produk -->
         <com.google.android.material.button.MaterialButton

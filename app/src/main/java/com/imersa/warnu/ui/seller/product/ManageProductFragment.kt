@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.imersa.warnu.databinding.FragmentProductManageBinding
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -18,16 +19,15 @@ class ManageProductFragment : Fragment() {
     private var _binding: FragmentProductManageBinding? = null
     private val binding get() = _binding!!
 
+    @Inject
+    lateinit var productRepository: ProductRepository
     private lateinit var adapter: ProductAdapter
     private val productList = mutableListOf<Product>()
 
-    private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProductManageBinding.inflate(inflater, container, false)
         return binding.root
@@ -40,22 +40,13 @@ class ManageProductFragment : Fragment() {
         binding.rvProductSeller.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.rvProductSeller.adapter = adapter
 
-        loadProducts()
-    }
-
-    private fun loadProducts() {
         val sellerId = auth.currentUser?.uid ?: return
-        firestore.collection("products")
-            .whereEqualTo("sellerId", sellerId)
-            .get()
-            .addOnSuccessListener { snapshot ->
-                productList.clear()
-                for (doc in snapshot.documents) {
-                    val product = doc.toObject(Product::class.java)
-                    product?.let { productList.add(it) }
-                }
-                adapter.notifyDataSetChanged()
-            }
+
+        productRepository.getProductsBySeller(sellerId).observe(viewLifecycleOwner) { products ->
+            productList.clear()
+            productList.addAll(products)
+            adapter.notifyDataSetChanged()
+        }
     }
 
     override fun onDestroyView() {
@@ -63,3 +54,4 @@ class ManageProductFragment : Fragment() {
         _binding = null
     }
 }
+

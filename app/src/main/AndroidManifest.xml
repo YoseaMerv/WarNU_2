@@ -2,6 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.imersa.warnu">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".WarnuApp"
         android:allowBackup="true"

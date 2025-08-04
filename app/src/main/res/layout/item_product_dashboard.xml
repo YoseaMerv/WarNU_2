@@ -18,13 +18,12 @@
 
         <!-- Gambar Produk -->
         <ImageView
-            android:id="@+id/ivProduk"
+            android:id="@+id/ivProductImage"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="150dp"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/product_name"
-            android:background="@android:color/darker_gray"
-            android:adjustViewBounds="true" />
+            tools:src="@drawable/placeholder_image"
+            android:contentDescription="product_image" />
 
         <TextView
             android:id="@+id/tvProductName"
@@ -59,8 +58,6 @@
             android:text="Deskripsi Produk"
             android:textSize="14sp"
             android:paddingTop="2dp" />
-
-
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
