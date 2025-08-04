@@ -12,6 +12,6 @@ class MainBuyerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBuyerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        supportActionBar?.hide()
     }
 }

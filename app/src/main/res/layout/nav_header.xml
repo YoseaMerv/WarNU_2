@@ -9,19 +9,23 @@
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
+    <!-- Ikon Toko -->
     <ImageView
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:src="@drawable/ic_store"
+        android:contentDescription="store_icon"
         app:tint="@android:color/white" />
 
+    <!-- Nama User atau Sapaan -->
     <TextView
+        android:id="@+id/textViewSeller"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="Menu Seller"
+        android:text="Welcome, Seller"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textStyle="bold"
-        android:textSize="18sp"/>
-
+        android:textSize="18sp"
+        android:textColor="@android:color/white" />
 </LinearLayout>

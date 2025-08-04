@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.google.firebase.firestore.ktx)
     implementation(libs.play.services.auth)
 
+
     // Facebook Login
     implementation(libs.facebook.login)
 
@@ -77,6 +78,9 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
     implementation("androidx.hilt:hilt-navigation-fragment:1.1.0")
+
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
 
     // Testing
     testImplementation(libs.junit)

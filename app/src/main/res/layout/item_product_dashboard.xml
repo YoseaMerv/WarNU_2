@@ -26,28 +26,22 @@
             android:background="@android:color/darker_gray"
             android:adjustViewBounds="true" />
 
-        <!-- Nama Produk -->
         <TextView
-            android:id="@+id/tvNamaProduk"
-            android:layout_width="match_parent"
+            android:id="@+id/tvProductName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@android:color/black"
+            android:text="Nama Produk"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:maxLines="2"
-            android:ellipsize="end"
-            tools:text="Kaos Polos Premium" />
+            android:paddingTop="4dp" />
 
-        <!-- Harga Produk -->
         <TextView
-            android:id="@+id/tvHargaProduk"
-            android:layout_width="match_parent"
+            android:id="@+id/tvProductPrice"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Rp 0"
             android:textColor="@android:color/holo_green_dark"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="Rp 20.000" />
+            android:paddingTop="2dp" />
 
         <!-- Stok Produk -->
         <TextView
@@ -57,6 +51,16 @@
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp"
             tools:text="Stok: 10" />
+
+        <TextView
+            android:id="@+id/tvProductDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deskripsi Produk"
+            android:textSize="14sp"
+            android:paddingTop="2dp" />
+
+
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

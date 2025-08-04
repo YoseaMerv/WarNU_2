@@ -10,7 +10,6 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        // Delay 2 detik lalu ke Login
         window.decorView.postDelayed({
             startActivity(Intent(this, LoginActivity::class.java))
             finish()

@@ -1,19 +1,25 @@
 package com.imersa.warnu.ui.register
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.InputType
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
+import com.imersa.warnu.R
 import com.imersa.warnu.databinding.ActivityRegisterSellerBinding
-import com.imersa.warnu.ui.register.RegisterSellerViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class RegisterSellerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterSellerBinding
     private val viewModel: RegisterSellerViewModel by viewModels()
+    private var isPasswordVisible = false
+    private var isConfirmPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +54,44 @@ class RegisterSellerActivity : AppCompatActivity() {
             }
         }
 
+        // Toggle show/hide password
+        binding.showPassword.setOnClickListener {
+            isPasswordVisible = togglePasswordVisibility(
+                binding.password,
+                binding.showPassword,
+                isPasswordVisible
+            )
+        }
+
+        // Toggle show/hide confirm password
+        binding.showConfirmPassword.setOnClickListener {
+            isConfirmPasswordVisible = togglePasswordVisibility(
+                binding.confirmPassword,
+                binding.showConfirmPassword,
+                isConfirmPasswordVisible
+            )
+        }
+
         binding.tvLogin.setOnClickListener {
-            finish() // Kembali ke login
+            finish()
         }
     }
 }
 
+private fun togglePasswordVisibility(
+    editText: EditText,
+    toggleIcon: ImageView,
+    isVisible: Boolean
+): Boolean {
+    if (isVisible) {
+        editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        toggleIcon.setImageResource(R.drawable.ic_closed_eye)
+    } else {
+        editText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        toggleIcon.setImageResource(R.drawable.ic_open_eye)
+    }
+    editText.typeface = Typeface.DEFAULT
+    editText.setSelection(editText.text?.length ?: 0)
+    return !isVisible
+}
 

@@ -38,7 +38,8 @@
     <string name="product_name">Kaos</string>
     <string name="product_price">Rp 20000,00</string>
     <string name="product_stock">Stok: 10</string>
-    <string name="tambah_produk">+ Tambah Produk</string>
-
+    <string name="tambah_produk">Tambah Produk</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

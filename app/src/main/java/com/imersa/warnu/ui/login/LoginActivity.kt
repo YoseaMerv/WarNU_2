@@ -46,25 +46,8 @@ class LoginActivity : AppCompatActivity() {
             viewModel.login(email, password)
         }
 
-        // Toggle show/hide password
         binding.showPassword.setOnClickListener {
-            isPasswordVisible = !isPasswordVisible
-
-            if (isPasswordVisible) {
-                binding.password.inputType =
-                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                binding.showPassword.setImageDrawable(
-                    ContextCompat.getDrawable(this, R.drawable.ic_open_eye)
-                )
-            } else {
-                binding.password.inputType =
-                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                binding.showPassword.setImageDrawable(
-                    ContextCompat.getDrawable(this, R.drawable.ic_closed_eye)
-                )
-            }
-            binding.password.typeface = Typeface.DEFAULT
-            binding.password.setSelection(binding.password.text?.length ?: 0)
+            isPasswordVisible = togglePasswordVisibility()
         }
 
         binding.signUpBuyer.setOnClickListener {
@@ -77,6 +60,21 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    private fun togglePasswordVisibility(): Boolean {
+        if (isPasswordVisible) {
+            binding.password.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            binding.showPassword.setImageResource(R.drawable.ic_closed_eye)
+        } else {
+            binding.password.inputType =
+                InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            binding.showPassword.setImageResource(R.drawable.ic_open_eye)
+        }
+
+        binding.password.typeface = Typeface.DEFAULT
+        binding.password.setSelection(binding.password.text?.length ?: 0)
+        return !isPasswordVisible
+    }
 
     private fun observeLoginState() {
         viewModel.loginState.observe(this) { state ->
