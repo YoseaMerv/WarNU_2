@@ -15,8 +15,6 @@
             android:icon="@drawable/ic_pesanan"
             android:title="Pesanan Masuk" />
     </group>
-
-
     <item android:title="">
         <menu>
             <item

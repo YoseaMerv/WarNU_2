@@ -10,10 +10,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MainSellerViewModel @Inject constructor() : ViewModel() {
-
-    private val auth = FirebaseAuth.getInstance()
-    private val firestore = FirebaseFirestore.getInstance()
+class MainSellerViewModel @Inject constructor(
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth
+) : ViewModel() {
 
     private val _fullName = MutableLiveData<String>()
     val fullName: LiveData<String> = _fullName
@@ -23,24 +23,24 @@ class MainSellerViewModel @Inject constructor() : ViewModel() {
 
     fun loadUserData() {
         val uid = auth.currentUser?.uid
-        if (uid != null) {
-            firestore.collection("users").document(uid)
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document != null && document.exists()) {
-                        val name = document.getString("fullName") ?: "Seller"
-                        _fullName.value = name
-                    } else {
-                        _userNotFound.value = true
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.e("MainSellerViewModel", "Error fetching user data", e)
+        if (uid.isNullOrBlank()) {
+            _userNotFound.value = true
+            return
+        }
+
+        firestore.collection("users").document(uid)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    _fullName.value = document.getString("fullName") ?: "Seller"
+                } else {
                     _userNotFound.value = true
                 }
-        } else {
-            _userNotFound.value = true
-        }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("MainSellerViewModel", "Error fetching user data", exception)
+                _userNotFound.value = true
+            }
     }
 
     fun logout() {

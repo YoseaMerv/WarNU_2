@@ -3,12 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_seller"
-    app:startDestination="@id/manageProductFragment">
+    app:startDestination="@id/dataSellerFragment">
 
+    <!-- Fragment Dashboard -->
     <fragment
-        android:id="@+id/manageProductFragment"
-        android:name="com.imersa.warnu.ui.seller.product.ManageProductFragment"
-        android:label="Kelola Produk"
-        tools:layout="@layout/fragment_product_manage" />
+        android:id="@+id/dataSellerFragment"
+        android:name="com.imersa.warnu.ui.seller.product.DataProductFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_product_data">
 
+        <!-- Action ke tambah produk -->
+        <action
+            android:id="@+id/action_dataSellerFragment_to_addProductFragment"
+            app:destination="@id/addProductFragment" />
+
+        <!-- Action ke detail produk -->
+        <action
+            android:id="@+id/action_dataSellerFragment_to_detailProductFragment"
+            app:destination="@id/detailProductFragment" />
+    </fragment>
+
+    <!-- Fragment Tambah Produk -->
+    <fragment
+        android:id="@+id/addProductFragment"
+        android:name="com.imersa.warnu.ui.seller.product.AddProductFragment"
+        android:label="Tambah Produk"
+        tools:layout="@layout/fragment_add_product" />
+
+    <!-- Fragment Detail Produk -->
+    <fragment
+        android:id="@+id/detailProductFragment"
+        android:name="com.imersa.warnu.ui.seller.DetailProductFragment"
+        android:label="Detail Produk"
+        tools:layout="@layout/fragment_detail_product" />
 </navigation>

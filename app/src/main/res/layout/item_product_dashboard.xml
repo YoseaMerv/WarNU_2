@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp"
-            tools:text="Stok: 10" />
+            tools:text="Stok: " />
 
         <TextView
             android:id="@+id/tvProductDescription"

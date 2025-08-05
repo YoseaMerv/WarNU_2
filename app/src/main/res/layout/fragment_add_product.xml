@@ -5,27 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
-    tools:context=".TambahProdukActivity">
+    tools:context=".ui.seller.product.AddProductFragment">
 
-    <!-- Toolbar Bagian Atas -->
+    <!-- Toolbar (opsional di Fragment, bisa disembunyikan kalau pakai host Activity) -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#00AA13"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:title="Tambah Produk"
-            app:titleTextColor="@android:color/white" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Content yang bisa di-scroll -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -38,65 +28,57 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Input Nama Produk -->
+            <!-- Nama Produk -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nama Produk">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNamaProduk"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Input Deskripsi -->
+            <!-- Deskripsi -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Deskripsi">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDeskripsi"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Input Harga -->
+            <!-- Harga -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Harga">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etHarga"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Input Stok -->
+            <!-- Stok -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Stok">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etStok"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Dropdown Kategori -->
@@ -106,16 +88,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Kategori">
-
                 <AutoCompleteTextView
                     android:id="@+id/actvKategori"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- [BARU] ImageView untuk preview gambar kategori -->
+            <!-- Preview Gambar -->
             <ImageView
                 android:id="@+id/ivKategoriPreview"
                 android:layout_width="match_parent"
@@ -124,7 +104,7 @@
                 android:scaleType="centerCrop"
                 android:visibility="gone"
                 tools:src="@drawable/placeholder_image"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
             <!-- Tombol Pilih Gambar -->
             <com.google.android.material.button.MaterialButton
@@ -139,7 +119,7 @@
                 app:icon="@drawable/ic_image"
                 app:iconGravity="textStart" />
 
-            <!-- Tombol Simpan Produk -->
+            <!-- Tombol Simpan -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSimpanProduk"
                 android:layout_width="match_parent"
@@ -151,9 +131,6 @@
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_save"
                 app:iconGravity="textStart" />
-
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,8 +19,11 @@ class ProductRepository @Inject constructor(
                     return@addSnapshotListener
                 }
 
-                val products = snapshot?.toObjects(Product::class.java) ?: emptyList()
+                val products = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(Product::class.java)?.copy(id = doc.id)
+                } ?: emptyList()
                 result.value = products
+
             }
 
         return result
