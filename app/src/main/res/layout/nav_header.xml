@@ -19,11 +19,11 @@
 
     <!-- Nama User atau Sapaan -->
     <TextView
-        android:id="@+id/textViewSeller"
+        android:id="@+id/textViewNavHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="Welcome, Seller"
+        android:text="Wellcome"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textStyle="bold"
         android:textSize="18sp"

@@ -72,10 +72,10 @@ class MainSellerActivity : AppCompatActivity() {
 
         // Set header "Welcome"
         val headerView = navigationView.getHeaderView(0)
-        val textViewWelcome = headerView.findViewById<TextView>(R.id.textViewSeller)
+        val textViewWelcome = headerView.findViewById<TextView>(R.id.textViewNavHeader)
 
-        viewModel.fullName.observe(this) { name ->
-            textViewWelcome.text = "Welcome, $name"
+        viewModel.name.observe(this) { name ->
+            textViewWelcome.text = "Selamat Datang, $name"
         }
 
         viewModel.userNotFound.observe(this) { notFound ->
@@ -85,6 +85,8 @@ class MainSellerActivity : AppCompatActivity() {
         viewModel.loadUserData()
 
         // Navigasi menu drawer
+        navigationView.menu.findItem(R.id.nav_history).isVisible = false
+        navigationView.menu.findItem(R.id.nav_favorites).isVisible = false
         navigationView.setNavigationItemSelectedListener { menuItem ->
             val handled = when (menuItem.itemId) {
                 R.id.nav_profile -> {

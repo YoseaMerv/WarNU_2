@@ -1,4 +1,4 @@
-package com.imersa.warnu.ui.seller
+package com.imersa.warnu.ui.buyer
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -10,25 +10,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MainSellerViewModel @Inject constructor(
+class MainBuyerViewModel @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private val _name = MutableLiveData<String>()
     val name: LiveData<String> = _name
-    private val _email = MutableLiveData<String>()
-    val email: LiveData<String> = _email
-    private val _phone = MutableLiveData<String>()
-    val phone: LiveData<String> = _phone
-    private val _address = MutableLiveData<String>()
-    val address: LiveData<String> = _address
-    private val _role = MutableLiveData<String>()
-    val role: LiveData<String> = _role
-    private val _uid = MutableLiveData<String>()
-    val uid: LiveData<String> = _uid
-    private val _storeName = MutableLiveData<String>()
-    val storeName: LiveData<String> = _storeName
 
     private val _userNotFound = MutableLiveData<Boolean>()
     val userNotFound: LiveData<Boolean> = _userNotFound
@@ -44,13 +32,13 @@ class MainSellerViewModel @Inject constructor(
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    _name.value = document.getString("name") ?: _role.value
+                    _name.value = document.getString("name") ?: "User"
                 } else {
                     _userNotFound.value = true
                 }
             }
             .addOnFailureListener { exception ->
-                Log.e("MainSellerViewModel", "Error fetching user data", exception)
+                Log.e("MainBuyerViewModel", "Error fetching user data", exception)
                 _userNotFound.value = true
             }
     }

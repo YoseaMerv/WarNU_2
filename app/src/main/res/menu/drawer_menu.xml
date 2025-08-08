@@ -1,38 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Menu Utama -->
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="Home" />
+            android:title="Beranda" />
+
         <item
             android:id="@+id/nav_profile"
-            android:title="Profile"
-            android:icon="@drawable/ic_profile" />
+            android:icon="@drawable/ic_profile"
+            android:title="Profil" />
+
         <item
             android:id="@+id/nav_manage_product"
             android:icon="@drawable/ic_manage"
-            android:title="Manage Produk" />
+            android:title="Kelola Produk" />
+
         <item
             android:id="@+id/nav_order"
             android:icon="@drawable/ic_order"
-            android:title="Order" />
+            android:title="Pesanan" />
+
         <item
             android:id="@+id/nav_history"
-            android:title="Riwayat Pembelian"
-            android:icon="@drawable/ic_manage" />
+            android:icon="@drawable/ic_order"
+            android:title="Riwayat Pembelian" />
+
         <item
             android:id="@+id/nav_favorites"
-            android:title="Favorit"
-            android:icon="@drawable/ic_order" />
+            android:icon="@drawable/ic_order"
+            android:title="Favorit" />
     </group>
+
+    <!-- Pemisah -->
     <item android:title="">
         <menu>
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout"
-                android:title="Log Out" />
+                android:title="Keluar" />
         </menu>
     </item>
 

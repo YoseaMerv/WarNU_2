@@ -21,7 +21,7 @@ class RegisterBuyerViewModel @Inject constructor(
     val errorMessage: LiveData<String?> get() = _errorMessage
 
     fun registerBuyer(
-        fullName: String,
+        name: String,
         address: String,
         email: String,
         phone: String,
@@ -32,7 +32,7 @@ class RegisterBuyerViewModel @Inject constructor(
                 val userId = result.user?.uid.orEmpty()
                 val userData = mapOf(
                     "uid" to userId,
-                    "fullName" to fullName,
+                    "name" to name,
                     "address" to address,
                     "email" to email,
                     "phone" to phone,

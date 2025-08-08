@@ -2,50 +2,64 @@
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/drawer_layout_buyer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.buyer.MainBuyerActivity">
 
-    <!-- Main content -->
+    <!-- Konten utama -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- AppBar -->
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
+        <!-- AppBar dengan Toolbar -->
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/green"
-            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-            app:title="Beranda"
-            app:navigationIcon="@drawable/hamburger_menu" />
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
-        <!-- Fragment container -->
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/nav_host_fragment"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/buyer_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:titleTextColor="@android:color/white"
+                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Tempat NavHostFragment -->
+        <fragment
+            android:id="@+id/fragment_container_buyer"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:defaultNavHost="true"
-            tools:ignore="MissingConstraints" />
+            app:navGraph="@navigation/nav_graph_buyer" />
+
+        <!-- Tombol aksi khusus di HomeBuyerFragment -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAksiBuyer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aksi Buyer"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:visibility="gone" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- Navigation drawer -->
+    <!-- Drawer Menu -->
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation_view"
+        android:id="@+id/navigation_view_buyer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:menu="@menu/drawer_menu"
-        android:background="@android:color/white"
-        app:itemTextColor="@color/green"
-        app:itemIconTint="@color/black"
-        app:headerLayout="@layout/nav_header"/>
-
+        android:background="?android:attr/windowBackground"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
