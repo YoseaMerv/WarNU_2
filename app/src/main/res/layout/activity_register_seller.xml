@@ -51,7 +51,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_person"
+                android:src="@drawable/ic_profile"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="8dp"
                 android:contentDescription="Person icon" />
@@ -65,6 +65,7 @@
                 android:background="@android:color/transparent"
                 android:inputType="textPersonName"
                 android:textColor="#000000"
+                android:textColorHint="#9CA3AF"
                 android:textSize="16sp"
                 android:padding="0dp"/>
         </LinearLayout>
@@ -95,6 +96,7 @@
                 android:background="@android:color/transparent"
                 android:inputType="textPersonName"
                 android:textColor="#000000"
+                android:textColorHint="#9CA3AF"
                 android:textSize="16sp"
                 android:padding="0dp"/>
         </LinearLayout>
@@ -121,12 +123,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Phone Number"
                 android:background="@android:color/transparent"
+                android:hint="Phone Number"
                 android:inputType="phone"
+                android:padding="0dp"
                 android:textColor="#000000"
-                android:textSize="16sp"
-                android:padding="0dp"/>
+                android:textColorHint="#9CA3AF"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <!-- Address -->
@@ -152,6 +155,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Address"
+                android:textColorHint="#9CA3AF"
                 android:inputType="textPostalAddress"
                 android:autofillHints="postalAddress"
                 android:background="@android:color/transparent" />
@@ -180,6 +184,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Email"
+                android:textColorHint="#9CA3AF"
                 android:inputType="textEmailAddress"
                 android:autofillHints="emailAddress"
                 android:background="@android:color/transparent" />
@@ -214,6 +219,7 @@
                     android:background="@android:color/transparent"
                     android:inputType="textPassword"
                     android:textColor="#000000"
+                    android:textColorHint="#9CA3AF"
                     android:textSize="16sp"
                     android:padding="0dp"/>
             </LinearLayout>
@@ -258,6 +264,7 @@
                     android:background="@android:color/transparent"
                     android:inputType="textPassword"
                     android:textColor="#000000"
+                    android:textColorHint="#9CA3AF"
                     android:textSize="16sp"
                     android:padding="0dp"/>
             </LinearLayout>

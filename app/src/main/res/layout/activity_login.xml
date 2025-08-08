@@ -7,8 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:orientation="vertical">
 
         <!-- Logo -->
         <ImageView
@@ -75,8 +74,10 @@
                     android:hint="Email"
                     android:background="@android:color/transparent"
                     android:textColor="#000000"
+                    android:textColorHint="#9CA3AF"
                     android:textSize="16sp"
                     android:padding="0dp" />
+
             </LinearLayout>
         </FrameLayout>
 
@@ -103,6 +104,7 @@
                     android:background="@android:color/transparent"
                     android:inputType="textPassword"
                     android:textColor="#000000"
+                    android:textColorHint="#9CA3AF"
                     android:textSize="16sp"
                     android:padding="0dp" />
             </LinearLayout>

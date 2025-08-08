@@ -29,7 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
-            app:defaultNavHost="true" />
+            app:defaultNavHost="true"
+            tools:ignore="MissingConstraints" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -41,6 +42,10 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:menu="@menu/drawer_menu"
-         />
+        android:background="@android:color/white"
+        app:itemTextColor="@color/green"
+        app:itemIconTint="@color/black"
+        app:headerLayout="@layout/nav_header"/>
+
 
 </androidx.drawerlayout.widget.DrawerLayout>

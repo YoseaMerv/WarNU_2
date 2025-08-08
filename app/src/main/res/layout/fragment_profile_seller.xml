@@ -77,7 +77,7 @@
                             android:layout_height="24dp"
                             android:layout_marginEnd="16dp"
                             app:tint="#1A8754"
-                            android:src="@drawable/ic_person" />
+                            android:src="@drawable/ic_profile" />
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

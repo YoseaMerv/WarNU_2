@@ -3,17 +3,29 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_profil"
-            android:icon="@drawable/ic_person"
-            android:title="Profil Saya" />
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Home" />
         <item
-            android:id="@+id/nav_kelola_produk"
-            android:icon="@drawable/ic_kelola"
-            android:title="Kelola Produk" />
+            android:id="@+id/nav_profile"
+            android:title="Profile"
+            android:icon="@drawable/ic_profile" />
         <item
-            android:id="@+id/nav_pesanan_masuk"
-            android:icon="@drawable/ic_pesanan"
-            android:title="Pesanan Masuk" />
+            android:id="@+id/nav_manage_product"
+            android:icon="@drawable/ic_manage"
+            android:title="Manage Produk" />
+        <item
+            android:id="@+id/nav_order"
+            android:icon="@drawable/ic_order"
+            android:title="Order" />
+        <item
+            android:id="@+id/nav_history"
+            android:title="Riwayat Pembelian"
+            android:icon="@drawable/ic_manage" />
+        <item
+            android:id="@+id/nav_favorites"
+            android:title="Favorit"
+            android:icon="@drawable/ic_order" />
     </group>
     <item android:title="">
         <menu>

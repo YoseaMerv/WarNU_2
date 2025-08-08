@@ -87,15 +87,15 @@ class MainSellerActivity : AppCompatActivity() {
         // Navigasi menu drawer
         navigationView.setNavigationItemSelectedListener { menuItem ->
             val handled = when (menuItem.itemId) {
-                R.id.nav_profil -> {
+                R.id.nav_profile -> {
                     Toast.makeText(this, "Profil Saya diklik", Toast.LENGTH_SHORT).show()
                     true
                 }
-                R.id.nav_kelola_produk -> {
+                R.id.nav_manage_product -> {
                     Toast.makeText(this, "Kelola Pesanan diklik", Toast.LENGTH_SHORT).show()
                     true
                 }
-                R.id.nav_pesanan_masuk -> {
+                R.id.nav_order -> {
                     Toast.makeText(this, "Pesanan Masuk diklik", Toast.LENGTH_SHORT).show()
                     true
                 }
@@ -112,14 +112,14 @@ class MainSellerActivity : AppCompatActivity() {
         }
     }
 
-    // Handle tombol back
-    override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
+//    // Handle tombol back
+//    override fun onBackPressed() {
+//        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+//            drawerLayout.closeDrawer(GravityCompat.START)
+//        } else {
+//            super.onBackPressed()
+//        }
+//    }
 
     // Handle tombol "up" di AppBar
     override fun onSupportNavigateUp(): Boolean {
