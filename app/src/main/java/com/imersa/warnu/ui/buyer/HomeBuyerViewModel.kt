@@ -1,47 +1,59 @@
 package com.imersa.warnu.ui.buyer
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeBuyerViewModel : ViewModel() {
+@HiltViewModel
+class HomeBuyerViewModel @Inject constructor(
+    private val firestore: FirebaseFirestore
+) : ViewModel() {
 
     private val _produkList = MutableLiveData<List<ProdukBuyer>>()
     val produkList: LiveData<List<ProdukBuyer>> get() = _produkList
 
-    private val dummyProduk = listOf(
-        ProdukBuyer(1, "Kopi Arabica", 15000, "https://via.placeholder.com/150"),
-        ProdukBuyer(2, "Kopi Robusta", 12000, "https://via.placeholder.com/150"),
-        ProdukBuyer(3, "Kopi Luwak", 55000, "https://via.placeholder.com/150"),
-        ProdukBuyer(4, "Kopi Tubruk", 10000, "https://via.placeholder.com/150"),
-        ProdukBuyer(5, "Kopi Gayo", 25000, "https://via.placeholder.com/150")
-    )
-
     fun loadProduk() {
-        viewModelScope.launch {
-            delay(500) // simulasi loading
-            _produkList.value = dummyProduk
-        }
+        firestore.collection("products")
+            .get()
+            .addOnSuccessListener { result ->
+                val produkList = result.documents.mapNotNull { doc ->
+                    doc.toObject(ProdukBuyer::class.java)?.copy(id = doc.id)
+                }
+                _produkList.value = produkList
+            }
+            .addOnFailureListener { e ->
+                Log.e("HomeBuyerViewModel", "Gagal memuat produk", e)
+                _produkList.value = emptyList()
+            }
     }
 
     fun searchProduk(keyword: String) {
-        viewModelScope.launch {
-            delay(200)
-            _produkList.value = if (keyword.isBlank()) {
-                dummyProduk
-            } else {
-                dummyProduk.filter { it.nama.contains(keyword, ignoreCase = true) }
-            }
+        if (keyword.isBlank()) {
+            loadProduk()
+            return
         }
+
+        firestore.collection("products")
+            .orderBy("name") // pastikan field ini di-index
+            .startAt(keyword)
+            .endAt(keyword + "\uf8ff")
+            .get()
+            .addOnSuccessListener { result ->
+                val produkList = result.documents.mapNotNull { doc ->
+                    doc.toObject(ProdukBuyer::class.java)?.copy(id = doc.id)
+                }
+                _produkList.value = produkList
+            }
+            .addOnFailureListener { e ->
+                Log.e("HomeBuyerViewModel", "Gagal mencari produk", e)
+                _produkList.value = emptyList()
+            }
     }
 }
-
-data class ProdukBuyer(
-    val id: Int,
-    val nama: String,
-    val harga: Int,
-    val gambarUrl: String
-)

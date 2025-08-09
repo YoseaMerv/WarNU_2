@@ -34,10 +34,16 @@ class ProdukBuyerAdapter(
         private val tvHarga: TextView = itemView.findViewById(R.id.tvHargaProdukBuyer)
 
         fun bind(produk: ProdukBuyer) {
-            tvNama.text = produk.nama
-            tvHarga.text = "Rp ${produk.harga}"
+            tvNama.text = produk.name ?: "-"
+            val priceText = if (produk.price != null) {
+                "Rp ${String.format("%,.0f", produk.price)}"
+            } else {
+                "Harga belum tersedia"
+            }
+            tvHarga.text = priceText
+
             Glide.with(itemView.context)
-                .load(produk.gambarUrl)
+                .load(produk.imageUrl)
                 .placeholder(R.drawable.placeholder_image)
                 .into(imgProduk)
 
