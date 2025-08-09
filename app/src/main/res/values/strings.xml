@@ -42,4 +42,12 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- String untuk Dashboard Driver -->
+    <string name="dashboard_driver_title">Dashboard Driver</string>
+    <string name="driver_photo_desc">Foto profil driver</string>
+    <string name="driver_greeting_placeholder">Halo, Rafi Driver</string>
+    <string name="driver_status_active">Status: Aktif</string>
+    <string name="driver_ready_prompt">Siap menerima pesanan hari ini?</string>
+
+
 </resources>

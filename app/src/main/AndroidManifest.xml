@@ -13,6 +13,11 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.WARNU">
 
+        <!-- maps activity -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAKkkbBGEObhmQImjAJsGN06xqvSe4jedU" />
+
         <!-- ✅ Splash Activity -->
         <activity
             android:name=".SplashActivity"
@@ -32,6 +37,9 @@
         <!-- ✅ Main Buyer dan Seller -->
         <activity android:name=".ui.buyer.MainBuyerActivity" android:exported="false" />
         <activity android:name=".ui.seller.MainSellerActivity" android:exported="false" />
+
+        <!-- ✅ Main Driver -->
+        <activity android:name=".ui.driver.MainDriverActivity" android:exported="false" />
 
     </application>
 </manifest>

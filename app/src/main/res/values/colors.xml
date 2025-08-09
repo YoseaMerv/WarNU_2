@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="green">#FF00AA13</color>
     <color name="transparent">#00000000</color>
+    <color name="primaryBlue">#2196F3</color>
+    <color name="statusGreen">#4CAF50</color>
 </resources>
