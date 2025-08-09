@@ -12,6 +12,7 @@ import com.imersa.warnu.ui.buyer.MainBuyerActivity
 import com.imersa.warnu.ui.seller.MainSellerActivity
 import dagger.hilt.android.AndroidEntryPoint
 import android.text.InputType
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import com.imersa.warnu.R
 import com.imersa.warnu.ui.register.RegisterBuyerActivity
@@ -27,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupListeners()

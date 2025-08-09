@@ -8,6 +8,7 @@ import javax.inject.Inject
 class ProductRepository @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
+
     fun getProductsBySeller(sellerId: String): LiveData<List<Product>> {
         val result = MutableLiveData<List<Product>>()
 
@@ -22,10 +23,17 @@ class ProductRepository @Inject constructor(
                 val products = snapshot?.documents?.mapNotNull { doc ->
                     doc.toObject(Product::class.java)?.copy(id = doc.id)
                 } ?: emptyList()
-                result.value = products
 
+                result.value = products
             }
 
         return result
+    }
+
+    fun deleteProduct(productId: String, onResult: (Boolean) -> Unit) {
+        firestore.collection("products").document(productId)
+            .delete()
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
     }
 }

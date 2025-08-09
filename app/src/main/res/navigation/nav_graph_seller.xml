@@ -3,37 +3,65 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_seller"
-    app:startDestination="@id/dataSellerFragment">
+    app:startDestination="@id/HomeSellerFragment">
 
-    <!-- Fragment Dashboard -->
+    <!-- Fragment Dashboard Utama -->
     <fragment
-        android:id="@+id/dataSellerFragment"
-        android:name="com.imersa.warnu.ui.seller.product.DataProductFragment"
+        android:id="@+id/HomeSellerFragment"
+        android:name="com.imersa.warnu.ui.seller.product.HomeSellerFragment"
         android:label="Dashboard"
-        tools:layout="@layout/fragment_product_data">
+        tools:layout="@layout/fragment_home_seller">
 
-        <!-- Action ke tambah produk -->
+        <!-- Navigasi ke Tambah Produk -->
         <action
             android:id="@+id/action_dataSellerFragment_to_addProductFragment"
             app:destination="@id/addProductFragment" />
 
-        <!-- Action ke detail produk -->
+        <!-- Navigasi ke Detail Produk -->
         <action
             android:id="@+id/action_dataSellerFragment_to_detailProductFragment"
             app:destination="@id/detailProductFragment" />
+
+        <!-- Navigasi dari EditManageFragment ke EditProductFragment -->
+        <action
+            android:id="@+id/action_EditManageFragment_to_EditProductFragment"
+            app:destination="@id/editProductFragment" />
+        <action
+            android:id="@+id/action_HomeSellerFragment_to_EditManageFragment"
+            app:destination="@id/EditManageFragment" />
+
     </fragment>
 
-    <!-- Fragment Tambah Produk -->
+    <!-- Fragment untuk menambah produk baru -->
     <fragment
         android:id="@+id/addProductFragment"
         android:name="com.imersa.warnu.ui.seller.product.AddProductFragment"
         android:label="Tambah Produk"
         tools:layout="@layout/fragment_add_product" />
 
-    <!-- Fragment Detail Produk -->
+    <!-- Fragment untuk mengelola produk -->
+    <fragment
+        android:id="@+id/EditManageFragment"
+        android:name="com.imersa.warnu.ui.seller.product.EditManageFragment"
+        android:label="Kelola Produk"
+        tools:layout="@layout/fragment_edit_manager" >
+        <action
+            android:id="@+id/action_EditManageFragment_to_editProductFragment"
+            app:destination="@id/editProductFragment" />
+    </fragment>
+
+    <!-- Fragment untuk edit detail produk -->
+    <fragment
+        android:id="@+id/editProductFragment"
+        android:name="com.imersa.warnu.ui.seller.product.EditProductFragment"
+        android:label="Edit Produk"
+        tools:layout="@layout/fragment_edit_product" />
+
+    <!-- Fragment untuk melihat detail produk -->
     <fragment
         android:id="@+id/detailProductFragment"
-        android:name="com.imersa.warnu.ui.seller.DetailProductFragment"
+        android:name="com.imersa.warnu.ui.seller.product.DetailProductFragment"
         android:label="Detail Produk"
         tools:layout="@layout/fragment_detail_product" />
+
 </navigation>

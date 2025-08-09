@@ -1,11 +1,12 @@
 package com.imersa.warnu.ui.seller.product
 
 data class Product(
-    val id: String = "",
-    val name: String = "",
-    val description: String = "",
-    val price: Double = 0.0,
-    val imageUrl: String = "",
-    val sellerId: String = "",
-    val stock : Int = 0
+    val id: String? = null,
+    val sellerId: String? = null,
+    val name: String? = null,
+    val price: Double? = null,
+    val description: String? = null,
+    val stock: Int? = 0,
+    val imageUrl: String? = null,
+    val category: String? = null
 )

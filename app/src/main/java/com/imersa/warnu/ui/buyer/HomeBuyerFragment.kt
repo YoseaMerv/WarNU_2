@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.imersa.warnu.R
@@ -42,8 +43,18 @@ class HomeBuyerFragment : Fragment() {
 
         // Setup RecyclerView
         adapterProduk = ProdukBuyerAdapter { produk ->
-            Toast.makeText(requireContext(), "Klik: ${produk.name}", Toast.LENGTH_SHORT).show()
+            val bundle = Bundle().apply {
+                putString("productId", produk.id ?: "")
+                putString("name", produk.name)
+                putString("price", produk.price?.toString() ?: "0")
+                putString("description", produk.description)
+                putInt("stock", produk.stock ?: 0)
+                putString("imageUrl", produk.imageUrl)
+                putString("category", produk.category)
+            }
+            findNavController().navigate(R.id.detailProductFragment, bundle)
         }
+
         rvProdukBuyer.layoutManager = GridLayoutManager(requireContext(), 2)
         rvProdukBuyer.adapter = adapterProduk
 

@@ -4,18 +4,15 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeBuyerViewModel @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
-
     private val _produkList = MutableLiveData<List<ProdukBuyer>>()
     val produkList: LiveData<List<ProdukBuyer>> get() = _produkList
 

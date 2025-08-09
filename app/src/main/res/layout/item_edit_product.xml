@@ -9,6 +9,7 @@
     app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
@@ -23,11 +24,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
-            tools:src="@android:color/darker_gray" />
+            tools:src="@drawable/placeholder_image" />
 
-        <!-- Grup Teks (Nama, Harga, Stok) -->
+        <!-- Grup Teks -->
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/layoutTextContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -44,7 +45,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:text="Madu" />
+                tools:text="Madu Premium" />
 
             <TextView
                 android:id="@+id/tvHargaStok"
@@ -53,22 +54,9 @@
                 android:layout_marginTop="4dp"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp"
-                tools:text="Rp 25000.00 - Stok:20" />
+                tools:text="Rp 25.000 - Stok: 20" />
 
         </LinearLayout>
-
-        <!-- Tombol Hapus -->
-        <ImageButton
-            android:id="@+id/btnHapus"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_delete"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="#D32F2F"
-            tools:ignore="ContentDescription" />
 
         <!-- Tombol Edit -->
         <ImageButton
@@ -82,6 +70,19 @@
             app:layout_constraintEnd_toStartOf="@id/btnHapus"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="#1976D2"
+            tools:ignore="ContentDescription" />
+
+        <!-- Tombol Hapus -->
+        <ImageButton
+            android:id="@+id/btnHapus"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#D32F2F"
             tools:ignore="ContentDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,23 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
-    tools:context=".ui.seller.product.KelolaProdukSellerFragment">
+    tools:context=".ui.seller.product.EditProductFragment">
 
     <!-- Toolbar Bagian Atas -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#1A8754"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:title="Edit Produk"
-            app:titleTextColor="@android:color/white" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Konten yang bisa di-scroll -->

@@ -4,6 +4,7 @@ plugins {
     id("com.google.gms.google-services")
     id("dagger.hilt.android.plugin")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -69,7 +70,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.google.firebase.firestore.ktx)
     implementation(libs.play.services.auth)
-
+    implementation ("com.google.firebase:firebase-storage-ktx")
 
     // Facebook Login
     implementation(libs.facebook.login)

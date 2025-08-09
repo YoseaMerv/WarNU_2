@@ -46,31 +46,31 @@ class MainSellerActivity : AppCompatActivity() {
         navigationView = findViewById(R.id.navigation_view_seller)
         btnTambahProduk = findViewById(R.id.btnTambahProdukSeller)
 
-        // Setup NavController
+        // Setup NavController dari NavHostFragment
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.fragment_container_seller) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Setup AppBarConfiguration & Toolbar
+        // Setup AppBarConfiguration dengan drawer dan top-level destinations
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.dataSellerFragment),
+            setOf(R.id.HomeSellerFragment, R.id.EditManageFragment), // top level destinations
             drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
 
-        // Tampilkan tombol tambah produk hanya di DataProductFragment
+        // Tampilkan tombol tambah produk hanya di HomeSellerFragment (dashboard)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             btnTambahProduk.visibility =
-                if (destination.id == R.id.dataSellerFragment) View.VISIBLE else View.GONE
+                if (destination.id == R.id.HomeSellerFragment) View.VISIBLE else View.GONE
         }
 
-        // Klik tombol tambah produk
+        // Klik tombol tambah produk navigasi ke addProductFragment
         btnTambahProduk.setOnClickListener {
             navController.navigate(R.id.addProductFragment)
         }
 
-        // Set header "Welcome"
+        // Set header welcome user
         val headerView = navigationView.getHeaderView(0)
         val textViewWelcome = headerView.findViewById<TextView>(R.id.textViewNavHeader)
 
@@ -84,17 +84,25 @@ class MainSellerActivity : AppCompatActivity() {
 
         viewModel.loadUserData()
 
-        // Navigasi menu drawer
+        // Hide some menu items if needed
         navigationView.menu.findItem(R.id.nav_history).isVisible = false
         navigationView.menu.findItem(R.id.nav_favorites).isVisible = false
+
+        // Handle menu drawer item clicks
         navigationView.setNavigationItemSelectedListener { menuItem ->
             val handled = when (menuItem.itemId) {
-                R.id.nav_profile -> {
-                    Toast.makeText(this, "Profil Saya diklik", Toast.LENGTH_SHORT).show()
+                R.id.nav_home -> {
+                    // Navigasi ke HomeSellerFragment
+                    navController.navigate(R.id.HomeSellerFragment)
                     true
                 }
                 R.id.nav_manage_product -> {
-                    Toast.makeText(this, "Kelola Pesanan diklik", Toast.LENGTH_SHORT).show()
+                    // Navigasi ke EditManageFragment
+                    navController.navigate(R.id.EditManageFragment)
+                    true
+                }
+                R.id.nav_profile -> {
+                    Toast.makeText(this, "Profil Saya diklik", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.nav_order -> {
@@ -112,9 +120,10 @@ class MainSellerActivity : AppCompatActivity() {
             if (handled) drawerLayout.closeDrawer(GravityCompat.START)
             handled
         }
+
     }
 
-//    // Handle tombol back
+    // Handle tombol back, tutup drawer jika terbuka
 //    override fun onBackPressed() {
 //        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
 //            drawerLayout.closeDrawer(GravityCompat.START)
@@ -123,9 +132,8 @@ class MainSellerActivity : AppCompatActivity() {
 //        }
 //    }
 
-    // Handle tombol "up" di AppBar
+    // Handle tombol Up di toolbar (drawer hamburger)
     override fun onSupportNavigateUp(): Boolean {
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
