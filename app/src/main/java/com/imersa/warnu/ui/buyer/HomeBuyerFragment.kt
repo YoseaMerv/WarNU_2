@@ -69,8 +69,6 @@ class HomeBuyerFragment : Fragment() {
             viewModel.searchProduk(keyword)
         }
 
-
-        // Banner click (optional)
         bannerImage.setOnClickListener {
             Toast.makeText(requireContext(), "Banner diklik", Toast.LENGTH_SHORT).show()
         }

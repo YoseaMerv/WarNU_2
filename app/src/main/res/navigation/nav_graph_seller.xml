@@ -14,22 +14,18 @@
 
         <!-- Navigasi ke Tambah Produk -->
         <action
-            android:id="@+id/action_dataSellerFragment_to_addProductFragment"
+            android:id="@+id/action_HomeSellerFragment_to_addProductFragment"
             app:destination="@id/addProductFragment" />
 
         <!-- Navigasi ke Detail Produk -->
         <action
-            android:id="@+id/action_dataSellerFragment_to_detailProductFragment"
+            android:id="@+id/action_HomeSellerFragment_to_detailProductFragment"
             app:destination="@id/detailProductFragment" />
 
-        <!-- Navigasi dari EditManageFragment ke EditProductFragment -->
-        <action
-            android:id="@+id/action_EditManageFragment_to_EditProductFragment"
-            app:destination="@id/editProductFragment" />
+        <!-- Navigasi ke EditManageFragment -->
         <action
             android:id="@+id/action_HomeSellerFragment_to_EditManageFragment"
             app:destination="@id/EditManageFragment" />
-
     </fragment>
 
     <!-- Fragment untuk menambah produk baru -->
@@ -45,6 +41,7 @@
         android:name="com.imersa.warnu.ui.seller.product.EditManageFragment"
         android:label="Kelola Produk"
         tools:layout="@layout/fragment_edit_manager" >
+
         <action
             android:id="@+id/action_EditManageFragment_to_editProductFragment"
             app:destination="@id/editProductFragment" />

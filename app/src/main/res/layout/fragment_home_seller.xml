@@ -48,4 +48,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Tombol Tambah Produk -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTambahProdukSeller"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="#1A8754"
+        android:text="@string/tambah_produk"
+        app:cornerRadius="16dp"
+        app:icon="@drawable/ic_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

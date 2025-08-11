@@ -29,8 +29,6 @@ class MainSellerActivity : AppCompatActivity() {
     private lateinit var navigationView: NavigationView
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var btnTambahProduk: MaterialButton
-
     private val viewModel: MainSellerViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +42,6 @@ class MainSellerActivity : AppCompatActivity() {
         // Inisialisasi view
         drawerLayout = findViewById(R.id.drawer_layout_seller)
         navigationView = findViewById(R.id.navigation_view_seller)
-        btnTambahProduk = findViewById(R.id.btnTambahProdukSeller)
 
         // Setup NavController dari NavHostFragment
         val navHostFragment = supportFragmentManager
@@ -60,15 +57,7 @@ class MainSellerActivity : AppCompatActivity() {
         navigationView.setupWithNavController(navController)
 
         // Tampilkan tombol tambah produk hanya di HomeSellerFragment (dashboard)
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            btnTambahProduk.visibility =
-                if (destination.id == R.id.HomeSellerFragment) View.VISIBLE else View.GONE
-        }
 
-        // Klik tombol tambah produk navigasi ke addProductFragment
-        btnTambahProduk.setOnClickListener {
-            navController.navigate(R.id.addProductFragment)
-        }
 
         // Set header welcome user
         val headerView = navigationView.getHeaderView(0)

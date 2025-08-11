@@ -36,15 +36,22 @@ class HomeSellerFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
         observeViewModel()
 
+        // Tombol tambah produk
+        binding.btnTambahProdukSeller.setOnClickListener {
+            val navController = requireActivity().findNavController(R.id.fragment_container_seller)
+            navController.navigate(R.id.addProductFragment) // ganti sesuai ID tujuan di nav_graph_seller
+        }
         val sellerId = auth.currentUser?.uid ?: return
         viewModel.fetchProducts(sellerId)
     }
+
 
     private fun setupRecyclerView() {
         adapter = ProductAdapter(

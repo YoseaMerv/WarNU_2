@@ -8,6 +8,8 @@
     tools:context=".ui.buyer.MainBuyerActivity">
 
     <!-- Konten utama -->
+
+    <!-- Drawer Menu -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -23,8 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                app:titleTextColor="@android:color/white"
-                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
+                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
+                app:titleTextColor="@android:color/white" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -34,24 +36,23 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:defaultNavHost="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:navGraph="@navigation/nav_graph_buyer" />
 
         <!-- Tombol aksi khusus di HomeBuyerFragment -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAksiBuyer"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aksi Buyer"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:text="Aksi Buyer"
             android:visibility="gone" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- Drawer Menu -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view_buyer"
         android:layout_width="wrap_content"
