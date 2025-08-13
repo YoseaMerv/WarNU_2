@@ -13,6 +13,28 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!-- ProgressBar Loading -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginTop="16dp" />
+
+        <!-- Empty State -->
+        <TextView
+            android:id="@+id/tvEmptyState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tidak ada produk tersedia"
+            android:gravity="center"
+            android:padding="16dp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
         <!-- Scroll & Grid Section -->
         <ScrollView
             android:id="@+id/scroll_section"

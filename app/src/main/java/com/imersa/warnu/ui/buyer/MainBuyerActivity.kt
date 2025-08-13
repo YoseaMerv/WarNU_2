@@ -2,6 +2,8 @@ package com.imersa.warnu.ui.buyer
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -29,7 +31,6 @@ class MainBuyerActivity : AppCompatActivity() {
     private lateinit var navigationView: NavigationView
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var btnAksiBuyer: MaterialButton
 
     private val viewModel: MainBuyerViewModel by viewModels()
 
@@ -44,7 +45,6 @@ class MainBuyerActivity : AppCompatActivity() {
         // Init Views
         drawerLayout = findViewById(R.id.drawer_layout_buyer)
         navigationView = findViewById(R.id.navigation_view_buyer)
-        btnAksiBuyer = findViewById(R.id.btnAksiBuyer)
 
         // Setup NavController
         val navHostFragment = supportFragmentManager
@@ -63,15 +63,6 @@ class MainBuyerActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
 
-        // Atur tombol aksi hanya di halaman Home
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            btnAksiBuyer.visibility =
-                if (destination.id == R.id.nav_home) View.VISIBLE else View.GONE
-        }
-
-        btnAksiBuyer.setOnClickListener {
-            Toast.makeText(this, "Aksi buyer dijalankan", Toast.LENGTH_SHORT).show()
-        }
 
         // Header Navigation Drawer
         navigationView.getHeaderView(0)?.let { headerView ->
@@ -108,10 +99,27 @@ class MainBuyerActivity : AppCompatActivity() {
                 }
             }
         }
+
+    }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_buyer_toolbar, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_cart -> {
+                // Navigasi ke halaman keranjang
+                navController.navigate(R.id.cartFragment) // pastikan ID sesuai di nav_graph_buyer.xml
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
+
 }

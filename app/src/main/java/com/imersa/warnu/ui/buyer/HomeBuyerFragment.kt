@@ -4,76 +4,112 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.imersa.warnu.R
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.imersa.warnu.databinding.FragmentHomeBuyerBinding
 
-@AndroidEntryPoint
 class HomeBuyerFragment : Fragment() {
 
-    private lateinit var rvProdukBuyer: RecyclerView
-    private lateinit var etSearch: EditText
-    private lateinit var bannerImage: ImageView
+    private var _binding: FragmentHomeBuyerBinding? = null
+    private val binding get() = _binding!!
 
-    private val viewModel: HomeBuyerViewModel by viewModels()
-    private lateinit var adapterProduk: ProdukBuyerAdapter
+    private lateinit var adapter: HomeBuyerAdapter
+    private val firestore by lazy { FirebaseFirestore.getInstance() }
+    private val auth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_home_buyer, container, false)
+    ): View {
+        _binding = FragmentHomeBuyerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Init Views
-        rvProdukBuyer = view.findViewById(R.id.rvProdukBuyer)
-        etSearch = view.findViewById(R.id.etSearch)
-        bannerImage = view.findViewById(R.id.bannerImage)
+        setupRecyclerView()
+        loadProducts()
+    }
 
-        // Setup RecyclerView
-        adapterProduk = ProdukBuyerAdapter { produk ->
-            val bundle = Bundle().apply {
-                putString("productId", produk.id ?: "")
-                putString("name", produk.name)
-                putString("price", produk.price?.toString() ?: "0")
-                putString("description", produk.description)
-                putInt("stock", produk.stock ?: 0)
-                putString("imageUrl", produk.imageUrl)
-                putString("category", produk.category)
+    private fun setupRecyclerView() {
+        adapter = HomeBuyerAdapter { product ->
+            addToCart(product)
+        }
+        binding.rvProdukBuyer.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvProdukBuyer.adapter = adapter
+    }
+
+    private fun loadProducts() {
+        showLoading(true)
+        firestore.collection("products")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    showLoading(false)
+                    Toast.makeText(requireContext(), "Gagal memuat data", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val productList = snapshot.toObjects(ProdukBuyer::class.java)
+                    adapter.submitList(productList)
+                    showEmptyState(false)
+                } else {
+                    adapter.submitList(emptyList())
+                    showEmptyState(true)
+                }
+                showLoading(false)
             }
-            findNavController().navigate(R.id.detailProductFragment, bundle)
-        }
+    }
 
-        rvProdukBuyer.layoutManager = GridLayoutManager(requireContext(), 2)
-        rvProdukBuyer.adapter = adapterProduk
+    private fun addToCart(product: ProdukBuyer) {
+        val userId = auth.currentUser?.uid ?: return
+        val cartRef = firestore.collection("cart").document(userId).collection("items")
 
-        // Observasi data dari ViewModel
-        viewModel.produkList.observe(viewLifecycleOwner) { listProduk ->
-            adapterProduk.submitList(listProduk)
-        }
+        val cartItem = CartItem(
+            id = product.id ?: "",
+            name = product.name ?: "",
+            price = product.price ?: 0.0,
+            imageUrl = product.imageUrl ?: "",
+            quantity = 1
+        )
 
-        // Search action
-        etSearch.addTextChangedListener { editable ->
-            val keyword = editable.toString()
-            viewModel.searchProduk(keyword)
-        }
+        // Cek apakah produk sudah ada di keranjang
+        cartRef.document(product.id ?: "").get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    // Update quantity
+                    val currentQty = document.getLong("quantity")?.toInt() ?: 1
+                    cartRef.document(product.id ?: "")
+                        .update("quantity", currentQty + 1)
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Jumlah diperbarui", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    // Tambah produk baru
+                    cartRef.document(product.id ?: "")
+                        .set(cartItem)
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+    }
 
-        bannerImage.setOnClickListener {
-            Toast.makeText(requireContext(), "Banner diklik", Toast.LENGTH_SHORT).show()
-        }
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
 
-        // Load produk awal
-        viewModel.loadProduk()
+    private fun showEmptyState(isEmpty: Boolean) {
+        binding.tvEmptyState.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.rvProdukBuyer.visibility = if (isEmpty) View.GONE else View.VISIBLE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

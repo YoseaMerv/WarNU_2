@@ -3,6 +3,7 @@ package com.imersa.warnu.ui.seller.product
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,6 +21,25 @@ class DetailProductViewModel @Inject constructor(
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
+    fun addToCart(productId: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val cartItem = hashMapOf(
+            "userId" to userId,
+            "productId" to productId,
+            "quantity" to 1
+        )
+
+        firestore.collection("cart")
+            .add(cartItem)
+            .addOnSuccessListener {
+                _errorMessage.value = "Produk berhasil ditambahkan ke keranjang"
+            }
+            .addOnFailureListener {
+                _errorMessage.value = "Gagal menambahkan ke keranjang"
+            }
+    }
+
 
     fun getProductById(productId: String) {
         _loading.value = true

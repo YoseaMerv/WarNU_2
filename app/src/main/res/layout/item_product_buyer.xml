@@ -36,6 +36,14 @@
             android:text="Rp 0"
             android:textColor="@color/black"
             android:textSize="14sp" />
+        <Button
+            android:id="@+id/btnAddToCart"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:text="Tambah Ke Keranjang"
+            android:textSize="14sp"
+            android:textColor="@color/white"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -1,5 +1,6 @@
 package com.imersa.warnu.ui.seller.product
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import java.text.NumberFormat
 import java.util.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @AndroidEntryPoint
 class DetailProductFragment : Fragment() {
@@ -23,6 +26,8 @@ class DetailProductFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: DetailProductViewModel by viewModels()
+    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +47,32 @@ class DetailProductFragment : Fragment() {
             return
         }
 
+        // Ambil role dari Firestore
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            firestore.collection("users")
+                .document(userId)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val role = document.getString("role")
+                        if (role == "buyer") {
+                            binding.fabAddToCart.visibility = View.VISIBLE
+                        } else {
+                            binding.fabAddToCart.visibility = View.GONE
+                        }
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(requireContext(), "Gagal ambil role user", Toast.LENGTH_SHORT).show()
+                }
+        }
+
+        binding.fabAddToCart.setOnClickListener {
+            viewModel.addToCart(productId)
+            Toast.makeText(requireContext(), "Produk ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
+        }
+
         viewModel.product.observe(viewLifecycleOwner) { product ->
             val formattedPrice = NumberFormat.getNumberInstance(Locale("id", "ID")).format(product.price)
 
@@ -58,13 +89,8 @@ class DetailProductFragment : Fragment() {
         }
 
         viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                binding.loadingLayout.visibility = View.VISIBLE
-                binding.contentLayout.visibility = View.GONE
-            } else {
-                binding.loadingLayout.visibility = View.GONE
-                binding.contentLayout.visibility = View.VISIBLE
-            }
+            binding.loadingLayout.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.contentLayout.visibility = if (isLoading) View.GONE else View.VISIBLE
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
@@ -81,4 +107,3 @@ class DetailProductFragment : Fragment() {
         _binding = null
     }
 }
-

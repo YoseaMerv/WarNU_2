@@ -19,4 +19,10 @@
         android:id="@+id/detailProductFragment"
         android:name="com.imersa.warnu.ui.seller.product.DetailProductFragment"
         tools:layout="@layout/fragment_detail_product" />
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.imersa.warnu.ui.buyer.CartFragment"
+        android:label="Keranjang"
+        tools:layout="@layout/fragment_cart" />
+
 </navigation>
