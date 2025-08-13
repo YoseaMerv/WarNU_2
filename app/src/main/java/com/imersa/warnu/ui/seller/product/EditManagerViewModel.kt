@@ -28,19 +28,18 @@ class EditManageViewModel @Inject constructor(
 
     fun deleteProduct(productId: String, onResult: (Boolean) -> Unit) {
         _loading.value = true
-        // Jalankan di coroutine supaya aman
         viewModelScope.launch {
             repository.deleteProduct(productId) { success ->
                 _loading.postValue(false)
-                if (success) {
-                    onResult(true)
-                } else {
-                    _errorMessage.postValue("Gagal menghapus produk")
+                if (success) onResult(true)
+                else {
+                    _errorMessage.postValue("Gagal menghapus produk atau file")
                     onResult(false)
                 }
             }
         }
     }
+
 
     fun clearError() {
         _errorMessage.value = null

@@ -30,7 +30,9 @@ class LoginActivity : AppCompatActivity() {
         supportActionBar?.hide()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         binding = ActivityLoginBinding.inflate(layoutInflater)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white_login)
         setContentView(binding.root)
+
         setupListeners()
         observeLoginState()
     }

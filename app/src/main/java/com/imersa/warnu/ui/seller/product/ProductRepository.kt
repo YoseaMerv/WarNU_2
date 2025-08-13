@@ -3,10 +3,12 @@ package com.imersa.warnu.ui.seller.product
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 
 class ProductRepository @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage
 ) {
 
     fun getProductsBySeller(sellerId: String): LiveData<List<Product>> {
@@ -31,9 +33,32 @@ class ProductRepository @Inject constructor(
     }
 
     fun deleteProduct(productId: String, onResult: (Boolean) -> Unit) {
-        firestore.collection("products").document(productId)
-            .delete()
-            .addOnSuccessListener { onResult(true) }
-            .addOnFailureListener { onResult(false) }
+        // Ambil data produk dulu untuk mengetahui image URL
+        firestore.collection("products").document(productId).get()
+            .addOnSuccessListener { document ->
+                val imageUrl = document.getString("imageUrl")
+
+                val deleteDoc = {
+                    firestore.collection("products").document(productId)
+                        .delete()
+                        .addOnSuccessListener { onResult(true) }
+                        .addOnFailureListener { onResult(false) }
+                }
+
+                if (!imageUrl.isNullOrEmpty()) {
+                    val storageRef = storage.getReferenceFromUrl(imageUrl)
+                    storageRef.delete()
+                        .addOnSuccessListener { deleteDoc() }
+                        .addOnFailureListener {
+                            // tetap hapus dokumen walaupun gagal hapus file
+                            deleteDoc()
+                        }
+                } else {
+                    deleteDoc()
+                }
+            }
+            .addOnFailureListener {
+                onResult(false)
+            }
     }
 }

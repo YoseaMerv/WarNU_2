@@ -4,13 +4,17 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.InputType
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.ActivityRegisterBuyerBinding
+import com.imersa.warnu.databinding.ActivityRegisterSellerBinding
 import com.imersa.warnu.ui.login.LoginActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,6 +30,9 @@ class RegisterBuyerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBuyerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white_login)
         supportActionBar?.hide()
 
         // Register logic

@@ -4,11 +4,14 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.InputType
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.ActivityRegisterSellerBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +28,10 @@ class RegisterSellerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterSellerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.hide()
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white_login)
         supportActionBar?.hide()
 
         viewModel.registerResult.observe(this) { success ->
@@ -63,7 +69,6 @@ class RegisterSellerActivity : AppCompatActivity() {
             )
         }
 
-        // Toggle show/hide confirm password
         binding.showConfirmPassword.setOnClickListener {
             isConfirmPasswordVisible = togglePasswordVisibility(
                 binding.confirmPassword,

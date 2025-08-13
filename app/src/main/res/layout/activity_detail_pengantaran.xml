@@ -5,7 +5,6 @@
     android:id="@+id/drawer_layout_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.driver.DetailPengantaranActivity"
     tools:openDrawer="start">
 
     <!-- Konten Utama Halaman -->

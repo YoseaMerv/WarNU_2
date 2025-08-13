@@ -78,6 +78,21 @@ class AddProductViewModel @Inject constructor(
         }
     }
 
+    fun uploadImage(imageData: ByteArray, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        val storageRef = FirebaseStorage.getInstance().reference
+            .child("products/${System.currentTimeMillis()}.jpg")
+
+        storageRef.putBytes(imageData)
+            .addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    onSuccess(uri.toString())
+                }
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
+            }
+    }
+
 
     fun resetState() {
         _state.value = AddProductState.Idle

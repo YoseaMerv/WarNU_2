@@ -40,6 +40,16 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:navGraph="@navigation/nav_graph_buyer" />
 
+        <!-- Tombol aksi khusus di HomeBuyerFragment -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAksiBuyer"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="170dp"
+            android:layout_height="188dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:text="Aksi Buyer"
+            android:visibility="gone" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

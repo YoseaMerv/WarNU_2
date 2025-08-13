@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -32,18 +33,22 @@
         app:layout_constraintTop_toBottomOf="@id/appBarLayout"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
+        <!-- Ganti LinearLayout dengan ConstraintLayout -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:padding="16dp">
 
             <!-- Input Nama Produk -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutNamaProduk"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="Nama Produk">
+                android:hint="Nama Produk"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNamaProduk"
@@ -54,11 +59,15 @@
 
             <!-- Input Deskripsi -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutDeskripsi"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:hint="Deskripsi"
                 android:layout_marginTop="16dp"
-                android:hint="Deskripsi">
+                app:layout_constraintTop_toBottomOf="@id/layoutNamaProduk"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDeskripsi"
@@ -69,11 +78,15 @@
 
             <!-- Input Harga -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutHarga"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:hint="Harga"
                 android:layout_marginTop="16dp"
-                android:hint="Harga">
+                app:layout_constraintTop_toBottomOf="@id/layoutDeskripsi"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etHarga"
@@ -85,11 +98,15 @@
 
             <!-- Input Stok -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutStok"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:hint="Stok"
                 android:layout_marginTop="16dp"
-                android:hint="Stok">
+                app:layout_constraintTop_toBottomOf="@id/layoutHarga"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etStok"
@@ -101,11 +118,15 @@
 
             <!-- Dropdown Kategori -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutKategori"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:hint="Kategori"
                 android:layout_marginTop="16dp"
-                android:hint="Kategori">
+                app:layout_constraintTop_toBottomOf="@id/layoutStok"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <AutoCompleteTextView
                     android:id="@+id/actvKategori"
@@ -115,20 +136,26 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivKategoriPreview"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_marginTop="16dp"
-                android:scaleType="centerCrop"
-                android:visibility="gone"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:background="@color/white"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintTop_toBottomOf="@id/layoutKategori"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
                 tools:src="@drawable/placeholder_image"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
+
 
             <!-- Tombol Pilih Gambar -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPilihGambar"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:backgroundTint="@color/green"
@@ -136,12 +163,15 @@
                 android:text="Pilih gambar"
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_image"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:layout_constraintTop_toBottomOf="@id/ivKategoriPreview"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <!-- Tombol Simpan Produk -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSimpanProduk"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="#1A8754"
@@ -149,8 +179,11 @@
                 android:text="Simpan produk"
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_save"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:layout_constraintTop_toBottomOf="@id/btnPilihGambar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,7 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
+        android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.WARNU">
 
         <!-- maps activity -->
@@ -39,7 +40,7 @@
         <activity android:name=".ui.seller.MainSellerActivity" android:exported="false" />
 
         <!-- ✅ Main Driver -->
-        <activity android:name=".ui.driver.MainDriverActivity" android:exported="false" />
+<!--        <activity android:name=".ui.driver.MainDriverActivity" android:exported="false" />-->
 
     </application>
 </manifest>
