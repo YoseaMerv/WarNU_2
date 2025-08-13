@@ -40,7 +40,7 @@ class AddProductFragment : Fragment() {
 
                 binding.ivKategoriPreview.apply {
                     visibility = View.VISIBLE
-                    scaleType = ImageView.ScaleType.FIT_CENTER // ✅ pastikan fitCenter
+                    scaleType = ImageView.ScaleType.FIT_CENTER
                 }
 
                 Glide.with(requireContext())
