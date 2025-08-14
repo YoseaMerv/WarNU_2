@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.imersa.warnu.ui.buyer.ProductBuyer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -12,7 +13,7 @@ import javax.inject.Inject
 class DetailProductViewModel @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
-
+    private val auth = FirebaseAuth.getInstance()
     private val _product = MutableLiveData<Product>()
     val product: LiveData<Product> get() = _product
 
@@ -24,22 +25,46 @@ class DetailProductViewModel @Inject constructor(
     fun addToCart(productId: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        val cartItem = hashMapOf(
-            "userId" to userId,
-            "productId" to productId,
-            "quantity" to 1
-        )
+        // Referensi ke subkoleksi items milik user
+        val itemsRef = firestore.collection("carts")
+            .document(userId)
+            .collection("items")
 
-        firestore.collection("cart")
-            .add(cartItem)
-            .addOnSuccessListener {
-                _errorMessage.value = "Produk berhasil ditambahkan ke keranjang"
+        // Cek apakah produk sudah ada di keranjang user
+        itemsRef.whereEqualTo("productId", productId)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    // Produk sudah ada → update quantity
+                    val docId = documents.documents[0].id
+                    val currentQty = documents.documents[0].getLong("quantity") ?: 1
+                    itemsRef.document(docId)
+                        .update("quantity", currentQty + 1)
+                        .addOnSuccessListener {
+                            _errorMessage.value = "Jumlah produk di keranjang bertambah"
+                        }
+                        .addOnFailureListener {
+                            _errorMessage.value = "Gagal menambah jumlah produk"
+                        }
+                } else {
+                    // Produk belum ada → tambah baru
+                    val cartItem = hashMapOf(
+                        "productId" to productId,
+                        "quantity" to 1
+                    )
+                    itemsRef.add(cartItem)
+                        .addOnSuccessListener {
+                            _errorMessage.value = "Produk berhasil ditambahkan ke keranjang"
+                        }
+                        .addOnFailureListener {
+                            _errorMessage.value = "Gagal menambahkan produk ke keranjang"
+                        }
+                }
             }
             .addOnFailureListener {
-                _errorMessage.value = "Gagal menambahkan ke keranjang"
+                _errorMessage.value = "Gagal memeriksa keranjang"
             }
     }
-
 
     fun getProductById(productId: String) {
         _loading.value = true

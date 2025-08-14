@@ -8,21 +8,32 @@
     <fragment
         android:id="@+id/homeBuyerFragment"
         android:name="com.imersa.warnu.ui.buyer.HomeBuyerFragment"
+        android:label="Beranda"
         tools:layout="@layout/fragment_home_buyer">
 
         <action
             android:id="@+id/action_homeBuyerFragment_to_detailProductFragment"
             app:destination="@id/detailProductFragment" />
+
+        <action
+            android:id="@+id/action_homeBuyerFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/detailProductFragment"
         android:name="com.imersa.warnu.ui.seller.product.DetailProductFragment"
-        tools:layout="@layout/fragment_detail_product" />
+        android:label="Detail Produk"
+        tools:layout="@layout/fragment_detail_product">
+
+        <action
+            android:id="@+id/action_detailProductFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/cartFragment"
         android:name="com.imersa.warnu.ui.buyer.CartFragment"
         android:label="Keranjang"
         tools:layout="@layout/fragment_cart" />
-
 </navigation>

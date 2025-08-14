@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.imersa.warnu.R
 
-class           ProductAdapter(
+class ProductAdapter(
     private val products: List<Product>,
     private val onItemClick: (Product) -> Unit,
     private val onEditClick: ((Product) -> Unit)? = null,

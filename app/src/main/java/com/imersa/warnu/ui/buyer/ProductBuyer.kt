@@ -1,6 +1,6 @@
 package com.imersa.warnu.ui.buyer
 
-data class ProdukBuyer(
+data class ProductBuyer(
     val id: String? = null,
     val sellerId: String? = null,
     val name: String? = null,

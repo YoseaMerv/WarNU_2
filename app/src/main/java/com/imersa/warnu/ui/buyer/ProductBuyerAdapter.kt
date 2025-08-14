@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.imersa.warnu.R
 
-class ProdukBuyerAdapter(
-    private val onItemClick: (ProdukBuyer) -> Unit
-) : ListAdapter<ProdukBuyer, ProdukBuyerAdapter.ViewHolder>(ProdukDiffCallback()) {
+class ProductBuyerAdapter(
+    private val onItemClick: (ProductBuyer) -> Unit
+) : ListAdapter<ProductBuyer, ProductBuyerAdapter.ViewHolder>(ProdukDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -27,13 +27,13 @@ class ProdukBuyerAdapter(
 
     class ViewHolder(
         itemView: View,
-        val onItemClick: (ProdukBuyer) -> Unit
+        val onItemClick: (ProductBuyer) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
         private val imgProduk: ImageView = itemView.findViewById(R.id.imgProdukBuyer)
         private val tvNama: TextView = itemView.findViewById(R.id.tvNamaProdukBuyer)
         private val tvHarga: TextView = itemView.findViewById(R.id.tvHargaProdukBuyer)
 
-        fun bind(produk: ProdukBuyer) {
+        fun bind(produk: ProductBuyer) {
             tvNama.text = produk.name ?: "-"
             val priceText = if (produk.price != null) {
                 "Rp ${String.format("%,.0f", produk.price)}"
@@ -53,12 +53,12 @@ class ProdukBuyerAdapter(
         }
     }
 
-    class ProdukDiffCallback : DiffUtil.ItemCallback<ProdukBuyer>() {
-        override fun areItemsTheSame(oldItem: ProdukBuyer, newItem: ProdukBuyer): Boolean {
+    class ProdukDiffCallback : DiffUtil.ItemCallback<ProductBuyer>() {
+        override fun areItemsTheSame(oldItem: ProductBuyer, newItem: ProductBuyer): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: ProdukBuyer, newItem: ProdukBuyer): Boolean {
+        override fun areContentsTheSame(oldItem: ProductBuyer, newItem: ProductBuyer): Boolean {
             return oldItem == newItem
         }
     }

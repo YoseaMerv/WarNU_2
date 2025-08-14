@@ -69,9 +69,56 @@ class DetailProductFragment : Fragment() {
         }
 
         binding.fabAddToCart.setOnClickListener {
-            viewModel.addToCart(productId)
-            Toast.makeText(requireContext(), "Produk ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
+            val currentProduct = viewModel.product.value
+            val userId = auth.currentUser?.uid
+
+            if (currentProduct?.id != null && userId != null) {
+                firestore.collection("carts")
+                    .document(userId)
+                    .collection("items")
+                    .document(currentProduct.id)
+                    .get()
+                    .addOnSuccessListener { doc ->
+                        if (doc.exists()) {
+                            // Sudah ada → update qty
+                            val currentQty = doc.getLong("quantity") ?: 0
+                            firestore.collection("carts")
+                                .document(userId)
+                                .collection("items")
+                                .document(currentProduct.id)
+                                .update("quantity", currentQty + 1)
+                                .addOnSuccessListener {
+                                    Toast.makeText(requireContext(), "Qty ditambah", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(requireContext(), "Gagal update cart", Toast.LENGTH_SHORT).show()
+                                }
+                        } else {
+                            // Belum ada → tambahkan baru
+                            val cartItem = hashMapOf(
+                                "productId" to currentProduct.id,
+                                "name" to currentProduct.name,
+                                "price" to currentProduct.price,
+                                "quantity" to 1
+                            )
+                            firestore.collection("carts")
+                                .document(userId)
+                                .collection("items")
+                                .document(currentProduct.id)
+                                .set(cartItem)
+                                .addOnSuccessListener {
+                                    Toast.makeText(requireContext(), "Ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(requireContext(), "Gagal tambah ke cart", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+                    }
+            } else {
+                Toast.makeText(requireContext(), "Produk belum dimuat", Toast.LENGTH_SHORT).show()
+            }
         }
+
 
         viewModel.product.observe(viewLifecycleOwner) { product ->
             val formattedPrice = NumberFormat.getNumberInstance(Locale("id", "ID")).format(product.price)
