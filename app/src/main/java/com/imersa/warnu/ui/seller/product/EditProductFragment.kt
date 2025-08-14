@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentEditProductBinding
 
@@ -25,6 +26,8 @@ class EditProductFragment : Fragment() {
     private var imageUri: Uri? = null
     private var productId: String? = null
     private var currentImageUrl: String? = null
+
+
 
     private val pickImageLauncher =
         registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { result ->
@@ -41,29 +44,33 @@ class EditProductFragment : Fragment() {
     ): View {
         _binding = FragmentEditProductBinding.inflate(inflater, container, false)
 
-        // Ambil data dari arguments
-        arguments?.let {
-            productId = it.getString("productId")
-            binding.etNamaProduk.setText(it.getString("name"))
-            binding.etDeskripsi.setText(it.getString("description"))
-            binding.etHarga.setText(it.getDouble("price").toString())
-            binding.etStok.setText(it.getLong("stock").toString())
-            binding.actvKategori.setText(it.getString("category"))
-            currentImageUrl = it.getString("imageUrl")
+        productId = arguments?.getString("productId")
+        currentImageUrl = arguments?.getString("imageUrl")
 
-            if (!currentImageUrl.isNullOrEmpty()) {
-                binding.ivKategoriPreview.visibility = View.VISIBLE
-                Glide.with(requireContext())
-                    .load(currentImageUrl)
-                    .placeholder(R.drawable.placeholder_image)
-                    .into(binding.ivKategoriPreview)
-            }
+        if (productId == null) {
+            Toast.makeText(requireContext(), "ID Produk tidak ditemukan", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.popBackStack()
+            return binding.root
         }
 
+        setupUI()
+        observeViewModel()
+
+        // Load data produk dari Firestore
+        viewModel.loadProduct(productId!!)
+
+        return binding.root
+    }
+
+    private fun setupUI() {
         // Setup kategori dropdown
         val kategoriList = listOf("Fashion", "Electronics", "Home", "Toys")
-        val adapterKategori = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, kategoriList)
+        val adapterKategori =
+            ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, kategoriList)
         binding.actvKategori.setAdapter(adapterKategori)
+
+        // Tampilkan gambar awal (kalau ada)
+        loadImage(currentImageUrl)
 
         // Pilih gambar baru
         binding.btnPilihGambarBaru.setOnClickListener {
@@ -72,62 +79,47 @@ class EditProductFragment : Fragment() {
         }
 
         // Simpan produk
-        binding.btnSimpanProduk.setOnClickListener {
-            simpanPerubahan()
-        }
-
-        observeViewModel()
-
-        return binding.root
+        binding.btnSimpanProduk.setOnClickListener { simpanPerubahan() }
     }
 
-
-
     private fun observeViewModel() {
-
-        productId = arguments?.getString("productId")
-        if (productId != null) {
-            viewModel.loadProduct(productId!!)
+        viewModel.productData.observe(viewLifecycleOwner) { product ->
+            product?.let {
+                binding.etNamaProduk.setText(it.name)
+                binding.etDeskripsi.setText(it.description)
+                binding.etHarga.setText(it.price.toString())
+                binding.etStok.setText(it.stock.toString())
+                binding.actvKategori.setText(it.category, false)
+                currentImageUrl = it.imageUrl
+                loadImage(currentImageUrl)
+            }
         }
-
 
         viewModel.uploadStatus.observe(viewLifecycleOwner) { result ->
             result.onSuccess { imageUrl ->
-                productId?.let { pid ->
-                    updateProductInFirestore(pid, imageUrl)
-                }
+                productId?.let { pid -> updateProductInFirestore(pid, imageUrl) }
             }
             result.onFailure {
-                Toast.makeText(requireContext(), "Gagal upload gambar: ${it.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Gagal upload gambar: ${it.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
-
-        viewModel.productData.observe(viewLifecycleOwner) { product ->
-            if (product != null) {
-                binding.etNamaProduk.setText(product.name)
-                binding.etDeskripsi.setText(product.description)
-                binding.etHarga.setText(product.price.toString())
-                binding.etStok.setText(product.stock.toString())
-                binding.actvKategori.setText(product.category)
-                currentImageUrl = product.imageUrl
-                if (!currentImageUrl.isNullOrEmpty()) {
-                    binding.ivKategoriPreview.visibility = View.VISIBLE
-                    Glide.with(requireContext())
-                        .load(currentImageUrl)
-                        .placeholder(R.drawable.placeholder_image)
-                        .into(binding.ivKategoriPreview)
-                }
-            }
-        }
-
 
         viewModel.updateStatus.observe(viewLifecycleOwner) { result ->
             result.onSuccess {
-                Toast.makeText(requireContext(), "Produk berhasil diupdate", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Produk berhasil diupdate", Toast.LENGTH_SHORT)
+                    .show()
                 parentFragmentManager.popBackStack()
             }
             result.onFailure {
-                Toast.makeText(requireContext(), "Gagal update produk: ${it.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Gagal update produk: ${it.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -144,15 +136,20 @@ class EditProductFragment : Fragment() {
             return
         }
 
+        val sellerUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (sellerUid == null) {
+            Toast.makeText(requireContext(), "User tidak terautentikasi", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         if (imageUri != null) {
-            viewModel.uploadImage(imageUri!!)
+            // Kirim UID seller ke ViewModel
+            viewModel.uploadImageAndDeleteOld(imageUri!!, currentImageUrl, sellerUid)
         } else {
-            // Gunakan currentImageUrl kalau gambar tidak diganti
-            productId?.let { pid ->
-                updateProductInFirestore(pid, currentImageUrl ?: "")
-            }
+            updateProductInFirestore(productId!!, currentImageUrl ?: "")
         }
     }
+
 
     private fun updateProductInFirestore(productId: String, imageUrl: String) {
         val nama = binding.etNamaProduk.text.toString().trim()
@@ -162,6 +159,18 @@ class EditProductFragment : Fragment() {
         val kategori = binding.actvKategori.text.toString().trim()
 
         viewModel.updateProduct(productId, nama, deskripsi, harga, stok, kategori, imageUrl)
+    }
+
+    private fun loadImage(url: String?) {
+        if (!url.isNullOrEmpty()) {
+            binding.ivKategoriPreview.visibility = View.VISIBLE
+            Glide.with(requireContext())
+                .load(url)
+                .placeholder(R.drawable.placeholder_image)
+                .into(binding.ivKategoriPreview)
+        } else {
+            binding.ivKategoriPreview.visibility = View.GONE
+        }
     }
 
     override fun onDestroyView() {

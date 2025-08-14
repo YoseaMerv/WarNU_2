@@ -76,7 +76,6 @@ class HomeSellerFragment : Fragment() {
         binding.rvProductSeller.adapter = adapter
     }
 
-
     private fun observeViewModel() {
         viewModel.products.observe(viewLifecycleOwner) { products ->
             productList.clear()

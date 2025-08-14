@@ -50,7 +50,6 @@ class ProductRepository @Inject constructor(
                     storageRef.delete()
                         .addOnSuccessListener { deleteDoc() }
                         .addOnFailureListener {
-                            // tetap hapus dokumen walaupun gagal hapus file
                             deleteDoc()
                         }
                 } else {

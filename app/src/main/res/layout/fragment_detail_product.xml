@@ -48,7 +48,7 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/ivDetailGambarProduk"
                             android:layout_width="match_parent"
-                            android:layout_height="200dp"
+                            android:layout_height="350dp"
                             android:scaleType="centerCrop"
                             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
                             tools:src="@drawable/placeholder_image" />

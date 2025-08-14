@@ -9,42 +9,25 @@ import com.google.firebase.storage.FirebaseStorage
 
 class EditProductViewModel : ViewModel() {
 
-    private val firestore = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
 
-    // LiveData untuk status upload image, berisi URL gambar yang sudah di-upload
-    private val _uploadStatus = MutableLiveData<Result<String>>()
-    val uploadStatus: LiveData<Result<String>> = _uploadStatus
-
-    // LiveData untuk status update product (sukses/gagal)
-    private val _updateStatus = MutableLiveData<Result<Unit>>()
-    val updateStatus: LiveData<Result<Unit>> = _updateStatus
     private val _productData = MutableLiveData<Product?>()
-    val productData: LiveData<Product?> = _productData
+    val productData: LiveData<Product?> get() = _productData
 
-    fun uploadImage(imageUri: Uri) {
-        val ref = storage.reference.child("product_images/${System.currentTimeMillis()}.jpg")
-        ref.putFile(imageUri)
-            .addOnSuccessListener {
-                ref.downloadUrl.addOnSuccessListener { uri ->
-                    _uploadStatus.postValue(Result.success(uri.toString()))
-                }
-                    .addOnFailureListener { e ->
-                        _uploadStatus.postValue(Result.failure(e))
-                    }
-            }
-            .addOnFailureListener { e ->
-                _uploadStatus.postValue(Result.failure(e))
-            }
-    }
+    private val _uploadStatus = MutableLiveData<Result<String>>()
+    val uploadStatus: LiveData<Result<String>> get() = _uploadStatus
+
+    private val _updateStatus = MutableLiveData<Result<Unit>>()
+    val updateStatus: LiveData<Result<Unit>> get() = _updateStatus
 
     fun loadProduct(productId: String) {
-        firestore.collection("products")
+        db.collection("products")
             .document(productId)
             .get()
-            .addOnSuccessListener { doc ->
-                if (doc != null && doc.exists()) {
-                    val product = doc.toObject(Product::class.java)
+            .addOnSuccessListener { snapshot ->
+                if (snapshot.exists()) {
+                    val product = snapshot.toObject(Product::class.java)
                     _productData.postValue(product)
                 } else {
                     _productData.postValue(null)
@@ -54,6 +37,38 @@ class EditProductViewModel : ViewModel() {
                 _productData.postValue(null)
             }
     }
+
+    /**
+     * Upload gambar baru dan hapus gambar lama (jika ada), simpan di folder productId
+     */
+    fun uploadImageAndDeleteOld(imageUri: Uri, oldImageUrl: String?, sellerUid: String) {
+        // Hapus gambar lama jika ada
+        if (!oldImageUrl.isNullOrEmpty()) {
+            try {
+                val oldRef = storage.getReferenceFromUrl(oldImageUrl)
+                oldRef.delete()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        // Upload ke folder seller UID
+        val fileName = "${System.currentTimeMillis()}.jpg"
+        val ref = storage.reference.child("product_images/$sellerUid/$fileName")
+
+        ref.putFile(imageUri)
+            .addOnSuccessListener {
+                ref.downloadUrl.addOnSuccessListener { uri ->
+                    _uploadStatus.postValue(Result.success(uri.toString()))
+                }.addOnFailureListener { e ->
+                    _uploadStatus.postValue(Result.failure(e))
+                }
+            }
+            .addOnFailureListener { e ->
+                _uploadStatus.postValue(Result.failure(e))
+            }
+    }
+
     fun updateProduct(
         productId: String,
         name: String,
@@ -63,7 +78,7 @@ class EditProductViewModel : ViewModel() {
         category: String,
         imageUrl: String
     ) {
-        val updateData = mapOf(
+        val productData = mapOf(
             "name" to name,
             "description" to description,
             "price" to price,
@@ -72,11 +87,9 @@ class EditProductViewModel : ViewModel() {
             "imageUrl" to imageUrl
         )
 
-
-
-        firestore.collection("products")
+        db.collection("products")
             .document(productId)
-            .update(updateData)
+            .update(productData)
             .addOnSuccessListener {
                 _updateStatus.postValue(Result.success(Unit))
             }
