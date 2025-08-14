@@ -14,8 +14,8 @@ class CartFragment : Fragment() {
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
 
-    private val cartViewModel: CartViewModel by viewModels()
     private lateinit var adapter: CartAdapter
+    private val cartViewModel: CartViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,19 +30,27 @@ class CartFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = CartAdapter(emptyList()) { cartItem ->
-            cartViewModel.removeFromCart(cartItem)
-        }
+        adapter = CartAdapter(
+            emptyList(),
+            onRemoveClick = { cartViewModel.removeFromCart(it) },
+            onIncreaseQty = { cartViewModel.increaseQty(it) },
+            onDecreaseQty = { cartViewModel.decreaseQty(it) }
+        )
         binding.rvCart.layoutManager = LinearLayoutManager(requireContext())
         binding.rvCart.adapter = adapter
     }
 
     private fun observeCartData() {
-        cartViewModel.cartList.observe(viewLifecycleOwner) { cartItems ->
+        cartViewModel.cartItems.observe(viewLifecycleOwner) { cartItems ->
             adapter.updateCartList(cartItems)
-
-            binding.tvEmptyCart.visibility = if (cartItems.isEmpty()) View.VISIBLE else View.GONE
+            binding.tvEmptyCart.visibility =
+                if (cartItems.isEmpty()) View.VISIBLE else View.GONE
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        cartViewModel.listenCartData()
     }
 
     override fun onDestroyView() {

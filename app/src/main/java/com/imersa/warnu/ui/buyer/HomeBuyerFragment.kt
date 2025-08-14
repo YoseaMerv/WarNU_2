@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentHomeBuyerBinding
 
@@ -56,15 +58,36 @@ class HomeBuyerFragment : Fragment() {
                 )
             },
             onAddToCartClick = { product ->
-                viewModel.addToCart(product,
-                    onSuccess = {
-                        Toast.makeText(requireContext(), "Ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
-                    },
-                    onError = {
-                        Toast.makeText(requireContext(), "Gagal menambahkan item", Toast.LENGTH_SHORT).show()
+                val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@HomeBuyerAdapter
+
+                val cartRef = FirebaseFirestore.getInstance()
+                    .collection("carts")
+                    .document(userId)
+                    .collection("items")
+                    .document(product.id!!)
+
+                FirebaseFirestore.getInstance().runTransaction { transaction ->
+                    val snapshot = transaction.get(cartRef)
+                    if (snapshot.exists()) {
+                        val currentQty = snapshot.getLong("quantity") ?: 0
+                        transaction.update(cartRef, "quantity", currentQty + 1)
+                    } else {
+                        val cartItem = hashMapOf(
+                            "productId" to product.id,
+                            "name" to product.name,
+                            "price" to product.price,
+                            "imageUrl" to product.imageUrl,
+                            "quantity" to 1
+                        )
+                        transaction.set(cartRef, cartItem)
                     }
-                )
+                }.addOnSuccessListener {
+                    Toast.makeText(requireContext(), "Ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener {
+                    Toast.makeText(requireContext(), "Gagal menambahkan item", Toast.LENGTH_SHORT).show()
+                }
             }
+
         )
         binding.rvProdukBuyer.layoutManager = LinearLayoutManager(requireContext())
         binding.rvProdukBuyer.adapter = adapter
