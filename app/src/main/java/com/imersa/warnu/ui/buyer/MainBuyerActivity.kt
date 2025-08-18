@@ -4,9 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -18,7 +16,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.navigation.NavigationView
 import com.imersa.warnu.R
 import com.imersa.warnu.ui.login.LoginActivity
@@ -63,7 +60,6 @@ class MainBuyerActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
 
-
         // Header Navigation Drawer
         navigationView.getHeaderView(0)?.let { headerView ->
             val textViewWelcome = headerView.findViewById<TextView>(R.id.textViewNavHeader)
@@ -100,17 +96,28 @@ class MainBuyerActivity : AppCompatActivity() {
             }
         }
 
+        // 🔹 Listener untuk hide tombol cart kalau sudah di CartFragment
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            invalidateOptionsMenu() // refresh menu tiap pindah fragment
+        }
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_buyer_toolbar, menu)
+
+        val cartMenu = menu.findItem(R.id.action_cart)
+        val currentDestination = navController.currentDestination?.id
+
+        // 🔹 Hide tombol cart kalau sudah di CartFragment
+        cartMenu?.isVisible = currentDestination != R.id.cartFragment
+
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_cart -> {
-                // Navigasi ke halaman keranjang
-                navController.navigate(R.id.cartFragment) // pastikan ID sesuai di nav_graph_buyer.xml
+                navController.navigate(R.id.cartFragment)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -121,5 +128,4 @@ class MainBuyerActivity : AppCompatActivity() {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
-
 }

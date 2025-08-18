@@ -8,22 +8,6 @@
     android:background="#F0F0F0"
     tools:context="com.imersa.warnu.ui.profile.ProfilSellerActivity">
 
-    <!-- Toolbar Bagian Atas -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#1A8754"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:title="Profil Saya"
-            app:titleTextColor="@android:color/white" />
-    </com.google.android.material.appbar.AppBarLayout>
-
     <!-- Konten Utama -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -47,7 +31,7 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                 app:strokeColor="#1A8754"
                 app:strokeWidth="2dp"
-                tools:src="@android:color/darker_gray" />
+                tools:src="@drawable/placeholder_image" />
 
             <!-- Kartu Informasi Profil -->
             <com.google.android.material.card.MaterialCardView
@@ -90,7 +74,7 @@
                                 android:textSize="12sp"
                                 android:textColor="@android:color/darker_gray"
                                 android:layout_marginBottom="2dp"
-                                android:text="Nama" />
+                                android:text="Name" />
                             <TextView
                                 android:id="@+id/tvNamaValue"
                                 android:layout_width="wrap_content"
@@ -128,7 +112,7 @@
                                 android:textSize="12sp"
                                 android:textColor="@android:color/darker_gray"
                                 android:layout_marginBottom="2dp"
-                                android:text="Email" />
+                                android:text="E-mail" />
                             <TextView
                                 android:id="@+id/tvEmailValue"
                                 android:layout_width="wrap_content"
@@ -166,7 +150,7 @@
                                 android:textSize="12sp"
                                 android:textColor="@android:color/darker_gray"
                                 android:layout_marginBottom="2dp"
-                                android:text="Telepon" />
+                                android:text="Phone" />
                             <TextView
                                 android:id="@+id/tvTeleponValue"
                                 android:layout_width="wrap_content"
@@ -204,7 +188,7 @@
                                 android:textSize="12sp"
                                 android:textColor="@android:color/darker_gray"
                                 android:layout_marginBottom="2dp"
-                                android:text="Alamat" />
+                                android:text="Address" />
                             <TextView
                                 android:id="@+id/tvAlamatValue"
                                 android:layout_width="wrap_content"
@@ -235,16 +219,17 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:orientation="vertical">
+
                             <TextView
-                                android:id="@+id/tvRoleLabel"
+                                android:id="@+id/tvShopLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="12sp"
                                 android:textColor="@android:color/darker_gray"
                                 android:layout_marginBottom="2dp"
-                                android:text="Role" />
+                                android:text="shop Name" />
                             <TextView
-                                android:id="@+id/tvRoleValue"
+                                android:id="@+id/tvShopName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@android:color/black"
@@ -254,6 +239,16 @@
                         </LinearLayout>
                     </LinearLayout>
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEditProfil"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:backgroundTint="#1A8754"
+                        android:text="Edit Profil"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white"
+                        app:cornerRadius="8dp" />
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>

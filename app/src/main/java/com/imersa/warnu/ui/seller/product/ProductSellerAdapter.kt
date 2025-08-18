@@ -10,13 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.imersa.warnu.R
 
-class ProductAdapter(
+class ProductSellerAdapter(
     private val products: List<Product>,
     private val onItemClick: (Product) -> Unit,
     private val onEditClick: ((Product) -> Unit)? = null,
     private val onDeleteClick: ((Product) -> Unit)? = null,
     private val layoutResId: Int
-) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
+) : RecyclerView.Adapter<ProductSellerAdapter.ProductViewHolder>() {
 
     inner class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         // Karena id beda, kita declare semua nullable dulu

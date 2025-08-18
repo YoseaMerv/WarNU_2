@@ -3,14 +3,6 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-  <!-- Garis Vertikal -->
-  <path
-      android:pathData="M12,5L12,19"
-      android:strokeWidth="2"
-      android:strokeLineCap="round"
-      android:strokeColor="@color/black"
-      android:fillColor="@android:color/transparent"/>
-
   <!-- Garis Horizontal -->
   <path
       android:pathData="M5,12L19,12"

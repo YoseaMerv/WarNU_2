@@ -3,16 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:gravity="center_vertical">
 
+    <!-- Gambar Produk -->
     <ImageView
         android:id="@+id/ivCartImage"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:scaleType="centerCrop"
-        android:background="@drawable/placeholder_image"
-        android:contentDescription="cartimage" />
+        android:src="@drawable/placeholder_image"
+        android:contentDescription="@string/cart_item_image" />
 
+    <!-- Info Produk -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -26,7 +29,9 @@
             android:layout_height="wrap_content"
             android:text="Nama Produk"
             android:textStyle="bold"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:ellipsize="end"
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/tvCartPrice"
@@ -36,18 +41,21 @@
             android:textColor="@color/black"
             android:textSize="14sp" />
 
+        <!-- Kontrol Qty -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical">
 
             <ImageButton
                 android:id="@+id/btnDecrease"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_add"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+                android:src="@drawable/ic_drop"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cart_decrease_qty" />
 
             <TextView
                 android:id="@+id/tvCartQty"
@@ -61,15 +69,18 @@
                 android:id="@+id/btnIncrease"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_order"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+                android:src="@drawable/ic_add"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cart_increase_qty" />
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Tombol Hapus -->
     <ImageButton
         android:id="@+id/btnRemove"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:src="@drawable/ic_delete"
-        android:background="?attr/selectableItemBackgroundBorderless" />
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cart_remove_item" />
 </LinearLayout>

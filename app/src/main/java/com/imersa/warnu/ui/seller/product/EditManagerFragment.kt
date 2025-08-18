@@ -24,7 +24,7 @@ class EditManageFragment : Fragment() {
     @Inject
     lateinit var auth: FirebaseAuth
 
-    private lateinit var adapter: ProductAdapter
+    private lateinit var adapter: ProductSellerAdapter
     private val productList = mutableListOf<Product>()
 
     private val viewModel: EditManageViewModel by viewModels()
@@ -53,7 +53,7 @@ class EditManageFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = ProductAdapter(
+        adapter = ProductSellerAdapter(
             products = productList,
             onItemClick = { product ->
                 val bundle = Bundle().apply {
@@ -94,7 +94,6 @@ class EditManageFragment : Fragment() {
             productList.addAll(products)
             adapter.notifyDataSetChanged()
         }
-
         viewModel.errorMessage.observe(viewLifecycleOwner) { msg ->
             msg?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()

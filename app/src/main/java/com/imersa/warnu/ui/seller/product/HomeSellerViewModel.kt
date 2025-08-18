@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeSellerViewModel @Inject constructor(
-    private val repository: ProductRepository
+    private val repository: ProductSellerRepository
 ) : ViewModel() {
 
     private val _products = MutableLiveData<List<Product>>()

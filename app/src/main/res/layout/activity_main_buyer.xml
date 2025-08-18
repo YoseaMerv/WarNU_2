@@ -7,9 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.buyer.MainBuyerActivity">
 
-    <!-- Konten utama -->
-
-    <!-- Drawer Menu -->
+    <!-- Konten Utama -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -20,14 +18,13 @@
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/buyer_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
+                android:background="@color/green"
                 app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
                 app:titleTextColor="@android:color/white" />
-
         </com.google.android.material.appbar.AppBarLayout>
 
         <!-- Tempat NavHostFragment -->
@@ -40,19 +37,19 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:navGraph="@navigation/nav_graph_buyer" />
 
-        <!-- Tombol aksi khusus di HomeBuyerFragment -->
-        <com.google.android.material.button.MaterialButton
+        <!-- Tombol Aksi (Floating) -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnAksiBuyer"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="170dp"
-            android:layout_height="188dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:text="Aksi Buyer"
-            android:visibility="gone" />
-
+            android:contentDescription="Aksi Buyer"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_add" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <!-- Drawer Menu -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view_buyer"
         android:layout_width="wrap_content"

@@ -6,9 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.ItemProductBuyerBinding
+import com.imersa.warnu.databinding.ItemBannerBinding
 import java.text.NumberFormat
 import java.util.Locale
 
+// ===================== ADAPTER PRODUK =====================
 class HomeBuyerAdapter(
     private val onItemClick: (ProductBuyer) -> Unit,
     private val onAddToCartClick: (ProductBuyer) -> Unit
@@ -22,7 +24,6 @@ class HomeBuyerAdapter(
         notifyDataSetChanged()
     }
 
-
     inner class ViewHolder(private val binding: ItemProductBuyerBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -30,17 +31,18 @@ class HomeBuyerAdapter(
             binding.tvNamaProdukBuyer.text = product.name
 
             // Format harga Rupiah
-            val formattedPrice = NumberFormat.getCurrencyInstance(Locale("in", "ID")).format(product.price ?: 0.0)
+            val formattedPrice = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+                .format(product.price ?: 0.0)
             binding.tvHargaProdukBuyer.text = formattedPrice
 
             // Load image pakai Glide
             Glide.with(binding.imgProdukBuyer.context)
                 .load(product.imageUrl)
-                .placeholder(R.drawable.placeholder_image) // gambar default
-                .error(R.drawable.placeholder_image)       // kalau gagal load
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.placeholder_image)
                 .into(binding.imgProdukBuyer)
 
-            // Klik item → buka detail
+            // Klik item → detail produk
             binding.root.setOnClickListener {
                 onItemClick(product)
             }
@@ -65,3 +67,31 @@ class HomeBuyerAdapter(
         holder.bind(items[position])
     }
 }
+
+// ===================== ADAPTER BANNER =====================
+class BannerAdapter(
+    private val banners: List<Int>
+) : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
+
+    inner class BannerViewHolder(val binding: ItemBannerBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(imageRes: Int) {
+            binding.imageBanner.setImageResource(imageRes)
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BannerViewHolder {
+        val binding = ItemBannerBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return BannerViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: BannerViewHolder, position: Int) {
+        val realPos = position % banners.size
+        holder.bind(banners[realPos])
+    }
+
+    override fun getItemCount(): Int = Int.MAX_VALUE
+}
+

@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditManageViewModel @Inject constructor(
-    private val repository: ProductRepository
+    private val repository: ProductSellerRepository
 ) : ViewModel() {
 
     private val _sellerId = MutableLiveData<String>()

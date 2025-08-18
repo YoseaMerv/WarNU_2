@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_cart"
-        android:icon="@drawable/ic_order"
+        android:icon="@drawable/ic_cart"
         android:title="Keranjang"
         app:showAsAction="always" />
 </menu>

@@ -26,7 +26,7 @@ class HomeSellerFragment : Fragment() {
     @Inject
     lateinit var auth: FirebaseAuth
 
-    private lateinit var adapter: ProductAdapter
+    private lateinit var adapter: ProductSellerAdapter
     private val productList = mutableListOf<Product>()
 
     override fun onCreateView(
@@ -54,7 +54,7 @@ class HomeSellerFragment : Fragment() {
 
 
     private fun setupRecyclerView() {
-        adapter = ProductAdapter(
+        adapter = ProductSellerAdapter(
             products = productList,
             onItemClick = { product ->
                 val bundle = Bundle().apply {
