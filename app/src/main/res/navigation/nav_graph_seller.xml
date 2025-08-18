@@ -26,6 +26,11 @@
         <action
             android:id="@+id/action_HomeSellerFragment_to_EditManageFragment"
             app:destination="@id/EditManageFragment" />
+
+        <!-- Navigasi ke ProfileSellerFragment -->
+        <action
+            android:id="@+id/action_HomeSellerFragment_to_profileSellerFragment"
+            app:destination="@id/profileSellerFragment" />
     </fragment>
 
     <!-- Fragment untuk menambah produk baru -->
@@ -61,4 +66,10 @@
         android:label="Detail Produk"
         tools:layout="@layout/fragment_detail_product" />
 
+    <!-- Fragment untuk melihat profil seller -->
+    <fragment
+        android:id="@+id/profileSellerFragment"
+        android:name="com.imersa.warnu.ui.seller.product.ProfileSellerFragment"
+        android:label="Profil Toko"
+        tools:layout="@layout/fragment_profile_seller" />
 </navigation>

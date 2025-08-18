@@ -2,13 +2,15 @@ package com.imersa.warnu.ui.seller.product
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 
 class ProductSellerRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    private val storage: FirebaseStorage,
+    private val auth: FirebaseAuth
 ) {
 
     fun getProductsBySeller(sellerId: String): LiveData<List<Product>> {
@@ -60,4 +62,32 @@ class ProductSellerRepository @Inject constructor(
                 onResult(false)
             }
     }
-}
+
+    fun getSellerProfile(): LiveData<SellerProfile> {
+        val result = MutableLiveData<SellerProfile>()
+        val userId = auth.currentUser?.uid ?: return result
+
+        firestore.collection("users")
+            .document(userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    result.value = SellerProfile()
+                    return@addSnapshotListener
+                }
+
+                val profile = snapshot?.toObject(SellerProfile::class.java)?.copy(id = snapshot.id)
+                result.value = profile ?: SellerProfile()
+            }
+
+        return result
+    }
+
+    fun updateSellerProfile(profile: SellerProfile, onResult: (Boolean) -> Unit) {
+        val userId = auth.currentUser?.uid ?: return onResult(false)
+
+        firestore.collection("users")
+            .document(userId)
+            .set(profile)
+            .addOnSuccessListener { onResult(true) }
+    }
+    }

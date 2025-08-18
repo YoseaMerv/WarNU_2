@@ -120,7 +120,6 @@
                 android:contentDescription="Toggle Password Visibility" />
         </FrameLayout>
 
-
         <!-- Forgot Password -->
         <TextView
             android:id="@+id/forgotPassword"
@@ -140,41 +139,7 @@
             android:text="Log In"
             android:backgroundTint="@color/green"
             android:textColor="#FFFFFF"
-
             android:layout_marginBottom="16dp" />
-
-        <!-- OR -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Or"
-            android:textColor="#6B7280"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Google Button -->
-        <Button
-            android:id="@+id/googleButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Continue with Google"
-            android:drawableLeft="@drawable/ic_google"
-            android:backgroundTint="#FFFFFF"
-            android:textColor="#111827"
-            android:elevation="2dp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Facebook Button -->
-        <Button
-            android:id="@+id/facebookButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Continue with Facebook"
-            android:drawableLeft="@drawable/ic_facebook"
-            android:backgroundTint="#FFFFFF"
-            android:textColor="#111827"
-            android:elevation="2dp"
-            android:layout_marginBottom="24dp" />
 
         <ProgressBar
             android:id="@+id/loginProgressBar"

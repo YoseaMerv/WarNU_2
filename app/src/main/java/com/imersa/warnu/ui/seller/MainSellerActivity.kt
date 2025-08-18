@@ -58,9 +58,6 @@ class MainSellerActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
 
-        // Tampilkan tombol tambah produk hanya di HomeSellerFragment (dashboard)
-
-
         // Set header welcome user
         val headerView = navigationView.getHeaderView(0)
         val textViewWelcome = headerView.findViewById<TextView>(R.id.textViewNavHeader)
@@ -93,9 +90,11 @@ class MainSellerActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_profile -> {
-                    Toast.makeText(this, "Profil Saya diklik", Toast.LENGTH_SHORT).show()
+                    // Navigasi ke ProfileSellerFragment
+                    navController.navigate(R.id.profileSellerFragment)
                     true
                 }
+
                 R.id.nav_order -> {
                     Toast.makeText(this, "Pesanan Masuk diklik", Toast.LENGTH_SHORT).show()
                     true

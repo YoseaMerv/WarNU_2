@@ -19,7 +19,6 @@ class ProductSellerAdapter(
 ) : RecyclerView.Adapter<ProductSellerAdapter.ProductViewHolder>() {
 
     inner class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // Karena id beda, kita declare semua nullable dulu
         val image: ImageView? = view.findViewById(R.id.ivProductImage)
             ?: view.findViewById(R.id.ivProduk)
         val name: TextView? = view.findViewById(R.id.tvProductName)
@@ -40,14 +39,12 @@ class ProductSellerAdapter(
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = products[position]
 
-        // Nama produk
         holder.name?.text = product.name ?: ""
 
-        // Harga dan stok untuk dashboard (pisah)
         if (layoutResId == R.layout.item_product_dashboard) {
             holder.harga?.text = "Rp ${(product.price ?: 0.0).toInt()}"
             holder.stok?.text = "Stok: ${product.stock ?: 0}"
-        } else { // untuk edit_product yang gabung harga+stok
+        } else {
             holder.harga?.text = "Rp ${(product.price ?: 0.0).toInt()} - Stok: ${product.stock ?: 0}"
         }
 
