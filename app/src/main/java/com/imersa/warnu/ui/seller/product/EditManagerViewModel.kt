@@ -1,6 +1,8 @@
 package com.imersa.warnu.ui.seller.product
 
 import androidx.lifecycle.*
+import com.imersa.warnu.data.model.Product
+import com.imersa.warnu.data.repository.ProductSellerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

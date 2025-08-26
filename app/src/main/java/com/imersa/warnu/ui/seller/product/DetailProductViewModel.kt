@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.imersa.warnu.ui.buyer.ProductBuyer
+import com.imersa.warnu.data.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

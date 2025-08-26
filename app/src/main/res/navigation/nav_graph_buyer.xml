@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeBuyerFragment"
-        android:name="com.imersa.warnu.ui.buyer.HomeBuyerFragment"
+        android:name="com.imersa.warnu.ui.buyer.home.HomeBuyerFragment"
         android:label="Beranda"
         tools:layout="@layout/fragment_home_buyer">
 
@@ -33,7 +33,7 @@
 
     <fragment
         android:id="@+id/cartFragment"
-        android:name="com.imersa.warnu.ui.buyer.CartFragment"
+        android:name="com.imersa.warnu.ui.buyer.cart.CartFragment"
         android:label="Keranjang"
         tools:layout="@layout/fragment_cart" />
 </navigation>

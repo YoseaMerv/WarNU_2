@@ -8,7 +8,7 @@
     <!-- Fragment Dashboard Utama -->
     <fragment
         android:id="@+id/HomeSellerFragment"
-        android:name="com.imersa.warnu.ui.seller.product.HomeSellerFragment"
+        android:name="com.imersa.warnu.ui.seller.home.HomeSellerFragment"
         android:label="Dashboard"
         tools:layout="@layout/fragment_home_seller">
 
@@ -69,7 +69,7 @@
     <!-- Fragment untuk melihat profil seller -->
     <fragment
         android:id="@+id/profileSellerFragment"
-        android:name="com.imersa.warnu.ui.seller.product.ProfileSellerFragment"
+        android:name="com.imersa.warnu.ui.seller.profile.ProfileSellerFragment"
         android:label="Profil Toko"
         tools:layout="@layout/fragment_profile_seller" />
 </navigation>

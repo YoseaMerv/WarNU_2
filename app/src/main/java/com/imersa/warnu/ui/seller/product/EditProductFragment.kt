@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentEditProductBinding
+import com.imersa.warnu.data.model.Product
 
 class EditProductFragment : Fragment() {
 

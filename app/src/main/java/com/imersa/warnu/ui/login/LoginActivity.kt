@@ -8,15 +8,15 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.imersa.warnu.databinding.ActivityLoginBinding
-import com.imersa.warnu.ui.buyer.MainBuyerActivity
-import com.imersa.warnu.ui.seller.MainSellerActivity
+import com.imersa.warnu.ui.buyer.main.MainBuyerActivity
+import com.imersa.warnu.ui.seller.main.MainSellerActivity
 import dagger.hilt.android.AndroidEntryPoint
 import android.text.InputType
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import com.imersa.warnu.R
-import com.imersa.warnu.ui.register.RegisterBuyerActivity
-import com.imersa.warnu.ui.register.RegisterSellerActivity
+import com.imersa.warnu.ui.register.buyer.RegisterBuyerActivity
+import com.imersa.warnu.ui.register.seller.RegisterSellerActivity
 
 
 @AndroidEntryPoint

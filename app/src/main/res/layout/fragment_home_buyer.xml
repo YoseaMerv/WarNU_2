@@ -5,7 +5,7 @@
     android:id="@+id/drawerLayoutBuyer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.buyer.HomeBuyerFragment">
+    tools:context=".ui.buyer.home.HomeBuyerFragment">
 
     <!-- Konten utama -->
     <LinearLayout

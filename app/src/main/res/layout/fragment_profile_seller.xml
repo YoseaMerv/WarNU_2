@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F0F0F0"
-    tools:context="com.imersa.warnu.ui.seller.product.ProfileSellerFragment">
+    tools:context="com.imersa.warnu.ui.seller.profile.ProfileSellerFragment">
 
     <!-- Scrollable Content -->
     <androidx.core.widget.NestedScrollView

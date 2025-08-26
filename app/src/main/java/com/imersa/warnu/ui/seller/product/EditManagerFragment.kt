@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.imersa.warnu.R
+import com.imersa.warnu.data.model.Product
 import com.imersa.warnu.databinding.FragmentEditManagerBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

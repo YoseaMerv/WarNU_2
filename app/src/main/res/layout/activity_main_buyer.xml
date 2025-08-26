@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout_buyer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.buyer.MainBuyerActivity">
+    tools:context=".ui.buyer.main.MainBuyerActivity">
 
     <!-- Konten Utama -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout

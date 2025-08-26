@@ -78,6 +78,7 @@ dependencies {
     // Hilt
     implementation("com.google.dagger:hilt-android:2.48")
     implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.play.services.analytics.impl)
     kapt("com.google.dagger:hilt-android-compiler:2.48")
     implementation("androidx.hilt:hilt-navigation-fragment:1.1.0")
 
