@@ -72,7 +72,6 @@ class MainSellerActivity : AppCompatActivity() {
 
         // Hide some menu items if needed
         navigationView.menu.findItem(R.id.nav_history).isVisible = false
-        navigationView.menu.findItem(R.id.nav_favorites).isVisible = false
 
         // Handle menu drawer item clicks
         navigationView.setNavigationItemSelectedListener { menuItem ->

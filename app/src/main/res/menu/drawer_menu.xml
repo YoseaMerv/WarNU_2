@@ -19,13 +19,9 @@
             android:icon="@drawable/ic_order"
             android:title="Order" />
         <item
-            android:id="@+id/nav_history"
-            android:title="Riwayat Pembelian"
-            android:icon="@drawable/ic_manage" />
-        <item
-            android:id="@+id/nav_favorites"
-            android:title="Favorit"
-            android:icon="@drawable/ic_order" />
+            android:id="@+id/orderHistoryFragment"
+            android:icon="@drawable/ic_receipt"
+            android:title="Pesanan" />
     </group>
     <item android:title="">
         <menu>

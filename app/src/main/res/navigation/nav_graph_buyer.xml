@@ -36,4 +36,14 @@
         android:name="com.imersa.warnu.ui.buyer.cart.CartFragment"
         android:label="Keranjang"
         tools:layout="@layout/fragment_cart" />
+    <fragment
+        android:id="@+id/orderHistoryFragment"
+        android:name="com.imersa.warnu.ui.buyer.order.OrderHistoryFragment"
+        android:label="Riwayat Pesanan"
+        tools:layout="@layout/fragment_order_history" />
+    <fragment
+        android:id="@+id/profileSellerFragment"
+        android:name="com.imersa.warnu.ui.seller.profile.ProfileSellerFragment"
+        android:label="fragment_profile_seller"
+        tools:layout="@layout/fragment_profile_seller" />
 </navigation>

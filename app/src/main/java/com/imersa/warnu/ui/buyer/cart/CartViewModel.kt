@@ -5,80 +5,62 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
 import com.imersa.warnu.data.model.CartItem
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class CartViewModel @Inject constructor(
-    private val firestore: FirebaseFirestore,
-    private val auth: FirebaseAuth
-) : ViewModel() {
+class CartViewModel : ViewModel() {
+
+    private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     private val _cartItems = MutableLiveData<List<CartItem>>()
-    val cartItems: LiveData<List<CartItem>> get() = _cartItems
+    val cartItems: LiveData<List<CartItem>> = _cartItems
 
-    private var listenerRegistration: ListenerRegistration? = null
+    init {
+        loadCartItems()
+    }
 
-    fun listenCartData() {
-        val userId = auth.currentUser?.uid ?: return
-        listenerRegistration?.remove() // hapus listener lama
+    private fun loadCartItems() {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            _cartItems.value = emptyList() // Jika tidak login, pastikan keranjang kosong
+            return
+        }
 
-        listenerRegistration = firestore.collection("carts")
-            .document(userId)
-            .collection("items")
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) return@addSnapshotListener
+        // --- PERBAIKAN PATH DI SINI ---
+        // Mengakses path yang benar: carts -> {userId} -> items
+        db.collection("carts").document(userId).collection("items")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    // Handle error (misal: log ke console)
+                    _cartItems.value = emptyList()
+                    return@addSnapshotListener
+                }
 
-                val items = snapshot?.documents?.mapNotNull { doc ->
-                    doc.toObject(CartItem::class.java)?.copy(id = doc.id)
-                } ?: emptyList()
-                _cartItems.value = items
+                // Konversi dokumen-dokumen di sub-koleksi 'items' menjadi list CartItem
+                val items = snapshot?.toObjects(CartItem::class.java)
+                _cartItems.value = items ?: emptyList()
             }
     }
 
-    fun increaseQty(item: CartItem) {
+    fun updateCartItemQuantity(productId: String, newQuantity: Int) {
         val userId = auth.currentUser?.uid ?: return
-        val newQty = item.quantity + 1
-        firestore.collection("carts")
-            .document(userId)
-            .collection("items")
-            .document(item.productId ?: return)
-            .update("quantity", newQty)
+
+        // Mengakses path yang benar untuk update
+        db.collection("carts").document(userId).collection("items").document(productId)
+            .update("quantity", newQuantity)
+            .addOnFailureListener {
+                // Handle error
+            }
     }
 
-    fun decreaseQty(item: CartItem) {
+    fun removeCartItem(productId: String) {
         val userId = auth.currentUser?.uid ?: return
-        val currentQty = item.quantity
-        val productId = item.productId ?: return
 
-        if (currentQty <= 1) {
-            firestore.collection("carts")
-                .document(userId)
-                .collection("items")
-                .document(productId)
-                .delete()
-        } else {
-            firestore.collection("carts")
-                .document(userId)
-                .collection("items")
-                .document(productId)
-                .update("quantity", currentQty - 1)
-        }
-    }
-
-    fun removeFromCart(item: CartItem) {
-        val userId = auth.currentUser?.uid ?: return
-        firestore.collection("carts")
-            .document(userId)
-            .collection("items")
-            .document(item.productId ?: return)
+        // Mengakses path yang benar untuk hapus
+        db.collection("carts").document(userId).collection("items").document(productId)
             .delete()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        listenerRegistration?.remove()
+            .addOnFailureListener {
+                // Handle error
+            }
     }
 }
