@@ -1,8 +1,13 @@
 package com.imersa.warnu.data.model
 
 data class UserProfile(
-    val name: String? = null,
-    val email: String? = null,
-    val phone: String? = null
-    // Tambahkan field lain jika ada, misal: address
+    val uid: String = "",
+    val name: String = "",
+    val email: String = "",
+    val phone: String = "",
+    val role: String = "",
+    val storeName: String? = null, // storeName bisa null untuk buyer
+    // ✅ TAMBAHKAN DUA BARIS INI
+    val address: String = "",
+    val photoUrl: String = ""
 )

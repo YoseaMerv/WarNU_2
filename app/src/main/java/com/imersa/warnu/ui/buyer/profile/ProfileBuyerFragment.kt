@@ -1,4 +1,4 @@
-package com.imersa.warnu.ui.seller.profile
+package com.imersa.warnu.ui.buyer.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,42 +11,38 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.imersa.warnu.R
-import com.imersa.warnu.databinding.FragmentProfileSellerBinding
+import com.imersa.warnu.databinding.FragmentProfileBuyerBinding
 
-class ProfileSellerFragment : Fragment() {
+class ProfileBuyerFragment : Fragment() {
 
-    private var _binding: FragmentProfileSellerBinding? = null
+    private var _binding: FragmentProfileBuyerBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: ProfileSellerViewModel by viewModels()
+    private val viewModel: ProfileBuyerViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProfileSellerBinding.inflate(inflater, container, false)
+        _binding = FragmentProfileBuyerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.loadSellerProfile()
+        viewModel.loadBuyerProfile()
         setupObservers()
 
+        // Tambahkan listener untuk tombol edit
         binding.btnEditProfil.setOnClickListener {
-            findNavController().navigate(R.id.action_profileSellerFragment_to_editProfileSellerFragment)
+            findNavController().navigate(R.id.action_profileBuyerFragment_to_editProfileBuyerFragment)
         }
     }
 
     private fun setupObservers() {
-        viewModel.sellerName.observe(viewLifecycleOwner) { name ->
+        viewModel.buyerName.observe(viewLifecycleOwner) { name ->
             binding.tvNamaValue.text = name
-        }
-
-        viewModel.storeName.observe(viewLifecycleOwner) { store ->
-            binding.tvShopName.text = store
         }
 
         viewModel.phone.observe(viewLifecycleOwner) { phone ->
@@ -57,7 +53,7 @@ class ProfileSellerFragment : Fragment() {
             binding.tvAlamatValue.text = address
         }
 
-        viewModel.sellerEmail.observe(viewLifecycleOwner) { email ->
+        viewModel.buyerEmail.observe(viewLifecycleOwner) { email ->
             binding.tvEmailValue.text = email
         }
 
@@ -66,10 +62,10 @@ class ProfileSellerFragment : Fragment() {
                 Glide.with(this)
                     .load(url)
                     .centerCrop()
-                    .placeholder(R.drawable.placeholder_image) // Menggunakan placeholder yang konsisten
+                    .placeholder(R.drawable.placeholder_image) // fallback
                     .into(binding.ivFotoProfil)
             } else {
-                binding.ivFotoProfil.setImageResource(R.drawable.ic_user) // fallback
+                binding.ivFotoProfil.setImageResource(com.google.android.material.R.drawable.ic_m3_chip_close) // fallback
             }
         }
 

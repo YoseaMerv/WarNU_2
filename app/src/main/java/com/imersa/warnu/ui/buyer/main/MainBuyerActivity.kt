@@ -80,18 +80,21 @@ class MainBuyerActivity : AppCompatActivity() {
 
         // Custom klik menu drawer untuk yang tidak di-handle default navigation
         navigationView.setNavigationItemSelectedListener { menuItem ->
+            drawerLayout.closeDrawer(GravityCompat.START)
             when (menuItem.itemId) {
                 R.id.nav_logout -> {
                     viewModel.logout()
                     startActivity(Intent(this, LoginActivity::class.java))
                     finish()
-                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                // Tambahkan case untuk Profile
+                R.id.nav_profile -> {
+                    navController.navigate(R.id.profileBuyerFragment)
                     true
                 }
                 else -> {
-                    val handled = NavigationUI.onNavDestinationSelected(menuItem, navController)
-                    if (handled) drawerLayout.closeDrawer(GravityCompat.START)
-                    handled
+                    NavigationUI.onNavDestinationSelected(menuItem, navController)
                 }
             }
         }

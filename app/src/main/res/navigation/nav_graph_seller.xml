@@ -71,5 +71,15 @@
         android:id="@+id/profileSellerFragment"
         android:name="com.imersa.warnu.ui.seller.profile.ProfileSellerFragment"
         android:label="Profil Toko"
-        tools:layout="@layout/fragment_profile_seller" />
+        tools:layout="@layout/fragment_profile_seller" >
+        <action
+            android:id="@+id/action_profileSellerFragment_to_editProfileSellerFragment"
+            app:destination="@id/editProfileSellerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editProfileSellerFragment"
+        android:name="com.imersa.warnu.ui.seller.profile.EditProfileSellerFragment"
+        android:label="Edit Profil Toko"
+        tools:layout="@layout/fragment_edit_profile_seller" />
 </navigation>

@@ -71,7 +71,7 @@ class MainSellerActivity : AppCompatActivity() {
         viewModel.loadUserData()
 
         // Hide some menu items if needed
-        navigationView.menu.findItem(R.id.nav_history).isVisible = false
+        navigationView.menu.findItem(R.id.orderHistoryFragment).isVisible = false
 
         // Handle menu drawer item clicks
         navigationView.setNavigationItemSelectedListener { menuItem ->

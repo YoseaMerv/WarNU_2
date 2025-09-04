@@ -10,14 +10,15 @@
         android:name="com.imersa.warnu.ui.buyer.home.HomeBuyerFragment"
         android:label="Beranda"
         tools:layout="@layout/fragment_home_buyer">
-
         <action
             android:id="@+id/action_homeBuyerFragment_to_detailProductFragment"
             app:destination="@id/detailProductFragment" />
-
         <action
             android:id="@+id/action_homeBuyerFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_homeBuyerFragment_to_profileBuyerFragment"
+            app:destination="@id/profileBuyerFragment" />
     </fragment>
 
     <fragment
@@ -25,7 +26,6 @@
         android:name="com.imersa.warnu.ui.seller.product.DetailProductFragment"
         android:label="Detail Produk"
         tools:layout="@layout/fragment_detail_product">
-
         <action
             android:id="@+id/action_detailProductFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
@@ -36,14 +36,27 @@
         android:name="com.imersa.warnu.ui.buyer.cart.CartFragment"
         android:label="Keranjang"
         tools:layout="@layout/fragment_cart" />
+
     <fragment
         android:id="@+id/orderHistoryFragment"
         android:name="com.imersa.warnu.ui.buyer.order.OrderHistoryFragment"
         android:label="Riwayat Pesanan"
         tools:layout="@layout/fragment_order_history" />
+
     <fragment
-        android:id="@+id/profileSellerFragment"
-        android:name="com.imersa.warnu.ui.seller.profile.ProfileSellerFragment"
-        android:label="fragment_profile_seller"
-        tools:layout="@layout/fragment_profile_seller" />
+        android:id="@+id/profileBuyerFragment"
+        android:name="com.imersa.warnu.ui.buyer.profile.ProfileBuyerFragment"
+        android:label="Profil"
+        tools:layout="@layout/fragment_profile_buyer">
+        <action
+            android:id="@+id/action_profileBuyerFragment_to_editProfileBuyerFragment"
+            app:destination="@id/editProfileBuyerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editProfileBuyerFragment"
+        android:name="com.imersa.warnu.ui.buyer.profile.EditProfileBuyerFragment"
+        android:label="Edit Profil"
+        tools:layout="@layout/fragment_edit_profile_buyer" />
+
 </navigation>
