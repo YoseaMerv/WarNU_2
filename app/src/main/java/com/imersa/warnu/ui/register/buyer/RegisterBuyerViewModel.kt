@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.util.regex.Pattern
 
 class RegisterBuyerViewModel : ViewModel() {
 
@@ -17,12 +18,31 @@ class RegisterBuyerViewModel : ViewModel() {
     private val _registerStatus = MutableLiveData<String>()
     val registerStatus: LiveData<String> get() = _registerStatus
 
-    // **ALUR BARU PADA FUNGSI UTAMA**
+    private val EMAIL_ADDRESS_PATTERN = Pattern.compile(
+        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+                "\\@" +
+                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+                "(" +
+                "\\." +
+                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+                ")+"
+    )
+
+
     fun register(
         name: String, email: String, phone: String, address: String, password: String, imageUri: Uri?
     ) {
+        if (!isValidEmail(email)) {
+            _registerStatus.value = "Error: Format email tidak valid."
+            return
+        }
+
+        if (password.length < 6) {
+            _registerStatus.value = "Error: Password minimal 6 karakter."
+            return
+        }
+
         _registerStatus.value = "Loading"
-        // 1. Buat user di Firebase Auth terlebih dahulu
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -32,7 +52,6 @@ class RegisterBuyerViewModel : ViewModel() {
                         return@addOnCompleteListener
                     }
 
-                    // 2. Jika ada gambar, unggah. Jika tidak, langsung simpan.
                     if (imageUri != null) {
                         uploadImageAndSaveUser(userId, name, email, phone, address, imageUri)
                     } else {
@@ -44,6 +63,10 @@ class RegisterBuyerViewModel : ViewModel() {
             }
     }
 
+    private fun isValidEmail(email: String): Boolean {
+        return EMAIL_ADDRESS_PATTERN.matcher(email).matches()
+    }
+
     private fun uploadImageAndSaveUser(
         userId: String, name: String, email: String, phone: String, address: String, imageUri: Uri
     ) {
@@ -52,7 +75,6 @@ class RegisterBuyerViewModel : ViewModel() {
         storageRef.putFile(imageUri)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                    // 3. Simpan semua data ke Firestore
                     saveUserToFirestore(userId, name, email, phone, address, downloadUrl.toString())
                 }
             }
@@ -69,9 +91,9 @@ class RegisterBuyerViewModel : ViewModel() {
             "name" to name,
             "email" to email,
             "phone" to phone,
-            "address" to address,  // Pastikan field ini benar
+            "address" to address,
             "role" to "buyer",
-            "photoUrl" to photoUrl // Pastikan field ini benar
+            "photoUrl" to photoUrl
         )
 
         firestore.collection("users").document(userId)

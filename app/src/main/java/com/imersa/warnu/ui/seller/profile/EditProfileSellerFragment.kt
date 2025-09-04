@@ -8,10 +8,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentEditProfileSellerBinding
 
 class EditProfileSellerFragment : Fragment() {
@@ -19,15 +18,14 @@ class EditProfileSellerFragment : Fragment() {
     private var _binding: FragmentEditProfileSellerBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: EditProfileSellerViewModel by viewModels()
+    private lateinit var viewModel: EditProfileSellerViewModel
     private var selectedImageUri: Uri? = null
 
-    private val imagePickerLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            selectedImageUri = it
-            binding.ivProfilePicture.setImageURI(it)
+    // Launcher untuk memilih gambar dari galeri
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        if (uri != null) {
+            selectedImageUri = uri
+            binding.ivProfile.setImageURI(selectedImageUri)
         }
     }
 
@@ -36,54 +34,64 @@ class EditProfileSellerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditProfileSellerBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(this)[EditProfileSellerViewModel::class.java]
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.loadUserProfile()
-        setupListeners()
-        observeViewModel()
+        setupObservers()
+        setupClickListeners()
+
+        // Ambil data pengguna saat ini untuk ditampilkan di form
+        viewModel.fetchUserData()
     }
 
-    private fun setupListeners() {
-        binding.cardProfileImage.setOnClickListener {
-            imagePickerLauncher.launch("image/*")
+    private fun setupClickListeners() {
+        // Tombol kembali
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
         }
 
+        // Tombol untuk memilih gambar profil
+        binding.btnChangePhoto.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
+
+        // Tombol simpan perubahan
         binding.btnSave.setOnClickListener {
             val name = binding.etName.text.toString().trim()
-            val storeName = binding.etStoreName.text.toString().trim()
             val phone = binding.etPhone.text.toString().trim()
             val address = binding.etAddress.text.toString().trim()
+            val storeName = binding.etStoreName.text.toString().trim()
 
-            if (name.isEmpty() || storeName.isEmpty() || phone.isEmpty() || address.isEmpty()) {
-                Toast.makeText(requireContext(), "Semua field harus diisi", Toast.LENGTH_SHORT).show()
+            if (name.isEmpty() || phone.isEmpty() || address.isEmpty() || storeName.isEmpty()) {
+                Toast.makeText(requireContext(), "Harap isi semua kolom", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            viewModel.updateUserProfile(name, storeName, phone, address, selectedImageUri)
+            viewModel.updateUser(name, phone, address, storeName, selectedImageUri)
         }
     }
 
-    private fun observeViewModel() {
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    private fun setupObservers() {
+        // Observer untuk menampilkan data pengguna yang sudah ada
+        viewModel.userData.observe(viewLifecycleOwner) { user ->
+            binding.etName.setText(user["name"] as? String)
+            binding.etPhone.setText(user["phone"] as? String)
+            binding.etAddress.setText(user["address"] as? String)
+            binding.etStoreName.setText(user["storeName"] as? String)
+            val photoUrl = user["photoUrl"] as? String
+            if (!photoUrl.isNullOrEmpty()) {
+                Glide.with(this)
+                    .load(photoUrl)
+                    .circleCrop()
+                    .into(binding.ivProfile)
+            }
         }
 
-        viewModel.userProfile.observe(viewLifecycleOwner) { user ->
-            binding.etName.setText(user.name)
-            binding.etStoreName.setText(user.storeName)
-            binding.etPhone.setText(user.phone)
-            binding.etAddress.setText(user.address)
-            Glide.with(this)
-                .load(user.photoUrl)
-                .placeholder(R.drawable.ic_user)
-                .circleCrop()
-                .into(binding.ivProfilePicture)
-        }
-
+        // Observer untuk status proses update
         viewModel.updateStatus.observe(viewLifecycleOwner) { status ->
             when {
                 status.startsWith("Loading") -> {
@@ -93,12 +101,13 @@ class EditProfileSellerFragment : Fragment() {
                 status.startsWith("Success") -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show()
-                    findNavController().navigateUp() // Kembali ke halaman profil
+                    findNavController().navigateUp() // Kembali ke halaman sebelumnya
                 }
-                status.startsWith("Error") -> {
+                status.startsWith("Error:") -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnSave.isEnabled = true
-                    Toast.makeText(requireContext(), status, Toast.LENGTH_LONG).show()
+                    val errorMessage = status.substringAfter("Error: ")
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                 }
             }
         }

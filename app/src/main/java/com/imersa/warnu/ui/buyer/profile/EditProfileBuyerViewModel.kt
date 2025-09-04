@@ -7,82 +7,100 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.imersa.warnu.data.model.UserProfile
 
 class EditProfileBuyerViewModel : ViewModel() {
 
+    private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
-    private val firestore = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
-
-    private val _userProfile = MutableLiveData<UserProfile>()
-    val userProfile: LiveData<UserProfile> get() = _userProfile
+    private val userId = auth.currentUser?.uid
 
     private val _updateStatus = MutableLiveData<String>()
     val updateStatus: LiveData<String> get() = _updateStatus
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> get() = _isLoading
+    private val _userData = MutableLiveData<Map<String, Any>>()
+    val userData: LiveData<Map<String, Any>> get() = _userData
 
-    fun loadUserProfile() {
-        _isLoading.value = true
-        val userId = auth.currentUser?.uid ?: return
-
-        firestore.collection("users").document(userId)
+    // Fungsi untuk mengambil data pengguna saat ini
+    fun fetchUserData() {
+        if (userId == null) {
+            _updateStatus.value = "Error: User tidak ditemukan."
+            return
+        }
+        db.collection("users").document(userId)
             .get()
             .addOnSuccessListener { document ->
-                val user = document.toObject(UserProfile::class.java)
-                user?.let {
-                    _userProfile.value = it
+                if (document != null && document.exists()) {
+                    _userData.value = document.data
+                } else {
+                    _updateStatus.value = "Error: Data pengguna tidak ditemukan."
                 }
             }
-            .addOnFailureListener {
-                // Handle error
-            }
-            .addOnCompleteListener {
-                _isLoading.value = false
+            .addOnFailureListener { e ->
+                _updateStatus.value = "Error: Gagal mengambil data - ${e.message}"
             }
     }
 
-    fun updateUserProfile(name: String, phone: String, address: String, newImageUri: Uri?) {
-        _updateStatus.value = "Loading"
-        val userId = auth.currentUser?.uid ?: return
+    // Fungsi untuk memperbarui profil pengguna
+    fun updateUser(
+        name: String,
+        phone: String,
+        address: String,
+        imageUri: Uri?
+    ) {
+        if (userId == null) {
+            _updateStatus.value = "Error: User tidak ditemukan."
+            return
+        }
 
-        if (newImageUri != null) {
-            uploadImageAndUpdateProfile(userId, name, phone, address, newImageUri)
+        _updateStatus.value = "Loading"
+
+        if (imageUri != null) {
+            // Jika ada gambar baru, unggah dulu
+            uploadImageAndUpdateUser(userId, name, phone, address, imageUri)
         } else {
-            updateProfileInFirestore(userId, name, phone, address, _userProfile.value?.photoUrl ?: "")
+            // Jika tidak ada gambar baru, langsung update data teks
+            updateUserData(userId, name, phone, address, null)
         }
     }
 
-    private fun uploadImageAndUpdateProfile(userId: String, name: String, phone: String, address: String, imageUri: Uri) {
+    private fun uploadImageAndUpdateUser(
+        userId: String, name: String, phone: String, address: String, imageUri: Uri
+    ) {
         val storageRef = storage.reference.child("profile_pictures/${userId}_profile.jpg")
         storageRef.putFile(imageUri)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                    updateProfileInFirestore(userId, name, phone, address, downloadUrl.toString())
+                    // Setelah gambar berhasil diunggah, perbarui data dengan URL gambar baru
+                    updateUserData(userId, name, phone, address, downloadUrl.toString())
                 }
             }
             .addOnFailureListener { e ->
-                _updateStatus.value = "Error: ${e.message}"
+                _updateStatus.value = "Error: Gagal mengunggah gambar - ${e.message}"
             }
     }
 
-    private fun updateProfileInFirestore(userId: String, name: String, phone: String, address: String, photoUrl: String) {
-        val updates = mapOf(
+    private fun updateUserData(
+        userId: String, name: String, phone: String, address: String, photoUrl: String?
+    ) {
+        val userUpdates = mutableMapOf<String, Any>(
             "name" to name,
             "phone" to phone,
-            "address" to address,
-            "photoUrl" to photoUrl
+            "address" to address
         )
 
-        firestore.collection("users").document(userId)
-            .update(updates)
+        // Hanya tambahkan photoUrl ke dalam map jika ada URL gambar yang baru
+        if (photoUrl != null) {
+            userUpdates["photoUrl"] = photoUrl
+        }
+
+        db.collection("users").document(userId)
+            .update(userUpdates) // 🔥 Menggunakan .update() untuk memperbarui field yang ada
             .addOnSuccessListener {
                 _updateStatus.value = "Success"
             }
             .addOnFailureListener { e ->
-                _updateStatus.value = "Error: ${e.message}"
+                _updateStatus.value = "Error: Gagal memperbarui data - ${e.message}"
             }
     }
 }
