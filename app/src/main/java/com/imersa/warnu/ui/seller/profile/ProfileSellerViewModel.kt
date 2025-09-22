@@ -49,7 +49,7 @@ class ProfileSellerViewModel : ViewModel() {
                     _storeName.value = doc.getString("storeName") ?: "Toko1"
                     _phone.value = doc.getString("phone") ?: "1234567"
                     _address.value = doc.getString("address") ?: "Jakarta"
-                    _photoUrl.value = doc.getString("photoUrl") ?: ""
+                    _photoUrl.value = doc.getString("photourl") ?: ""
                     _errorMessage.value = null
                 } else {
                     _errorMessage.value = "Data profil tidak ditemukan"

@@ -12,5 +12,7 @@ data class Order(
     @get:PropertyName("items") // Pastikan nama properti cocok dengan di Firestore
     @set:PropertyName("items")
     var items: List<CartItem>? = null, // Menggunakan kembali CartItem
-    val customerName: String? = null
+    val customerName: String? = null,
+    var sellerIds: List<String>? = null
 )
+

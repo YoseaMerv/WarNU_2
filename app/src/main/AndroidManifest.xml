@@ -25,7 +25,7 @@
         <!-- maps activity -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAKkkbBGEObhmQImjAJsGN06xqvSe4jedU" /> <!-- ✅ Splash Activity -->
+            android:value="AIzaSyAKkkbBGEObhmQImjAJsGN06xqvSe4jedU" />
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -35,7 +35,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- ✅ Login & Register -->
+        </activity>
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false" />
@@ -44,7 +44,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.register.seller.RegisterSellerActivity"
-            android:exported="false" /> <!-- ✅ Main Buyer dan Seller -->
+            android:exported="false" />
         <activity
             android:name=".ui.buyer.main.MainBuyerActivity"
             android:exported="false" />

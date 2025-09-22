@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentEditProfileSellerBinding
 
 class EditProfileSellerFragment : Fragment() {
@@ -21,7 +22,6 @@ class EditProfileSellerFragment : Fragment() {
     private lateinit var viewModel: EditProfileSellerViewModel
     private var selectedImageUri: Uri? = null
 
-    // Launcher untuk memilih gambar dari galeri
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
             selectedImageUri = uri
@@ -41,25 +41,19 @@ class EditProfileSellerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Set judul action bar
+        requireActivity().title = "Edit Profil"
+
         setupObservers()
         setupClickListeners()
-
-        // Ambil data pengguna saat ini untuk ditampilkan di form
         viewModel.fetchUserData()
     }
 
     private fun setupClickListeners() {
-        // Tombol kembali
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        // Tombol untuk memilih gambar profil
         binding.btnChangePhoto.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
 
-        // Tombol simpan perubahan
         binding.btnSave.setOnClickListener {
             val name = binding.etName.text.toString().trim()
             val phone = binding.etPhone.text.toString().trim()
@@ -76,22 +70,24 @@ class EditProfileSellerFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        // Observer untuk menampilkan data pengguna yang sudah ada
         viewModel.userData.observe(viewLifecycleOwner) { user ->
             binding.etName.setText(user["name"] as? String)
             binding.etPhone.setText(user["phone"] as? String)
             binding.etAddress.setText(user["address"] as? String)
             binding.etStoreName.setText(user["storeName"] as? String)
-            val photoUrl = user["photoUrl"] as? String
+
+            val photoUrl = user["photourl"] as? String
             if (!photoUrl.isNullOrEmpty()) {
                 Glide.with(this)
                     .load(photoUrl)
-                    .circleCrop()
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_user)
                     .into(binding.ivProfile)
+            } else {
+                binding.ivProfile.setImageResource(R.drawable.ic_user)
             }
         }
 
-        // Observer untuk status proses update
         viewModel.updateStatus.observe(viewLifecycleOwner) { status ->
             when {
                 status.startsWith("Loading") -> {
@@ -101,7 +97,7 @@ class EditProfileSellerFragment : Fragment() {
                 status.startsWith("Success") -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show()
-                    findNavController().navigateUp() // Kembali ke halaman sebelumnya
+                    findNavController().navigateUp()
                 }
                 status.startsWith("Error:") -> {
                     binding.progressBar.visibility = View.GONE

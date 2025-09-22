@@ -33,6 +33,12 @@
             app:destination="@id/profileSellerFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/orderManagerFragment"
+        android:name="com.imersa.warnu.ui.seller.order.OrderManagerFragment"
+        android:label="Order Manager"
+        tools:layout="@layout/fragment_seller_orders" />
+
     <!-- Fragment untuk menambah produk baru -->
     <fragment
         android:id="@+id/addProductFragment"

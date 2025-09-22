@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.imersa.warnu.R
@@ -13,6 +14,7 @@ import com.imersa.warnu.data.model.ApiService
 import com.imersa.warnu.data.model.CartItem
 import com.imersa.warnu.data.model.CustomerDetails
 import com.imersa.warnu.data.model.ItemDetails
+import com.imersa.warnu.data.model.Order
 import com.imersa.warnu.data.model.TransactionRequest
 import com.imersa.warnu.data.model.TransactionResponse
 import com.imersa.warnu.data.model.UserProfile
@@ -31,6 +33,11 @@ class CheckoutActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
+    // Variabel untuk menyimpan data sementara
+    private var currentCartItems: List<CartItem> = listOf()
+    private var currentTransactionRequest: TransactionRequest? = null
+    private var currentUserProfile: UserProfile? = null
+
     private val uikitLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val transactionResult = result.data?.getParcelableExtra<TransactionResult>(UiKitConstants.KEY_TRANSACTION_RESULT)
         handleTransactionResult(transactionResult)
@@ -45,45 +52,39 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     private fun fetchAllDataAndProceed(totalAmount: Double) {
-        val userId = auth.currentUser?.uid
-        if (userId == null) {
+        val userId = auth.currentUser?.uid ?: run {
             Toast.makeText(this, "Anda harus login untuk melanjutkan", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        val userProfileRef = db.collection("users").document(userId)
-        userProfileRef.get().addOnSuccessListener { userDocument ->
-            if (userDocument == null || !userDocument.exists()) {
-                Toast.makeText(this, "Profil pengguna tidak ditemukan.", Toast.LENGTH_SHORT).show()
-                finish()
-                return@addOnSuccessListener
-            }
-            val userProfile = userDocument.toObject(UserProfile::class.java)
-
-            db.collection("carts").document(userId).collection("items").get()
-                .addOnSuccessListener { cartSnapshot ->
-                    if (cartSnapshot.isEmpty) {
-                        Toast.makeText(this, "Keranjang Anda kosong.", Toast.LENGTH_SHORT).show()
-                        finish()
-                        return@addOnSuccessListener
-                    }
-                    val cartItems = cartSnapshot.toObjects(CartItem::class.java)
-                    getSnapToken(totalAmount, cartItems, userProfile)
-                }
-                .addOnFailureListener { e ->
-                    Log.e("CheckoutActivity", "Gagal mengambil item keranjang:", e)
-                    Toast.makeText(this, "Gagal memuat data keranjang.", Toast.LENGTH_SHORT).show()
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { userDocument ->
+                val userProfile = userDocument.toObject(UserProfile::class.java)
+                if (userProfile == null) {
+                    Toast.makeText(this, "Profil pengguna tidak ditemukan.", Toast.LENGTH_SHORT).show()
                     finish()
+                    return@addOnSuccessListener
                 }
-        }.addOnFailureListener { e ->
-            Log.e("CheckoutActivity", "Gagal mengambil profil pengguna:", e)
-            Toast.makeText(this, "Gagal memuat profil pengguna.", Toast.LENGTH_SHORT).show()
-            finish()
-        }
+                this.currentUserProfile = userProfile
+
+                db.collection("carts").document(userId).collection("items").get()
+                    .addOnSuccessListener { cartSnapshot ->
+                        if (cartSnapshot.isEmpty) {
+                            Toast.makeText(this, "Keranjang Anda kosong.", Toast.LENGTH_SHORT).show()
+                            finish()
+                            return@addOnSuccessListener
+                        }
+                        val cartItems = cartSnapshot.toObjects(CartItem::class.java)
+                        this.currentCartItems = cartItems
+                        getSnapToken(totalAmount, cartItems, userProfile)
+                    }
+                    .addOnFailureListener { e -> handleError("Gagal mengambil item keranjang:", e) }
+            }
+            .addOnFailureListener { e -> handleError("Gagal mengambil profil pengguna:", e) }
     }
 
-    private fun getSnapToken(totalAmount: Double, cartItems: List<CartItem>, userProfile: UserProfile?) {
+    private fun getSnapToken(totalAmount: Double, cartItems: List<CartItem>, userProfile: UserProfile) {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -91,7 +92,6 @@ class CheckoutActivity : AppCompatActivity() {
         val apiService = retrofit.create(ApiService::class.java)
 
         val itemDetails = cartItems.map {
-            // PERBAIKAN 1: Gunakan 'productName' sesuai model data CartItem
             ItemDetails(
                 id = it.productId ?: "",
                 price = it.price ?: 0.0,
@@ -101,42 +101,38 @@ class CheckoutActivity : AppCompatActivity() {
         }
 
         val customerDetails = CustomerDetails(
-            // PERBAIKAN 2: Gunakan 'fullName' sesuai model data UserProfile
-            first_name = userProfile?.name ?: "Pengguna WarNU",
-            email = userProfile?.email ?: "email@tidakada.com",
-            phone = userProfile?.phone ?: "08123456789"
+            first_name = userProfile.name ?: "Pengguna",
+            email = userProfile.email ?: "",
+            phone = userProfile.phone ?: ""
         )
 
-        val firebaseUser = auth.currentUser
+        val orderId = "WARN-ORDER-${System.currentTimeMillis()}"
         val request = TransactionRequest(
-            orderId = "WARNU-ORDER-" + System.currentTimeMillis(),
+            orderId = orderId,
             totalAmount = totalAmount,
             items = itemDetails,
             customerDetails = customerDetails,
-            userId = firebaseUser?.uid
+            userId = auth.currentUser?.uid
         )
+        this.currentTransactionRequest = request
 
         apiService.createTransaction(request).enqueue(object : Callback<TransactionResponse> {
             override fun onResponse(call: Call<TransactionResponse>, response: Response<TransactionResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     startPayment(response.body()!!.token)
                 } else {
-                    Log.e("CheckoutActivity", "Gagal mendapatkan token: ${response.errorBody()?.string()}")
-                    Toast.makeText(this@CheckoutActivity, "Gagal mendapatkan token pembayaran.", Toast.LENGTH_SHORT).show()
-                    finish() // Tutup jika gagal dapat token
+                    handleApiError("Gagal mendapatkan token: ${response.errorBody()?.string()}")
                 }
             }
             override fun onFailure(call: Call<TransactionResponse>, t: Throwable) {
-                Log.e("CheckoutActivity", "Koneksi Error: ${t.message}")
-                Toast.makeText(this@CheckoutActivity, "Koneksi ke server gagal.", Toast.LENGTH_SHORT).show()
-                finish() // Tutup jika koneksi gagal
+                handleApiError("Koneksi Error: ${t.message}")
             }
         })
     }
 
     private fun startPayment(snapToken: String) {
         UiKitApi.Builder()
-            .withMerchantClientKey("MASUKKAN_CLIENT_KEY_ANDA")
+            .withMerchantClientKey("SB-Mid-client-c3kYeww-hLgqgYq5") // Client Key
             .withContext(this)
             .withMerchantUrl(BASE_URL)
             .enableLog(true)
@@ -150,49 +146,95 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     private fun handleTransactionResult(result: TransactionResult?) {
-        if (result == null) {
-            Toast.makeText(this, "Transaksi dibatalkan", Toast.LENGTH_LONG).show()
-        } else {
-            val message: String
-
-            // PERBAIKAN 3: Gunakan STATUS_SUCCESS dan kosongkan keranjang saat PENDING juga
-            when (result.status) {
-                UiKitConstants.STATUS_SUCCESS, UiKitConstants.STATUS_PENDING -> {
-                    message = "Pesanan berhasil dibuat!"
-                    // Kosongkan keranjang karena pesanan sudah dibuat
-                    clearCart()
-                }
-                UiKitConstants.STATUS_FAILED -> {
-                    message = "Transaksi Gagal: ${result.transactionId}"
-                }
-                UiKitConstants.STATUS_CANCELED -> {
-                    message = "Transaksi Dibatalkan"
-                }
-                else -> {
-                    message = "Status Transaksi Tidak Valid"
-                }
-            }
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        val isSuccess = when (result?.status) {
+            UiKitConstants.STATUS_SUCCESS, UiKitConstants.STATUS_PENDING -> true
+            else -> false
         }
 
-        // Selalu kirim sinyal dan tutup activity setelah proses selesai
-        setResult(Activity.RESULT_OK)
-        finish()
+        val message = result?.status ?: "Transaksi dibatalkan"
+        Toast.makeText(this, "Status: $message", Toast.LENGTH_LONG).show()
+
+        if (isSuccess) {
+            saveOrderToFirestore(result!!.status)
+        } else {
+            finish()
+        }
     }
+
+    private fun saveOrderToFirestore(paymentStatus: String) {
+        val request = currentTransactionRequest
+        val user = auth.currentUser
+        val profile = currentUserProfile
+        if (request == null || user == null || profile == null) {
+            Toast.makeText(this, "Data tidak lengkap, gagal menyimpan pesanan.", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        val db = FirebaseFirestore.getInstance()
+
+        // 🔎 Pastikan sellerId terisi
+        val cartItemsWithSeller = currentCartItems.map { item ->
+            if (item.sellerId.isNullOrEmpty() && !item.productId.isNullOrEmpty()) {
+                // Ambil sellerId dari koleksi products
+                db.collection("products").document(item.productId!!).get()
+                    .addOnSuccessListener { doc ->
+                        val sellerId = doc.getString("sellerId")
+                        item.sellerId = sellerId
+                    }
+            }
+            item
+        }
+
+        val order = Order(
+            orderId = request.orderId,
+            userId = user.uid,
+            customerName = profile.name,
+            items = cartItemsWithSeller,
+            totalAmount = request.totalAmount,
+            paymentStatus = paymentStatus,
+            createdAt = Timestamp.now(),
+            sellerIds = cartItemsWithSeller.mapNotNull { it.sellerId }.distinct()
+        )
+
+        db.collection("orders")
+            .document(request.orderId!!) // ✅ simpan pakai orderId biar konsisten
+            .set(order)
+            .addOnSuccessListener {
+                Log.d("CheckoutActivity", "Pesanan berhasil disimpan ke Firestore.")
+                clearCart()
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
+            .addOnFailureListener { e ->
+                handleError("Gagal menyimpan pesanan ke Firestore:", e)
+                finish()
+            }
+    }
+
 
     private fun clearCart() {
         val userId = auth.currentUser?.uid ?: return
-        val cartItemsRef = db.collection("carts").document(userId).collection("items")
-
-        cartItemsRef.get().addOnSuccessListener { snapshot ->
-            if (snapshot.isEmpty) return@addOnSuccessListener
-            val batch = db.batch()
-            for (document in snapshot.documents) {
-                batch.delete(document.reference)
+        db.collection("carts").document(userId).collection("items")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val batch = db.batch()
+                snapshot.documents.forEach { batch.delete(it.reference) }
+                batch.commit()
+                    .addOnSuccessListener { Log.d("CheckoutActivity", "Keranjang berhasil dikosongkan.") }
+                    .addOnFailureListener { e -> Log.e("CheckoutActivity", "Gagal mengosongkan keranjang:", e) }
             }
-            batch.commit()
-                .addOnSuccessListener { Log.d("CheckoutActivity", "Keranjang berhasil dikosongkan.") }
-                .addOnFailureListener { e -> Log.e("CheckoutActivity", "Gagal mengosongkan keranjang:", e) }
-        }
+    }
+
+    private fun handleError(message: String, e: Exception) {
+        Log.e("CheckoutActivity", message, e)
+        Toast.makeText(this, "Terjadi kesalahan, silakan coba lagi.", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    private fun handleApiError(message: String) {
+        Log.e("CheckoutActivity", message)
+        Toast.makeText(this, "Terjadi kesalahan pada server.", Toast.LENGTH_SHORT).show()
+        finish()
     }
 }

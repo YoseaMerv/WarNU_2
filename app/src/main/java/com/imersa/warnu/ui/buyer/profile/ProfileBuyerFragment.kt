@@ -65,23 +65,18 @@ class ProfileBuyerFragment : Fragment() {
                     .placeholder(R.drawable.placeholder_image) // fallback
                     .into(binding.ivFotoProfil)
             } else {
-                binding.ivFotoProfil.setImageResource(com.google.android.material.R.drawable.ic_m3_chip_close) // fallback
+                binding.ivFotoProfil.setImageResource(R.drawable.placeholder_image)
+            }
+
+            viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+                binding.progressBar.isVisible = loading
+            }
+
+            viewModel.errorMessage.observe(viewLifecycleOwner) { msg ->
+                if (msg != null) {
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                }
             }
         }
-
-        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
-            binding.progressBar.isVisible = loading
-        }
-
-        viewModel.errorMessage.observe(viewLifecycleOwner) { msg ->
-            if (msg != null) {
-                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

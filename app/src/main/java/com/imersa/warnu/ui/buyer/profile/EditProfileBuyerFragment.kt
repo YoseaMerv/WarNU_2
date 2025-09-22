@@ -22,16 +22,17 @@ class EditProfileBuyerFragment : Fragment() {
     private var selectedImageUri: Uri? = null
 
     // Launcher untuk memilih gambar dari galeri
-    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        if (uri != null) {
-            selectedImageUri = uri
-            binding.ivProfile.setImageURI(selectedImageUri)
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null) {
+                selectedImageUri = uri
+                binding.ivProfile.setImageURI(selectedImageUri)
+            }
         }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentEditProfileBuyerBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[EditProfileBuyerViewModel::class.java]
@@ -41,6 +42,9 @@ class EditProfileBuyerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Set judul action bar
+        requireActivity().title = "Edit Profil"
+
         setupObservers()
         setupClickListeners()
 
@@ -49,11 +53,6 @@ class EditProfileBuyerFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        // Tombol kembali
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-
         // Tombol untuk memilih gambar profil
         binding.btnChangePhoto.setOnClickListener {
             pickImageLauncher.launch("image/*")
@@ -70,17 +69,17 @@ class EditProfileBuyerFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            viewModel.updateUser(name, phone, address, selectedImageUri)
+            viewModel.updateUser(requireContext(), name, phone, address, selectedImageUri)
         }
     }
 
     private fun setupObservers() {
-        // Observer untuk menampilkan data pengguna yang sudah ada
         viewModel.userData.observe(viewLifecycleOwner) { user ->
             binding.etName.setText(user["name"] as? String)
             binding.etPhone.setText(user["phone"] as? String)
             binding.etAddress.setText(user["address"] as? String)
-            val photoUrl = user["photoUrl"] as? String
+
+            val photoUrl = user["photourl"] as? String
             if (!photoUrl.isNullOrEmpty()) {
                 Glide.with(this)
                     .load(photoUrl)
@@ -89,7 +88,6 @@ class EditProfileBuyerFragment : Fragment() {
             }
         }
 
-        // Observer untuk status proses update
         viewModel.updateStatus.observe(viewLifecycleOwner) { status ->
             when {
                 status.startsWith("Loading") -> {
@@ -99,7 +97,7 @@ class EditProfileBuyerFragment : Fragment() {
                 status.startsWith("Success") -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show()
-                    findNavController().navigateUp() // Kembali ke halaman sebelumnya
+                    findNavController().navigateUp()
                 }
                 status.startsWith("Error:") -> {
                     binding.progressBar.visibility = View.GONE

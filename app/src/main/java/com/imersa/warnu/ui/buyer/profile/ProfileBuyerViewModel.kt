@@ -46,7 +46,7 @@ class ProfileBuyerViewModel : ViewModel() {
                     _buyerEmail.value = doc.getString("email") ?: "email@example.com"
                     _phone.value = doc.getString("phone") ?: "No. Telepon"
                     _address.value = doc.getString("address") ?: "Alamat"
-                    _photoUrl.value = doc.getString("photoUrl") ?: ""
+                    _photoUrl.value = doc.getString("photourl") ?: ""
                     _errorMessage.value = null
                 } else {
                     _errorMessage.value = "Data profil tidak ditemukan"

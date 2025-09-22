@@ -1,5 +1,6 @@
 package com.imersa.warnu.ui.buyer.profile
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,7 +22,7 @@ class EditProfileBuyerViewModel : ViewModel() {
     private val _userData = MutableLiveData<Map<String, Any>>()
     val userData: LiveData<Map<String, Any>> get() = _userData
 
-    // Fungsi untuk mengambil data pengguna saat ini
+    // 🔹 Ambil data pengguna
     fun fetchUserData() {
         if (userId == null) {
             _updateStatus.value = "Error: User tidak ditemukan."
@@ -41,8 +42,9 @@ class EditProfileBuyerViewModel : ViewModel() {
             }
     }
 
-    // Fungsi untuk memperbarui profil pengguna
+    // 🔹 Update profil pengguna
     fun updateUser(
+        context: Context,
         name: String,
         phone: String,
         address: String,
@@ -56,22 +58,43 @@ class EditProfileBuyerViewModel : ViewModel() {
         _updateStatus.value = "Loading"
 
         if (imageUri != null) {
-            // Jika ada gambar baru, unggah dulu
+            // Cek apakah file valid sebelum upload
+            try {
+                val inputStream = context.contentResolver.openInputStream(imageUri)
+                val fileSize = inputStream?.available() ?: 0
+                inputStream?.close()
+
+                if (fileSize <= 0) {
+                    _updateStatus.value = "Error: File gambar tidak valid."
+                    return
+                }
+            } catch (e: Exception) {
+                _updateStatus.value = "Error: Tidak bisa membaca file - ${e.message}"
+                return
+            }
+
+            // Upload fresh (tanpa resume session lama)
             uploadImageAndUpdateUser(userId, name, phone, address, imageUri)
         } else {
-            // Jika tidak ada gambar baru, langsung update data teks
+            // Kalau tidak ada foto baru, update data teks saja
             updateUserData(userId, name, phone, address, null)
         }
     }
 
+    // 🔹 Upload foto baru + update Firestore
     private fun uploadImageAndUpdateUser(
-        userId: String, name: String, phone: String, address: String, imageUri: Uri
+        userId: String,
+        name: String,
+        phone: String,
+        address: String,
+        imageUri: Uri
     ) {
-        val storageRef = storage.reference.child("profile_pictures/${userId}_profile.jpg")
+        // Nama file unik → biar session upload selalu fresh
+        val storageRef = storage.reference.child("profile_pictures/${userId}_${System.currentTimeMillis()}.jpg")
+
         storageRef.putFile(imageUri)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                    // Setelah gambar berhasil diunggah, perbarui data dengan URL gambar baru
                     updateUserData(userId, name, phone, address, downloadUrl.toString())
                 }
             }
@@ -80,8 +103,13 @@ class EditProfileBuyerViewModel : ViewModel() {
             }
     }
 
+    // 🔹 Update data ke Firestore
     private fun updateUserData(
-        userId: String, name: String, phone: String, address: String, photoUrl: String?
+        userId: String,
+        name: String,
+        phone: String,
+        address: String,
+        photoUrl: String?
     ) {
         val userUpdates = mutableMapOf<String, Any>(
             "name" to name,
@@ -89,13 +117,13 @@ class EditProfileBuyerViewModel : ViewModel() {
             "address" to address
         )
 
-        // Hanya tambahkan photoUrl ke dalam map jika ada URL gambar yang baru
+        // Firestore pakai field "photourl" (bukan photoUrl camelCase)
         if (photoUrl != null) {
-            userUpdates["photoUrl"] = photoUrl
+            userUpdates["photourl"] = photoUrl
         }
 
         db.collection("users").document(userId)
-            .update(userUpdates) // 🔥 Menggunakan .update() untuk memperbarui field yang ada
+            .update(userUpdates)
             .addOnSuccessListener {
                 _updateStatus.value = "Success"
             }

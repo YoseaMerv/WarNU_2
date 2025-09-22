@@ -93,7 +93,7 @@ class MainSellerActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_order -> {
-                    Toast.makeText(this, "Pesanan Masuk diklik", Toast.LENGTH_SHORT).show()
+                    navController.navigate(R.id.orderManagerFragment)
                     true
                 }
                 R.id.nav_logout -> {

@@ -15,7 +15,6 @@
         android:layout_marginRight="12dp">
 
 
-        <!-- Foto Profil Buyer -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_photo_buyer"
             android:layout_width="40dp"
@@ -34,7 +33,6 @@
                 tools:srcCompat="@tools:sample/avatars" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Nama Buyer -->
         <TextView
             android:id="@+id/tv_buyer_name"
             android:layout_width="wrap_content"
@@ -47,7 +45,6 @@
             app:layout_constraintTop_toTopOf="@id/card_photo_buyer"
             tools:text="Rafi Buyer" />
 
-        <!-- Tanggal Pesanan -->
         <TextView
             android:id="@+id/tv_order_date"
             android:layout_width="wrap_content"
@@ -57,7 +54,6 @@
             app:layout_constraintTop_toBottomOf="@id/tv_buyer_name"
             tools:text="2025-08-03 11:21" />
 
-        <!-- Status Pesanan -->
         <TextView
             android:id="@+id/tv_order_status"
             android:layout_width="wrap_content"
@@ -76,7 +72,6 @@
             tools:background="@drawable/status_cancelled_background"
             tools:text="CANCELLED" />
 
-        <!-- Detail Item Pesanan -->
         <TextView
             android:id="@+id/tv_order_items"
             android:layout_width="0dp"
@@ -89,7 +84,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_photo_buyer" />
 
-        <!-- Garis Pemisah -->
         <View
             android:id="@+id/divider_total"
             android:layout_width="0dp"
@@ -100,7 +94,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_order_items" />
 
-        <!-- Total Harga -->
         <TextView
             android:id="@+id/tv_total_price"
             android:layout_width="wrap_content"
