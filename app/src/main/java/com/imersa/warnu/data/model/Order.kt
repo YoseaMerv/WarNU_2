@@ -7,12 +7,11 @@ data class Order(
     val orderId: String? = null,
     val userId: String? = null,
     val totalAmount: Double? = null,
-    val paymentStatus: String? = null, // "pending", "settlement", "failed"
+    val paymentStatus: String? = null,
     val createdAt: Timestamp? = null,
-    @get:PropertyName("items") // Pastikan nama properti cocok dengan di Firestore
+    @get:PropertyName("items")
     @set:PropertyName("items")
-    var items: List<CartItem>? = null, // Menggunakan kembali CartItem
+    var items: List<CartItem>? = null,
     val customerName: String? = null,
-    var sellerIds: List<String>? = null
+    var sellerId: String? = null // 💡 DIUBAH: Menjadi tunggal
 )
-

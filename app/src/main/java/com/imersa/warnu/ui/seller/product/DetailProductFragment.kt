@@ -80,7 +80,7 @@ class DetailProductFragment : Fragment() {
                     .get()
                     .addOnSuccessListener { doc ->
                         if (doc.exists()) {
-                            // Sudah ada → update qty
+                            // ... (logika untuk update quantity tidak perlu diubah)
                             val currentQty = doc.getLong("quantity") ?: 0
                             firestore.collection("carts")
                                 .document(userId)
@@ -90,17 +90,20 @@ class DetailProductFragment : Fragment() {
                                 .addOnSuccessListener {
                                     Toast.makeText(requireContext(), "Qty ditambah", Toast.LENGTH_SHORT).show()
                                 }
-                                .addOnFailureListener {
-                                    Toast.makeText(requireContext(), "Gagal update cart", Toast.LENGTH_SHORT).show()
-                                }
+                            // ...
                         } else {
+                            // --- PERUBAHAN DI SINI ---
                             // Belum ada → tambahkan baru
                             val cartItem = hashMapOf(
                                 "productId" to currentProduct.id,
                                 "name" to currentProduct.name,
                                 "price" to currentProduct.price,
-                                "quantity" to 1
+                                "quantity" to 1,
+                                "sellerId" to currentProduct.sellerId, // 💡 TAMBAHKAN BARIS INI
+                                "imageUrl" to currentProduct.imageUrl // Opsional: bagus untuk ditampilkan di cart
                             )
+                            // --- AKHIR PERUBAHAN ---
+
                             firestore.collection("carts")
                                 .document(userId)
                                 .collection("items")

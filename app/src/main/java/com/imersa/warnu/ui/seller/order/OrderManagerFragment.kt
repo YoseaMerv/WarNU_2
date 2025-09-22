@@ -6,14 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.imersa.warnu.databinding.FragmentSellerOrdersBinding
 
 class OrderManagerFragment : Fragment() {
 
     private var _binding: FragmentSellerOrdersBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: OrderSellerViewModel by viewModels()
-    private lateinit var adapter: OrderSellerAdapter
+    private lateinit var orderAdapter: OrderSellerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,23 +28,33 @@ class OrderManagerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 🔹 Pasang adapter kosong dulu
-        adapter = OrderSellerAdapter(mutableListOf())
-        binding.rvOrders.adapter = adapter
+        setupRecyclerView()
+        observeViewModel()
 
-        // 🔹 Observe orders
+        viewModel.loadOrders()
+    }
+
+    private fun setupRecyclerView() {
+        orderAdapter = OrderSellerAdapter()
+        binding.rvOrders.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = orderAdapter
+        }
+    }
+
+    private fun observeViewModel() {
         viewModel.orders.observe(viewLifecycleOwner) { orders ->
-            if (orders.isNotEmpty()) {
-                adapter.updateData(orders)
-                binding.rvOrders.visibility = View.VISIBLE
-                binding.emptyLayout.visibility = View.GONE
-            } else {
-                binding.rvOrders.visibility = View.GONE
-                binding.emptyLayout.visibility = View.VISIBLE
-            }
+            orderAdapter.submitList(orders)
         }
 
-        viewModel.fetchOrders()
+        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        viewModel.emptyState.observe(viewLifecycleOwner) { isEmpty ->
+            binding.tvEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            binding.rvOrders.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        }
     }
 
     override fun onDestroyView() {
@@ -50,5 +62,3 @@ class OrderManagerFragment : Fragment() {
         _binding = null
     }
 }
-
-

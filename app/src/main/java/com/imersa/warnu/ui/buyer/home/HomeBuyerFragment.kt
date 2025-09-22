@@ -94,7 +94,8 @@ class HomeBuyerFragment : Fragment() {
                             "name" to product.name,
                             "price" to product.price,
                             "imageUrl" to product.imageUrl,
-                            "quantity" to 1
+                            "quantity" to 1,
+                            "sellerId" to product.sellerId
                         )
                         transaction.set(cartRef, cartItem)
                     }

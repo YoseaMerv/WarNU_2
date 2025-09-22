@@ -2,14 +2,16 @@ package com.imersa.warnu.ui.seller.order
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.imersa.warnu.data.model.Order
 import com.imersa.warnu.databinding.ItemOrdersBinding
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class OrderSellerAdapter(private var orders: MutableList<Order>) :
-    RecyclerView.Adapter<OrderSellerAdapter.OrderViewHolder>() {
+class OrderSellerAdapter : ListAdapter<Order, OrderSellerAdapter.OrderViewHolder>(OrderDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
         val binding = ItemOrdersBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -17,38 +19,40 @@ class OrderSellerAdapter(private var orders: MutableList<Order>) :
     }
 
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
-        holder.bind(orders[position])
+        val order = getItem(position)
+        holder.bind(order)
     }
 
-    override fun getItemCount(): Int = orders.size
-
-    fun updateData(newOrders: List<Order>) {
-        orders.clear()
-        orders.addAll(newOrders)
-        notifyDataSetChanged()
-    }
-
-    inner class OrderViewHolder(private val binding: ItemOrdersBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class OrderViewHolder(private val binding: ItemOrdersBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(order: Order) {
-            binding.tvBuyerName.text = order.customerName ?: "Pembeli"
+            val formattedPrice = NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(order.totalAmount)
+            val sdf = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale("id", "ID"))
 
-            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-            binding.tvOrderDate.text = order.createdAt?.toDate()?.let { sdf.format(it) } ?: "Tanpa tanggal"
+            binding.tvOrderId.text = "Order #${order.orderId?.take(8)}" // Ambil 8 karakter pertama
+            binding.tvCustomerName.text = order.customerName ?: "Nama Pelanggan Tidak Tersedia"
+            binding.tvOrderTotal.text = formattedPrice
+            binding.tvOrderStatus.text = order.paymentStatus?.replaceFirstChar { it.uppercase() }
+            binding.tvOrderDate.text = order.createdAt?.toDate()?.let { sdf.format(it) } ?: "Tanggal tidak tersedia"
 
-            binding.tvOrderStatus.text = order.paymentStatus?.uppercase(Locale.ROOT) ?: "UNKNOWN"
-
-            // 🔹 Filter item yang memang milik seller ini
-            val sellerId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
-            val sellerItems = order.items?.filter { it.sellerId == sellerId }
-
-            binding.tvOrderItems.text = sellerItems?.joinToString("\n") {
-                "• ${it.name} x${it.quantity} - Rp ${it.price}"
-            } ?: "Tidak ada item."
-
-            val totalPriceForSeller = sellerItems?.sumOf { (it.price ?: 0.0) * it.quantity }
-            binding.tvTotalPrice.text = "Total: Rp ${totalPriceForSeller ?: 0.0}"
+            // Logika untuk mengubah warna status (opsional tapi bagus)
+            // Anda perlu membuat drawable (misal: status_pending_background.xml)
+            // binding.tvOrderStatus.setBackgroundResource(
+            //     when(order.paymentStatus) {
+            //         "pending" -> R.drawable.status_pending_background
+            //         "settlement" -> R.drawable.status_success_background
+            //         else -> R.drawable.status_failed_background
+            //     }
+            // )
         }
     }
 }
 
+class OrderDiffCallback : DiffUtil.ItemCallback<Order>() {
+    override fun areItemsTheSame(oldItem: Order, newItem: Order): Boolean {
+        return oldItem.orderId == newItem.orderId
+    }
+
+    override fun areContentsTheSame(oldItem: Order, newItem: Order): Boolean {
+        return oldItem == newItem
+    }
+}
