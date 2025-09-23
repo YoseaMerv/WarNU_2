@@ -80,6 +80,8 @@
                     android:id="@+id/et_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"
                     android:hint="Nama Lengkap"/>
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -103,6 +105,8 @@
                     android:id="@+id/et_store_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"
                     android:hint="Nama Toko"/>
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -126,7 +130,9 @@
                     android:id="@+id/et_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nomor Telepon"/>
+                    android:hint="Nomor Telepon"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Input Alamat -->
@@ -151,7 +157,9 @@
                     android:layout_height="wrap_content"
                     android:hint="Alamat"
                     android:minLines="3"
-                    android:gravity="top"/>
+                    android:gravity="top"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Tombol Simpan -->

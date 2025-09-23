@@ -22,9 +22,9 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:scaleType="centerCrop"
+            android:contentDescription="product_image"
             tools:src="@drawable/placeholder_image"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
-            android:contentDescription="product_image" />
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Corner.Medium" />
 
         <TextView
             android:id="@+id/tvProductName"

@@ -39,6 +39,9 @@
                     android:id="@+id/etNamaProduk"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
                     tools:text="Sepatu Nike" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -58,6 +61,9 @@
                     android:id="@+id/etDeskripsi"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
                     tools:text="Sepatu lari yang nyaman" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -77,6 +83,8 @@
                     android:id="@+id/etHarga"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
                     tools:text="1250000" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -97,6 +105,8 @@
                     android:id="@+id/etStok"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
                     android:inputType="number"
                     tools:text="10" />
             </com.google.android.material.textfield.TextInputLayout>

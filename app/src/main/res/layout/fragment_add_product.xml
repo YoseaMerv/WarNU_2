@@ -36,7 +36,9 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNamaProduk"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Deskripsi -->
@@ -49,7 +51,9 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDeskripsi"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Harga -->
@@ -63,6 +67,8 @@
                     android:id="@+id/etHarga"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"
                     android:inputType="numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -77,7 +83,9 @@
                     android:id="@+id/etStok"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Dropdown Kategori -->
@@ -92,6 +100,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"
                     tools:ignore="LabelFor" />
             </com.google.android.material.textfield.TextInputLayout>
 
