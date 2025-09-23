@@ -44,6 +44,7 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_marginTop="12dp"
+            android:contentDescription="Customer Icon"
             android:src="@drawable/ic_user"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_order_id"

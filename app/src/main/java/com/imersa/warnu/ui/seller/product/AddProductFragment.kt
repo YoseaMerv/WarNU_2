@@ -74,7 +74,7 @@ class AddProductFragment : Fragment() {
                 name, price, description, stock, category, selectedImageUri
             )
         }
-
+        @Suppress("DEPRECATION")
         lifecycleScope.launchWhenStarted {
             viewModel.state.collectLatest { state ->
                 when (state) {

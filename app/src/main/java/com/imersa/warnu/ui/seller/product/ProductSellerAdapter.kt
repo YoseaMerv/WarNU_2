@@ -1,5 +1,6 @@
 package com.imersa.warnu.ui.seller.product
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +37,7 @@ class ProductSellerAdapter(
         return ProductViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = products[position]
 

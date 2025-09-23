@@ -22,7 +22,7 @@ class EditManageViewModel @Inject constructor(
         repository.getProductsBySeller(sellerId)
     }
 
-    private val _loading = MutableLiveData<Boolean>(false)
+    private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> get() = _loading
 
     private val _errorMessage = MutableLiveData<String?>(null)

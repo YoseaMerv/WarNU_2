@@ -1,5 +1,6 @@
 package com.imersa.warnu.ui.seller.home
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -76,6 +77,7 @@ class HomeSellerFragment : Fragment() {
         binding.rvProductSeller.adapter = adapter
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun observeViewModel() {
         viewModel.products.observe(viewLifecycleOwner) { products ->
             productList.clear()

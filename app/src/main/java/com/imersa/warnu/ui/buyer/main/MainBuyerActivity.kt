@@ -1,5 +1,6 @@
 package com.imersa.warnu.ui.buyer.main
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -31,6 +32,7 @@ class MainBuyerActivity : AppCompatActivity() {
 
     private val viewModel: MainBuyerViewModel by viewModels()
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_buyer)

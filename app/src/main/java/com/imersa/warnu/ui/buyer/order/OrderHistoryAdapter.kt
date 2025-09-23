@@ -24,7 +24,7 @@ class OrderHistoryAdapter : ListAdapter<Order, OrderHistoryAdapter.OrderViewHold
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
-
+    @Suppress("DEPRECATION")
     inner class OrderViewHolder(private val binding: ItemOrderHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(order: Order) {

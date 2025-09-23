@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="16dp"
-            android:text="Tidak ada produk tersedia"
+            android:text="@string/tidak_ada_produk_tersedia"
             android:textColor="@android:color/darker_gray"
             android:textSize="16sp"
             android:visibility="gone" />
@@ -74,17 +74,20 @@
                         <ImageView
                             android:layout_width="18dp"
                             android:layout_height="18dp"
-                            android:tint="@color/black"
-                            android:src="@drawable/ic_search" />
+                            android:contentDescription="@string/search"
+                            android:src="@drawable/ic_search"
+                            app:tint="@color/black" />
 
                         <EditText
                             android:id="@+id/etSearch"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
+                            android:autofillHints=""
                             android:background="@android:color/transparent"
-                            android:hint="Cari produk..."
+                            android:hint="@string/cari_produk"
                             android:imeOptions="actionSearch"
+                            android:inputType="text"
                             android:singleLine="true"
                             android:textSize="14sp" />
                     </LinearLayout>

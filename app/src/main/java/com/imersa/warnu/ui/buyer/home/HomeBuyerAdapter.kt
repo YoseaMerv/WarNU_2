@@ -1,5 +1,6 @@
 package com.imersa.warnu.ui.buyer.home
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ class HomeBuyerAdapter(
 
     private val items = mutableListOf<Product>()
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitList(list: List<Product>) {
         items.clear()
         items.addAll(list)
@@ -28,7 +30,7 @@ class HomeBuyerAdapter(
 
         fun bind(product: Product) {
             binding.tvNamaProdukBuyer.text = product.name
-
+            @Suppress("DEPRECATION")
             val formattedPrice =
                 NumberFormat.getCurrencyInstance(Locale("in", "ID")).format(product.price ?: 0.0)
             binding.tvHargaProdukBuyer.text = formattedPrice

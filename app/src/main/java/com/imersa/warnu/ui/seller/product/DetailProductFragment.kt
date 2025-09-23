@@ -1,5 +1,6 @@
 package com.imersa.warnu.ui.seller.product
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +34,7 @@ class DetailProductFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -111,6 +113,7 @@ class DetailProductFragment : Fragment() {
 
         viewModel.product.observe(viewLifecycleOwner) { product ->
             val formattedPrice =
+                @Suppress("DEPRECATION")
                 NumberFormat.getNumberInstance(Locale("id", "ID")).format(product.price)
 
             binding.tvDetailNamaProduk.text = product.name

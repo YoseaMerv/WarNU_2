@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
     tools:context=".ui.seller.product.AddProductFragment">
 
     <!-- Toolbar (opsional di Fragment, bisa disembunyikan kalau pakai host Activity) -->
@@ -33,7 +32,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nama Produk">
+                android:hint="@string/nama_produk">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNamaProduk"
                     android:layout_width="match_parent"
@@ -46,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Deskripsi">
+                android:hint="@string/deskripsi">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDeskripsi"
                     android:layout_width="match_parent"
@@ -59,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Harga">
+                android:hint="@string/harga">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etHarga"
                     android:layout_width="match_parent"
@@ -73,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Stok">
+                android:hint="@string/stok">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etStok"
                     android:layout_width="match_parent"
@@ -87,12 +86,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Kategori">
+                android:hint="@string/kategori">
                 <AutoCompleteTextView
                     android:id="@+id/actvKategori"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none" />
+                    android:inputType="none"
+                    tools:ignore="LabelFor" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Preview Gambar -->
@@ -101,6 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:layout_marginTop="16dp"
+                android:contentDescription="@string/category_preview"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
                 tools:src="@drawable/placeholder_image"
@@ -114,7 +115,7 @@
                 android:layout_marginTop="24dp"
                 android:backgroundTint="#1A8754"
                 android:paddingVertical="12dp"
-                android:text="Pilih gambar"
+                android:text="@string/pilih_gambar"
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_image"
                 app:iconGravity="textStart" />
@@ -127,7 +128,7 @@
                 android:layout_marginTop="8dp"
                 android:backgroundTint="#1A8754"
                 android:paddingVertical="12dp"
-                android:text="Simpan produk"
+                android:text="@string/simpan_produk"
                 app:cornerRadius="8dp"
                 app:icon="@drawable/ic_save"
                 app:iconGravity="textStart" />

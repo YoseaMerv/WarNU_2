@@ -28,7 +28,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <!-- Tempat NavHostFragment -->
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_container_buyer"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:contentDescription="Aksi Buyer"
+            android:contentDescription="@string/aksi_buyer"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_add" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

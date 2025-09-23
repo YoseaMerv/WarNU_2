@@ -3,7 +3,6 @@ package com.imersa.warnu.ui.seller.product
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.imersa.warnu.data.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +12,6 @@ import javax.inject.Inject
 class DetailProductViewModel @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
-    private val auth = FirebaseAuth.getInstance()
     private val _product = MutableLiveData<Product>()
     val product: LiveData<Product> get() = _product
 

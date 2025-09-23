@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
     tools:context=".ui.seller.product.EditProductFragment">
 
     <!-- Toolbar Bagian Atas -->
@@ -119,7 +118,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none"
-                    tools:text="Sneakers" />
+                    tools:text="Sneakers"
+                    tools:ignore="LabelFor" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.imageview.ShapeableImageView

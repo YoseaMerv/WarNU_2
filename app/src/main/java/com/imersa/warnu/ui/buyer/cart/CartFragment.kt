@@ -68,6 +68,7 @@ class CartFragment : Fragment() {
 
     private fun updateTotalPrice(cartItems: List<CartItem>) {
         val totalPrice = cartItems.sumOf { (it.price ?: 0.0) * it.quantity }
+        @Suppress("DEPRECATION")
         val localeID = Locale("in", "ID")
         val numberFormat = NumberFormat.getCurrencyInstance(localeID)
         binding.tvTotalPrice.text = numberFormat.format(totalPrice)

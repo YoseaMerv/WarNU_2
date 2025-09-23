@@ -46,6 +46,7 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:contentDescription="@string/receipt"
             android:src="@drawable/ic_receipt"
             app:tint="@color/black" />
 
@@ -53,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Belum Ada Pesanan"
+            android:text="@string/belum_ada_pesanan"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -61,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Semua pesanan Anda akan muncul di sini." />
+            android:text="@string/semua_pesanan_anda_akan_muncul_di_sini" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

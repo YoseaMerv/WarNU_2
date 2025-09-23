@@ -1,5 +1,6 @@
 package com.imersa.warnu.ui.seller.main
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
@@ -28,7 +29,8 @@ class MainSellerActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private val viewModel: MainSellerViewModel by viewModels()
-
+    @SuppressLint("SetTextI18n")
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_seller)

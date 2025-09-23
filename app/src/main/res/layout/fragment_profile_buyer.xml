@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0F0F0"
     tools:context=".ui.buyer.profile.ProfileBuyerFragment">
 
     <androidx.core.widget.NestedScrollView
@@ -50,6 +49,7 @@
                             android:id="@+id/ivFotoProfil"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:contentDescription="Photo Profile"
                             android:scaleType="centerCrop"
                             android:src="@drawable/placeholder_image" />
                     </com.google.android.material.card.MaterialCardView>
@@ -64,6 +64,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginEnd="16dp"
+                            android:contentDescription="Profile"
                             android:src="@drawable/ic_profile"
                             app:tint="#1A8754" />
 
@@ -104,6 +105,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginEnd="16dp"
+                            android:contentDescription="Phone"
                             android:src="@drawable/ic_phone"
                             app:tint="#1A8754" />
 
@@ -144,6 +146,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginEnd="16dp"
+                            android:contentDescription="E-Mail"
                             android:src="@drawable/ic_email"
                             app:tint="#1A8754" />
 
@@ -184,6 +187,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginEnd="16dp"
+                            android:contentDescription="Location"
                             android:src="@drawable/ic_location"
                             app:tint="#1A8754" />
 

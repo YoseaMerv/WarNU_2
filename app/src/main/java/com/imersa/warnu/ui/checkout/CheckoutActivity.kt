@@ -29,7 +29,7 @@ class CheckoutActivity : AppCompatActivity() {
     private val BASE_URL = "http://10.0.2.2:3000/"
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
-
+    @Suppress("DEPRECATION")
     private val uikitLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val transactionResult =
@@ -96,9 +96,9 @@ class CheckoutActivity : AppCompatActivity() {
         }
 
         val customerDetails = CustomerDetails(
-            name = userProfile.name ?: "Pengguna",
-            email = userProfile.email ?: "",
-            phone = userProfile.phone ?: ""
+            name = userProfile.name,
+            email = userProfile.email,
+            phone = userProfile.phone
         )
 
         val sellerId = cartItems.firstOrNull()?.sellerId

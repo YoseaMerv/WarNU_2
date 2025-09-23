@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white_login">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:layout_height="80dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_bike_logo"
-            android:contentDescription="Logo"
+            android:contentDescription="@string/logo"
             android:layout_marginTop="48dp"
             />
 
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Login to your"
+            android:text="@string/login_to_your"
             android:textColor="#111827"
 
             android:textSize="24sp"
@@ -36,7 +36,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Account"
+            android:text="@string/account"
             android:textStyle="bold"
             android:textSize="24sp"
             android:textColor="#111827"
@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter your email and password to log in"
+            android:text="@string/enter_your_email_and_password_to_log_in"
             android:textColor="#6B7280"
             android:textSize="14sp"
             android:layout_gravity="center_horizontal"
@@ -65,14 +65,16 @@
                 android:orientation="horizontal"
                 android:background="@drawable/edittext_background"
                 android:padding="12dp"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                tools:ignore="UselessParent">
 
                 <EditText
                     android:id="@+id/emailInput"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Email"
+                    android:autofillHints=""
+                    android:hint="@string/email"
                     android:inputType="textEmailAddress"
                     android:singleLine="true"
                     android:maxLength="100"
@@ -104,7 +106,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Password"
+                    android:autofillHints=""
+                    android:hint="@string/password"
                     android:background="@android:color/transparent"
                     android:inputType="textPassword"
                     android:textColor="#000000"
@@ -120,7 +123,7 @@
                 android:src="@drawable/ic_closed_eye"
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="12dp"
-                android:contentDescription="Toggle Password Visibility" />
+                android:contentDescription="@string/toggle_password_visibility" />
         </FrameLayout>
 
         <!-- Forgot Password -->
@@ -128,7 +131,7 @@
             android:id="@+id/forgotPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Forgot Password ?"
+            android:text="@string/forgot_password"
             android:textColor="#2563EB"
             android:textSize="14sp"
             android:layout_gravity="end"
@@ -139,7 +142,7 @@
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Log In"
+            android:text="@string/log_in"
             android:backgroundTint="@color/green"
             android:textColor="#FFFFFF"
             android:layout_marginBottom="16dp" />
@@ -167,7 +170,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Don't have an account?"
+                android:text="@string/don_t_have_an_account"
                 android:textColor="#6B7280"
                 android:textSize="14sp"
                 android:gravity="center"/>
@@ -183,13 +186,14 @@
                     android:id="@+id/signUpBuyer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sign Up as Buyer"
+                    android:text="@string/sign_up_as_buyer"
                     android:textColor="#2563EB"
                     android:textSize="14sp"
-                    android:paddingEnd="8dp"/>
+                    android:paddingEnd="8dp"
+                    android:paddingStart="8dp" />
 
                 <TextView
-                    android:text="|"
+                    android:text="@string/I"
                     android:textColor="#9CA3AF"
                     android:textSize="14sp"
                     android:layout_width="wrap_content"
@@ -203,10 +207,11 @@
                     android:id="@+id/signUpSeller"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sign Up as Seller"
+                    android:text="@string/sign_up_as_seller"
                     android:textColor="#2563EB"
                     android:textSize="14sp"
-                    android:paddingStart="8dp"/>
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

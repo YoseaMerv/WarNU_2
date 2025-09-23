@@ -1,5 +1,6 @@
 package com.imersa.warnu.ui.seller.order
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -26,6 +27,8 @@ class OrderSellerAdapter :
 
     inner class OrderViewHolder(private val binding: ItemOrdersBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
+        @Suppress("DEPRECATION")
         fun bind(order: Order) {
             val formattedPrice =
                 NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(order.totalAmount)

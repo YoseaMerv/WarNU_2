@@ -32,7 +32,7 @@ class CartAdapter(
             binding.apply {
                 tvProductName.text = cartItem.name
                 tvQuantity.text = cartItem.quantity.toString()
-
+                @Suppress("DEPRECATION")
                 val localeID = Locale("in", "ID")
                 val numberFormat = NumberFormat.getCurrencyInstance(localeID)
                 tvProductPrice.text = numberFormat.format(cartItem.price ?: 0.0)

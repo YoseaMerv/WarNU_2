@@ -1,5 +1,6 @@
 package com.imersa.warnu.ui.buyer.product
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,7 @@ class ProductAdapter(
         private val tvNama: TextView = itemView.findViewById(R.id.tvNamaProdukBuyer)
         private val tvHarga: TextView = itemView.findViewById(R.id.tvHargaProdukBuyer)
 
+        @SuppressLint("DefaultLocale")
         fun bind(produk: Product) {
             tvNama.text = produk.name ?: "-"
             val priceText = if (produk.price != null) {
