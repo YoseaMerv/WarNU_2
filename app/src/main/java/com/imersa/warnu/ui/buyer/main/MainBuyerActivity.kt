@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -39,6 +40,7 @@ class MainBuyerActivity : AppCompatActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.buyer_toolbar)
         setSupportActionBar(toolbar)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.green)
 
         drawerLayout = findViewById(R.id.drawer_layout_buyer)
         navigationView = findViewById(R.id.navigation_view_buyer)

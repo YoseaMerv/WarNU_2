@@ -169,8 +169,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="Tambah ke Keranjang"
-        android:src="@drawable/ic_order"
-        app:backgroundTint="@color/teal_700"
+        android:src="@drawable/ic_cart"
+        app:backgroundTint="@color/green"
         app:layout_anchor="@id/contentLayout"
         app:layout_anchorGravity="bottom|end"
         android:visibility="gone" />

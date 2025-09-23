@@ -22,18 +22,24 @@ class EditProfileBuyerViewModel : ViewModel() {
     private val _userData = MutableLiveData<Map<String, Any>>()
     val userData: LiveData<Map<String, Any>> get() = _userData
 
+    private var oldPhotoUrl: String? = null
+
     fun fetchUserData() {
         if (userId == null) {
             _updateStatus.value = "Error: User tidak ditemukan."
             return
         }
-        db.collection("users").document(userId).get().addOnSuccessListener { document ->
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    _userData.value = document.data
+                    val data = document.data ?: emptyMap()
+                    _userData.value = data
+                    oldPhotoUrl = data["photourl"] as? String
                 } else {
                     _updateStatus.value = "Error: Data pengguna tidak ditemukan."
                 }
-            }.addOnFailureListener { e ->
+            }
+            .addOnFailureListener { e ->
                 _updateStatus.value = "Error: Gagal mengambil data - ${e.message}"
             }
     }
@@ -75,11 +81,18 @@ class EditProfileBuyerViewModel : ViewModel() {
         val storageRef =
             storage.reference.child("profile_pictures/${userId}_${System.currentTimeMillis()}.jpg")
 
-        storageRef.putFile(imageUri).addOnSuccessListener {
+        storageRef.putFile(imageUri)
+            .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                     updateUserData(userId, name, phone, address, downloadUrl.toString())
+
+                    // 🔥 Hapus foto lama setelah sukses update (kalau ada)
+                    oldPhotoUrl?.let { url ->
+                        deleteOldPhoto(url)
+                    }
                 }
-            }.addOnFailureListener { e ->
+            }
+            .addOnFailureListener { e ->
                 _updateStatus.value = "Error: Gagal mengunggah gambar - ${e.message}"
             }
     }
@@ -88,17 +101,33 @@ class EditProfileBuyerViewModel : ViewModel() {
         userId: String, name: String, phone: String, address: String, photoUrl: String?
     ) {
         val userUpdates = mutableMapOf<String, Any>(
-            "name" to name, "phone" to phone, "address" to address
+            "name" to name,
+            "phone" to phone,
+            "address" to address
         )
 
         if (photoUrl != null) {
             userUpdates["photourl"] = photoUrl
         }
 
-        db.collection("users").document(userId).update(userUpdates).addOnSuccessListener {
+        db.collection("users").document(userId).update(userUpdates)
+            .addOnSuccessListener {
                 _updateStatus.value = "Success"
-            }.addOnFailureListener { e ->
+            }
+            .addOnFailureListener { e ->
                 _updateStatus.value = "Error: Gagal memperbarui data - ${e.message}"
             }
+    }
+
+    private fun deleteOldPhoto(url: String) {
+        try {
+            val oldRef = storage.getReferenceFromUrl(url)
+            oldRef.delete()
+                .addOnSuccessListener {
+                }
+                .addOnFailureListener {
+                }
+        } catch (e: Exception) {
+        }
     }
 }

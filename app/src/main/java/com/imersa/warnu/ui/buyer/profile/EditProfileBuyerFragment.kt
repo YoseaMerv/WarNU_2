@@ -25,7 +25,10 @@ class EditProfileBuyerFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             if (uri != null) {
                 selectedImageUri = uri
-                binding.ivProfile.setImageURI(selectedImageUri)
+                Glide.with(this)
+                    .load(selectedImageUri)
+                    .circleCrop()
+                    .into(binding.ivProfile)
             }
         }
 

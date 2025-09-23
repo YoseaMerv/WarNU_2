@@ -45,7 +45,7 @@ class OrderHistoryAdapter : ListAdapter<Order, OrderHistoryAdapter.OrderViewHold
                 when (status) {
                     "SETTLEMENT" -> {
                         tvStatus.background =
-                            ContextCompat.getDrawable(itemView.context, R.drawable.circle_green)
+                            ContextCompat.getDrawable(itemView.context, R.drawable.status_settlement_background)
                     }
 
                     "PENDING" -> {

@@ -3,9 +3,11 @@ package com.imersa.warnu.ui.seller.order
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.imersa.warnu.R
 import com.imersa.warnu.data.model.Order
 import com.imersa.warnu.databinding.ItemOrdersBinding
 import java.text.NumberFormat
@@ -27,19 +29,49 @@ class OrderSellerAdapter :
 
     inner class OrderViewHolder(private val binding: ItemOrdersBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         @SuppressLint("SetTextI18n")
         @Suppress("DEPRECATION")
         fun bind(order: Order) {
-            val formattedPrice =
-                NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(order.totalAmount)
-            val sdf = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale("id", "ID"))
+            val localeID = Locale("in", "ID")
+            val numberFormat = NumberFormat.getCurrencyInstance(localeID)
+            val formattedPrice = numberFormat.format(order.totalAmount ?: 0.0)
 
-            binding.tvOrderId.text = "Order #${order.orderId?.take(8)}" // Ambil 8 karakter pertama
-            binding.tvCustomerName.text = order.customerName ?: "Nama Pelanggan Tidak Tersedia"
-            binding.tvOrderTotal.text = formattedPrice
-            binding.tvOrderStatus.text = order.paymentStatus?.replaceFirstChar { it.uppercase() }
-            binding.tvOrderDate.text =
-                order.createdAt?.toDate()?.let { sdf.format(it) } ?: "Tanggal tidak tersedia"
+            val sdf = SimpleDateFormat("dd MMMM yyyy, HH:mm", localeID)
+
+            binding.apply {
+                tvOrderId.text = "Order #${order.orderId ?: "-"}"
+                tvCustomerName.text = order.customerName ?: "Nama Pelanggan Tidak Tersedia"
+                tvOrderTotal.text = formattedPrice
+                tvOrderDate.text =
+                    order.createdAt?.toDate()?.let { sdf.format(it) } ?: "Tanggal tidak tersedia"
+
+                val status = order.paymentStatus?.uppercase(Locale.ROOT) ?: "UNKNOWN"
+                tvOrderStatus.text = status
+
+                when (status) {
+                    "SETTLEMENT" -> {
+                        tvOrderStatus.background = ContextCompat.getDrawable(
+                            itemView.context,
+                            R.drawable.status_settlement_background
+                        )
+                    }
+
+                    "PENDING" -> {
+                        tvOrderStatus.background = ContextCompat.getDrawable(
+                            itemView.context,
+                            R.drawable.status_pending_background
+                        )
+                    }
+
+                    else -> {
+                        tvOrderStatus.background = ContextCompat.getDrawable(
+                            itemView.context,
+                            R.drawable.status_cancelled_background
+                        )
+                    }
+                }
+            }
         }
     }
 }
