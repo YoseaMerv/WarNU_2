@@ -26,37 +26,31 @@ class CartAdapter(
         holder.bind(item)
     }
 
-    inner class CartViewHolder(private val binding: ItemCartBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CartViewHolder(private val binding: ItemCartBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(cartItem: CartItem) {
             binding.apply {
                 tvProductName.text = cartItem.name
                 tvQuantity.text = cartItem.quantity.toString()
 
-                // Format harga ke Rupiah
                 val localeID = Locale("in", "ID")
                 val numberFormat = NumberFormat.getCurrencyInstance(localeID)
                 tvProductPrice.text = numberFormat.format(cartItem.price ?: 0.0)
 
-                Glide.with(itemView.context)
-                    .load(cartItem.imageUrl)
-                    .into(ivProductImage)
+                Glide.with(itemView.context).load(cartItem.imageUrl).into(ivProductImage)
 
-                // Listener untuk tombol tambah kuantitas
                 btnIncreaseQuantity.setOnClickListener {
                     onUpdateQuantity(cartItem, cartItem.quantity + 1)
                 }
 
-                // Listener untuk tombol kurang kuantitas
                 btnDecreaseQuantity.setOnClickListener {
                     if (cartItem.quantity > 1) {
                         onUpdateQuantity(cartItem, cartItem.quantity - 1)
                     } else {
-                        // Jika kuantitas 1 lalu dikurangi, hapus item
                         onRemoveItem(cartItem)
                     }
                 }
 
-                // Listener untuk tombol hapus item
                 btnRemoveItem.setOnClickListener {
                     onRemoveItem(cartItem)
                 }

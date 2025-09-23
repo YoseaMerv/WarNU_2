@@ -21,9 +21,7 @@ class ProfileSellerFragment : Fragment() {
     private val viewModel: ProfileSellerViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileSellerBinding.inflate(inflater, container, false)
         return binding.root
@@ -63,9 +61,7 @@ class ProfileSellerFragment : Fragment() {
 
         viewModel.photoUrl.observe(viewLifecycleOwner) { url ->
             if (!url.isNullOrEmpty()) {
-                Glide.with(this)
-                    .load(url)
-                    .centerCrop()
+                Glide.with(this).load(url).centerCrop()
                     .placeholder(R.drawable.placeholder_image) // Menggunakan placeholder yang konsisten
                     .into(binding.ivFotoProfil)
             } else {

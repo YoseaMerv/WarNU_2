@@ -19,18 +19,17 @@ class RegisterBuyerViewModel : ViewModel() {
     val registerStatus: LiveData<String> get() = _registerStatus
 
     private val EMAIL_ADDRESS_PATTERN = Pattern.compile(
-        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
-                "\\@" +
-                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
-                "(" +
-                "\\." +
-                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
-                ")+"
+        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" + "\\@" + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" + "(" + "\\." + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" + ")+"
     )
 
 
     fun register(
-        name: String, email: String, phone: String, address: String, password: String, imageUri: Uri?
+        name: String,
+        email: String,
+        phone: String,
+        address: String,
+        password: String,
+        imageUri: Uri?
     ) {
         if (!isValidEmail(email)) {
             _registerStatus.value = "Error: Format email tidak valid."
@@ -43,8 +42,7 @@ class RegisterBuyerViewModel : ViewModel() {
         }
 
         _registerStatus.value = "Loading"
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val userId = auth.currentUser?.uid
                     if (userId == null) {
@@ -72,19 +70,22 @@ class RegisterBuyerViewModel : ViewModel() {
     ) {
         val storageRef = storage.reference.child("profile_pictures/${userId}_profile.jpg")
 
-        storageRef.putFile(imageUri)
-            .addOnSuccessListener {
+        storageRef.putFile(imageUri).addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                     saveUserToFirestore(userId, name, email, phone, address, downloadUrl.toString())
                 }
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 _registerStatus.value = "Error: Gagal mengunggah gambar - ${e.message}"
             }
     }
 
     private fun saveUserToFirestore(
-        userId: String, name: String, email: String, phone: String, address: String, photoUrl: String
+        userId: String,
+        name: String,
+        email: String,
+        phone: String,
+        address: String,
+        photoUrl: String
     ) {
         val user = hashMapOf(
             "uid" to userId,
@@ -96,12 +97,9 @@ class RegisterBuyerViewModel : ViewModel() {
             "photoUrl" to photoUrl
         )
 
-        firestore.collection("users").document(userId)
-            .set(user)
-            .addOnSuccessListener {
+        firestore.collection("users").document(userId).set(user).addOnSuccessListener {
                 _registerStatus.value = "Success"
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 _registerStatus.value = "Error: Gagal menyimpan data - ${e.message}"
             }
     }

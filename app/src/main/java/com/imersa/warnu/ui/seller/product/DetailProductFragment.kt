@@ -1,6 +1,5 @@
 package com.imersa.warnu.ui.seller.product
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,16 +7,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentDetailProductBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import java.text.NumberFormat
-import java.util.*
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Locale
 
 @AndroidEntryPoint
 class DetailProductFragment : Fragment() {
@@ -30,9 +27,7 @@ class DetailProductFragment : Fragment() {
     private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailProductBinding.inflate(inflater, container, false)
         return binding.root
@@ -47,13 +42,9 @@ class DetailProductFragment : Fragment() {
             return
         }
 
-        // Ambil role dari Firestore
         val userId = auth.currentUser?.uid
         if (userId != null) {
-            firestore.collection("users")
-                .document(userId)
-                .get()
-                .addOnSuccessListener { document ->
+            firestore.collection("users").document(userId).get().addOnSuccessListener { document ->
                     if (document.exists()) {
                         val role = document.getString("role")
                         if (role == "buyer") {
@@ -62,9 +53,9 @@ class DetailProductFragment : Fragment() {
                             binding.fabAddToCart.visibility = View.GONE
                         }
                     }
-                }
-                .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Gagal ambil role user", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener {
+                    Toast.makeText(requireContext(), "Gagal ambil role user", Toast.LENGTH_SHORT)
+                        .show()
                 }
         }
 
@@ -73,47 +64,42 @@ class DetailProductFragment : Fragment() {
             val userId = auth.currentUser?.uid
 
             if (currentProduct?.id != null && userId != null) {
-                firestore.collection("carts")
-                    .document(userId)
-                    .collection("items")
-                    .document(currentProduct.id)
-                    .get()
-                    .addOnSuccessListener { doc ->
+                firestore.collection("carts").document(userId).collection("items")
+                    .document(currentProduct.id).get().addOnSuccessListener { doc ->
                         if (doc.exists()) {
-                            // ... (logika untuk update quantity tidak perlu diubah)
                             val currentQty = doc.getLong("quantity") ?: 0
-                            firestore.collection("carts")
-                                .document(userId)
-                                .collection("items")
-                                .document(currentProduct.id)
-                                .update("quantity", currentQty + 1)
+                            firestore.collection("carts").document(userId).collection("items")
+                                .document(currentProduct.id).update("quantity", currentQty + 1)
                                 .addOnSuccessListener {
-                                    Toast.makeText(requireContext(), "Qty ditambah", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Qty ditambah",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                            // ...
                         } else {
-                            // --- PERUBAHAN DI SINI ---
-                            // Belum ada → tambahkan baru
                             val cartItem = hashMapOf(
                                 "productId" to currentProduct.id,
                                 "name" to currentProduct.name,
                                 "price" to currentProduct.price,
                                 "quantity" to 1,
-                                "sellerId" to currentProduct.sellerId, // 💡 TAMBAHKAN BARIS INI
-                                "imageUrl" to currentProduct.imageUrl // Opsional: bagus untuk ditampilkan di cart
+                                "sellerId" to currentProduct.sellerId,
+                                "imageUrl" to currentProduct.imageUrl
                             )
-                            // --- AKHIR PERUBAHAN ---
 
-                            firestore.collection("carts")
-                                .document(userId)
-                                .collection("items")
-                                .document(currentProduct.id)
-                                .set(cartItem)
-                                .addOnSuccessListener {
-                                    Toast.makeText(requireContext(), "Ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(requireContext(), "Gagal tambah ke cart", Toast.LENGTH_SHORT).show()
+                            firestore.collection("carts").document(userId).collection("items")
+                                .document(currentProduct.id).set(cartItem).addOnSuccessListener {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Ditambahkan ke keranjang",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }.addOnFailureListener {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Gagal tambah ke cart",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                         }
                     }
@@ -124,7 +110,8 @@ class DetailProductFragment : Fragment() {
 
 
         viewModel.product.observe(viewLifecycleOwner) { product ->
-            val formattedPrice = NumberFormat.getNumberInstance(Locale("id", "ID")).format(product.price)
+            val formattedPrice =
+                NumberFormat.getNumberInstance(Locale("id", "ID")).format(product.price)
 
             binding.tvDetailNamaProduk.text = product.name
             binding.tvDetailHargaProduk.text = "Rp$formattedPrice"
@@ -132,9 +119,7 @@ class DetailProductFragment : Fragment() {
             binding.chipKategori.text = product.category
             binding.chipStok.text = "Stok: ${product.stock}"
 
-            Glide.with(this)
-                .load(product.imageUrl)
-                .placeholder(R.drawable.placeholder_image)
+            Glide.with(this).load(product.imageUrl).placeholder(R.drawable.placeholder_image)
                 .into(binding.ivDetailGambarProduk)
         }
 

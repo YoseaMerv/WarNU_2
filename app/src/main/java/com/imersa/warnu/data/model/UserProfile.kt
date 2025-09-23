@@ -6,8 +6,7 @@ data class UserProfile(
     val email: String = "",
     val phone: String = "",
     val role: String = "",
-    val storeName: String? = null, // storeName bisa null untuk buyer
-    // ✅ TAMBAHKAN DUA BARIS INI
+    val storeName: String? = null,
     val address: String = "",
     val photoUrl: String = ""
 )

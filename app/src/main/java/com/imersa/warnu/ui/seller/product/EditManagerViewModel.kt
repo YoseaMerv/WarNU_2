@@ -1,6 +1,10 @@
 package com.imersa.warnu.ui.seller.product
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import com.imersa.warnu.data.model.Product
 import com.imersa.warnu.data.repository.ProductSellerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,11 +44,6 @@ class EditManageViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-
-    fun clearError() {
-        _errorMessage.value = null
     }
 }
 

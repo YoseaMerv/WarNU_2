@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentEditProductBinding
-import com.imersa.warnu.data.model.Product
 
 class EditProductFragment : Fragment() {
 
@@ -29,7 +28,6 @@ class EditProductFragment : Fragment() {
     private var currentImageUrl: String? = null
 
 
-
     private val pickImageLauncher =
         registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -40,8 +38,7 @@ class EditProductFragment : Fragment() {
         }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditProductBinding.inflate(inflater, container, false)
 
@@ -57,29 +54,24 @@ class EditProductFragment : Fragment() {
         setupUI()
         observeViewModel()
 
-        // Load data produk dari Firestore
         viewModel.loadProduct(productId!!)
 
         return binding.root
     }
 
     private fun setupUI() {
-        // Setup kategori dropdown
         val kategoriList = listOf("Fashion", "Electronics", "Home", "Toys")
         val adapterKategori =
             ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, kategoriList)
         binding.actvKategori.setAdapter(adapterKategori)
 
-        // Tampilkan gambar awal (kalau ada)
         loadImage(currentImageUrl)
 
-        // Pilih gambar baru
         binding.btnPilihGambarBaru.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
             pickImageLauncher.launch(intent)
         }
 
-        // Simpan produk
         binding.btnSimpanProduk.setOnClickListener { simpanPerubahan() }
     }
 
@@ -102,9 +94,7 @@ class EditProductFragment : Fragment() {
             }
             result.onFailure {
                 Toast.makeText(
-                    requireContext(),
-                    "Gagal upload gambar: ${it.message}",
-                    Toast.LENGTH_SHORT
+                    requireContext(), "Gagal upload gambar: ${it.message}", Toast.LENGTH_SHORT
                 ).show()
             }
         }
@@ -117,9 +107,7 @@ class EditProductFragment : Fragment() {
             }
             result.onFailure {
                 Toast.makeText(
-                    requireContext(),
-                    "Gagal update produk: ${it.message}",
-                    Toast.LENGTH_SHORT
+                    requireContext(), "Gagal update produk: ${it.message}", Toast.LENGTH_SHORT
                 ).show()
             }
         }
@@ -165,9 +153,7 @@ class EditProductFragment : Fragment() {
     private fun loadImage(url: String?) {
         if (!url.isNullOrEmpty()) {
             binding.ivKategoriPreview.visibility = View.VISIBLE
-            Glide.with(requireContext())
-                .load(url)
-                .placeholder(R.drawable.placeholder_image)
+            Glide.with(requireContext()).load(url).placeholder(R.drawable.placeholder_image)
                 .into(binding.ivKategoriPreview)
         } else {
             binding.ivKategoriPreview.visibility = View.GONE

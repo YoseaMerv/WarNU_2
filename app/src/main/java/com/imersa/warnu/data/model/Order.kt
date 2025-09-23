@@ -13,5 +13,5 @@ data class Order(
     @set:PropertyName("items")
     var items: List<CartItem>? = null,
     val customerName: String? = null,
-    var sellerId: String? = null // 💡 DIUBAH: Menjadi tunggal
+    var sellerId: String? = null
 )

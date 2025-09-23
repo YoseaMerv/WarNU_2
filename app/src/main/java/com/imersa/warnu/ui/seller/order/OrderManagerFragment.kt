@@ -18,8 +18,7 @@ class OrderManagerFragment : Fragment() {
     private lateinit var orderAdapter: OrderSellerAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSellerOrdersBinding.inflate(inflater, container, false)
         return binding.root

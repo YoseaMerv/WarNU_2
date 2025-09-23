@@ -45,10 +45,9 @@ class HomeSellerFragment : Fragment() {
         setupRecyclerView()
         observeViewModel()
 
-        // Tombol tambah produk
         binding.btnTambahProdukSeller.setOnClickListener {
             val navController = requireActivity().findNavController(R.id.fragment_container_seller)
-            navController.navigate(R.id.addProductFragment) // ganti sesuai ID tujuan di nav_graph_seller
+            navController.navigate(R.id.addProductFragment)
         }
         val sellerId = auth.currentUser?.uid ?: return
         viewModel.fetchProducts(sellerId)
@@ -57,8 +56,7 @@ class HomeSellerFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = ProductSellerAdapter(
-            products = productList,
-            onItemClick = { product ->
+            products = productList, onItemClick = { product ->
                 val bundle = Bundle().apply {
                     putString("productId", product.id ?: "")
                     putString("name", product.name)
@@ -72,8 +70,7 @@ class HomeSellerFragment : Fragment() {
                 val navController =
                     requireActivity().findNavController(R.id.fragment_container_seller)
                 navController.navigate(R.id.detailProductFragment, bundle)
-            },
-            layoutResId = R.layout.item_product_dashboard
+            }, layoutResId = R.layout.item_product_dashboard
         )
         binding.rvProductSeller.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.rvProductSeller.adapter = adapter

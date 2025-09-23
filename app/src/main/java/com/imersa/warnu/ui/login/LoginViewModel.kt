@@ -1,8 +1,8 @@
 package com.imersa.warnu.ui.login
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,8 +20,7 @@ class LoginViewModel @Inject constructor(
     fun login(email: String, password: String) {
         _loginState.value = LoginState.Loading
 
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
+        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val uid = firebaseAuth.currentUser?.uid
                     if (uid != null) {
@@ -36,16 +35,14 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun checkUserRole(uid: String) {
-        firestore.collection("users").document(uid).get()
-            .addOnSuccessListener { document ->
+        firestore.collection("users").document(uid).get().addOnSuccessListener { document ->
                 val role = document.getString("role")
                 if (role != null) {
                     _loginState.value = LoginState.Success(role)
                 } else {
                     _loginState.value = LoginState.Error("Role not defined.")
                 }
-            }
-            .addOnFailureListener {
+            }.addOnFailureListener {
                 _loginState.value = LoginState.Error(it.message ?: "Failed to get user role.")
             }
     }

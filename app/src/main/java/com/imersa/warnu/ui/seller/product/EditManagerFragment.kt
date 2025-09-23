@@ -31,9 +31,7 @@ class EditManageFragment : Fragment() {
     private val viewModel: EditManageViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditManagerBinding.inflate(inflater, container, false)
         return binding.root
@@ -55,34 +53,34 @@ class EditManageFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = ProductSellerAdapter(
-            products = productList,
-            onItemClick = { product ->
-                val bundle = Bundle().apply {
-                    putString("productId", product.id ?: "")
+            products = productList, onItemClick = { product ->
+            val bundle = Bundle().apply {
+                putString("productId", product.id ?: "")
+            }
+            findNavController().navigate(R.id.detailProductFragment, bundle)
+        }, onEditClick = { product ->
+            val bundle = Bundle().apply {
+                putString("productId", product.id ?: "")
+            }
+            findNavController().navigate(R.id.editProductFragment, bundle)
+        }, onDeleteClick = onDeleteClick@{ product ->
+            val productId = product.id ?: ""
+            if (productId.isBlank()) {
+                Toast.makeText(requireContext(), "Produk tidak valid", Toast.LENGTH_SHORT).show()
+                return@onDeleteClick
+            }
+            viewModel.deleteProduct(productId) { success ->
+                if (success) {
+                    Toast.makeText(requireContext(), "Produk dihapus", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Gagal menghapus produk",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-                findNavController().navigate(R.id.detailProductFragment, bundle)
-            },
-            onEditClick = { product ->
-                val bundle = Bundle().apply {
-                    putString("productId", product.id ?: "")
-                }
-                findNavController().navigate(R.id.editProductFragment, bundle)
-            },
-            onDeleteClick = onDeleteClick@{ product ->
-                val productId = product.id ?: ""
-                if (productId.isBlank()) {
-                    Toast.makeText(requireContext(), "Produk tidak valid", Toast.LENGTH_SHORT).show()
-                    return@onDeleteClick
-                }
-                viewModel.deleteProduct(productId) { success ->
-                    if (success) {
-                        Toast.makeText(requireContext(), "Produk dihapus", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(requireContext(), "Gagal menghapus produk", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            },
-            layoutResId = R.layout.item_edit_product
+            }
+        }, layoutResId = R.layout.item_edit_product
         )
 
         binding.ProductSeller.layoutManager = GridLayoutManager(requireContext(), 1)

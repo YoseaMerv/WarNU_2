@@ -5,16 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.imersa.warnu.R
-import com.imersa.warnu.databinding.ItemProductBuyerBinding
-import com.imersa.warnu.databinding.ItemBannerBinding
 import com.imersa.warnu.data.model.Product
+import com.imersa.warnu.databinding.ItemBannerBinding
+import com.imersa.warnu.databinding.ItemProductBuyerBinding
 import java.text.NumberFormat
 import java.util.Locale
 
-// ===================== ADAPTER PRODUK =====================
 class HomeBuyerAdapter(
-    private val onItemClick: (Product) -> Unit,
-    private val onAddToCartClick: (Product) -> Unit
+    private val onItemClick: (Product) -> Unit, private val onAddToCartClick: (Product) -> Unit
 ) : RecyclerView.Adapter<HomeBuyerAdapter.ViewHolder>() {
 
     private val items = mutableListOf<Product>()
@@ -31,24 +29,18 @@ class HomeBuyerAdapter(
         fun bind(product: Product) {
             binding.tvNamaProdukBuyer.text = product.name
 
-            // Format harga Rupiah
-            val formattedPrice = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
-                .format(product.price ?: 0.0)
+            val formattedPrice =
+                NumberFormat.getCurrencyInstance(Locale("in", "ID")).format(product.price ?: 0.0)
             binding.tvHargaProdukBuyer.text = formattedPrice
 
-            // Load image pakai Glide
-            Glide.with(binding.imgProdukBuyer.context)
-                .load(product.imageUrl)
-                .placeholder(R.drawable.placeholder_image)
-                .error(R.drawable.placeholder_image)
+            Glide.with(binding.imgProdukBuyer.context).load(product.imageUrl)
+                .placeholder(R.drawable.placeholder_image).error(R.drawable.placeholder_image)
                 .into(binding.imgProdukBuyer)
 
-            // Klik item → detail produk
             binding.root.setOnClickListener {
                 onItemClick(product)
             }
 
-            // Klik tombol tambah → add to cart
             binding.btnAddToCart.setOnClickListener {
                 onAddToCartClick(product)
             }
@@ -69,7 +61,6 @@ class HomeBuyerAdapter(
     }
 }
 
-// ===================== ADAPTER BANNER =====================
 class BannerAdapter(
     private val banners: List<Int>
 ) : RecyclerView.Adapter<BannerAdapter.BannerViewHolder>() {
@@ -95,4 +86,3 @@ class BannerAdapter(
 
     override fun getItemCount(): Int = Int.MAX_VALUE
 }
-

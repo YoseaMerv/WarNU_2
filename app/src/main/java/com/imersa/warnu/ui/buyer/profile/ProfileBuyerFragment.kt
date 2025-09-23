@@ -21,9 +21,7 @@ class ProfileBuyerFragment : Fragment() {
     private val viewModel: ProfileBuyerViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBuyerBinding.inflate(inflater, container, false)
         return binding.root
@@ -34,7 +32,6 @@ class ProfileBuyerFragment : Fragment() {
         viewModel.loadBuyerProfile()
         setupObservers()
 
-        // Tambahkan listener untuk tombol edit
         binding.btnEditProfil.setOnClickListener {
             findNavController().navigate(R.id.action_profileBuyerFragment_to_editProfileBuyerFragment)
         }
@@ -59,10 +56,7 @@ class ProfileBuyerFragment : Fragment() {
 
         viewModel.photoUrl.observe(viewLifecycleOwner) { url ->
             if (!url.isNullOrEmpty()) {
-                Glide.with(this)
-                    .load(url)
-                    .centerCrop()
-                    .placeholder(R.drawable.placeholder_image) // fallback
+                Glide.with(this).load(url).centerCrop().placeholder(R.drawable.placeholder_image)
                     .into(binding.ivFotoProfil)
             } else {
                 binding.ivFotoProfil.setImageResource(R.drawable.placeholder_image)

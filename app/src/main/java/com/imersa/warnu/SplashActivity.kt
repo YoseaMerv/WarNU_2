@@ -12,7 +12,6 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         window.apply {
-            // Untuk API 21+ (Lollipop ke atas)
             statusBarColor = android.graphics.Color.TRANSPARENT
             decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

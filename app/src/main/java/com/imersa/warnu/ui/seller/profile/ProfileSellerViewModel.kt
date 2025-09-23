@@ -11,7 +11,6 @@ class ProfileSellerViewModel : ViewModel() {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    // LiveData untuk data profil seller
     private val _sellerName = MutableLiveData<String>()
     val sellerName: LiveData<String> get() = _sellerName
 
@@ -39,10 +38,7 @@ class ProfileSellerViewModel : ViewModel() {
     fun loadSellerProfile() {
         val userId = auth.currentUser?.uid ?: return
 
-        firestore.collection("users")
-            .document(userId)
-            .get()
-            .addOnSuccessListener { doc ->
+        firestore.collection("users").document(userId).get().addOnSuccessListener { doc ->
                 if (doc.exists()) {
                     _sellerName.value = doc.getString("name") ?: "Toko"
                     _sellerEmail.value = doc.getString("email") ?: "toko1@gmail.com"
@@ -54,11 +50,9 @@ class ProfileSellerViewModel : ViewModel() {
                 } else {
                     _errorMessage.value = "Data profil tidak ditemukan"
                 }
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 _errorMessage.value = e.message ?: "Gagal memuat data profil"
-            }
-            .addOnCompleteListener {
+            }.addOnCompleteListener {
                 _isLoading.value = false
             }
     }

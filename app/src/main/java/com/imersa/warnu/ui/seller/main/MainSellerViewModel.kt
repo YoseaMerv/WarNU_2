@@ -11,8 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainSellerViewModel @Inject constructor(
-    private val firestore: FirebaseFirestore,
-    private val auth: FirebaseAuth
+    private val firestore: FirebaseFirestore, private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private val _name = MutableLiveData<String>()
@@ -27,8 +26,6 @@ class MainSellerViewModel @Inject constructor(
     val role: LiveData<String> = _role
     private val _uid = MutableLiveData<String>()
     val uid: LiveData<String> = _uid
-    private val _storeName = MutableLiveData<String>()
-    val storeName: LiveData<String> = _storeName
 
     private val _userNotFound = MutableLiveData<Boolean>()
     val userNotFound: LiveData<Boolean> = _userNotFound
@@ -40,16 +37,13 @@ class MainSellerViewModel @Inject constructor(
             return
         }
 
-        firestore.collection("users").document(uid)
-            .get()
-            .addOnSuccessListener { document ->
+        firestore.collection("users").document(uid).get().addOnSuccessListener { document ->
                 if (document.exists()) {
-                    _name.value = document.getString("name") ?: _role.value
+                    _name.value = document.getString("name") ?: role.value
                 } else {
                     _userNotFound.value = true
                 }
-            }
-            .addOnFailureListener { exception ->
+            }.addOnFailureListener { exception ->
                 Log.e("MainSellerViewModel", "Error fetching user data", exception)
                 _userNotFound.value = true
             }

@@ -45,16 +45,13 @@ class AddProductViewModel @Inject constructor(
             _state.value = AddProductState.Loading
 
             try {
-                val imageRef = storage.reference
-                    .child("product_images/${currentUser.uid}/${System.currentTimeMillis()}.jpg")
+                val imageRef =
+                    storage.reference.child("product_images/${currentUser.uid}/${System.currentTimeMillis()}.jpg")
 
-                // Upload file
                 imageRef.putFile(imageUri).await()
 
-                // Ambil download URL
                 val downloadUrl = imageRef.downloadUrl.await()
 
-                // Simpan ke Firestore
                 val product = hashMapOf(
                     "name" to name,
                     "price" to price?.toDoubleOrNull(),
@@ -66,9 +63,7 @@ class AddProductViewModel @Inject constructor(
                     "createdAt" to System.currentTimeMillis()
                 )
 
-                firestore.collection("products")
-                    .add(product)
-                    .await()
+                firestore.collection("products").add(product).await()
 
                 _state.value = AddProductState.Success
 

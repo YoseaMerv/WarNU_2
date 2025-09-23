@@ -16,18 +16,15 @@ class RegisterSellerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterSellerBinding
     private val viewModel: RegisterSellerViewModel by viewModels()
 
-    // Variabel untuk menyimpan URI gambar yang dipilih
     private var selectedImageUri: Uri? = null
 
-    // Launcher untuk membuka galeri gambar
     private val imagePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
             selectedImageUri = it
-            // Tampilkan gambar yang dipilih di ImageView
             binding.ivProfilePicture.setImageURI(it)
-            binding.ivProfilePicture.setPadding(0, 0, 0, 0) // Hapus padding jika ada
+            binding.ivProfilePicture.setPadding(0, 0, 0, 0)
         }
     }
 
@@ -41,12 +38,11 @@ class RegisterSellerActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        // Tambahkan listener klik pada ImageView untuk memilih gambar
         binding.cardProfileImage.setOnClickListener {
-            imagePickerLauncher.launch("image/*") // Buka galeri
+            imagePickerLauncher.launch("image/*")
         }
         binding.ivProfilePicture.setOnClickListener {
-            imagePickerLauncher.launch("image/*") // Buka galeri
+            imagePickerLauncher.launch("image/*")
         }
 
         binding.btnRegister.setOnClickListener {
@@ -62,7 +58,6 @@ class RegisterSellerActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Panggil fungsi register di ViewModel dengan menyertakan URI gambar
             viewModel.register(name, email, phone, address, storeName, password, selectedImageUri)
         }
     }
@@ -74,15 +69,16 @@ class RegisterSellerActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.btnRegister.isEnabled = false
                 }
+
                 status.startsWith("Success") -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(this, "Registrasi berhasil!", Toast.LENGTH_LONG).show()
-                    // Arahkan ke halaman login
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                     finish()
                 }
+
                 status.startsWith("Error") -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnRegister.isEnabled = true

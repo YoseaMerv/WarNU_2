@@ -22,16 +22,16 @@ class EditProfileSellerFragment : Fragment() {
     private lateinit var viewModel: EditProfileSellerViewModel
     private var selectedImageUri: Uri? = null
 
-    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        if (uri != null) {
-            selectedImageUri = uri
-            binding.ivProfile.setImageURI(selectedImageUri)
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null) {
+                selectedImageUri = uri
+                binding.ivProfile.setImageURI(selectedImageUri)
+            }
         }
-    }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditProfileSellerBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this)[EditProfileSellerViewModel::class.java]
@@ -41,8 +41,7 @@ class EditProfileSellerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Set judul action bar
-        requireActivity().title = "Edit Profil"
+        requireActivity().title = "Edit Profile"
 
         setupObservers()
         setupClickListeners()
@@ -78,10 +77,7 @@ class EditProfileSellerFragment : Fragment() {
 
             val photoUrl = user["photourl"] as? String
             if (!photoUrl.isNullOrEmpty()) {
-                Glide.with(this)
-                    .load(photoUrl)
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_user)
+                Glide.with(this).load(photoUrl).centerCrop().placeholder(R.drawable.ic_user)
                     .into(binding.ivProfile)
             } else {
                 binding.ivProfile.setImageResource(R.drawable.ic_user)
@@ -94,11 +90,17 @@ class EditProfileSellerFragment : Fragment() {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.btnSave.isEnabled = false
                 }
+
                 status.startsWith("Success") -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Profil berhasil diperbarui",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     findNavController().navigateUp()
                 }
+
                 status.startsWith("Error:") -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnSave.isEnabled = true

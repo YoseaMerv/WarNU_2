@@ -3,10 +3,8 @@ package com.imersa.warnu.ui.buyer.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.imersa.warnu.data.model.Product
 import com.imersa.warnu.data.repository.ProductRepository
-import kotlinx.coroutines.launch
 
 class HomeBuyerViewModel(
     private val repository: ProductRepository = ProductRepository()
@@ -26,20 +24,17 @@ class HomeBuyerViewModel(
 
     fun loadProducts() {
         _loading.value = true
-        repository.listenProducts(
-            onResult = { list ->
-                _loading.value = false
-                _products.value = list
-                _filteredProducts.value = list
-                _emptyState.value = list.isEmpty()
-            },
-            onError = {
-                _loading.value = false
-                _products.value = emptyList()
-                _filteredProducts.value = emptyList()
-                _emptyState.value = true
-            }
-        )
+        repository.listenProducts(onResult = { list ->
+            _loading.value = false
+            _products.value = list
+            _filteredProducts.value = list
+            _emptyState.value = list.isEmpty()
+        }, onError = {
+            _loading.value = false
+            _products.value = emptyList()
+            _filteredProducts.value = emptyList()
+            _emptyState.value = true
+        })
     }
 
     fun searchProducts(query: String) {
@@ -53,18 +48,4 @@ class HomeBuyerViewModel(
         }
     }
 
-    fun addToCart(
-        product: Product,
-        onSuccess: () -> Unit,
-        onError: (Exception) -> Unit
-    ) {
-        viewModelScope.launch {
-            try {
-                repository.addToCart(product)
-                onSuccess()
-            } catch (e: Exception) {
-                onError(e)
-            }
-        }
-    }
 }

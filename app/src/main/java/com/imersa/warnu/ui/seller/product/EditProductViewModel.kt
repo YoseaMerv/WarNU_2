@@ -23,27 +23,19 @@ class EditProductViewModel : ViewModel() {
     val updateStatus: LiveData<Result<Unit>> get() = _updateStatus
 
     fun loadProduct(productId: String) {
-        db.collection("products")
-            .document(productId)
-            .get()
-            .addOnSuccessListener { snapshot ->
+        db.collection("products").document(productId).get().addOnSuccessListener { snapshot ->
                 if (snapshot.exists()) {
                     val product = snapshot.toObject(Product::class.java)
                     _productData.postValue(product)
                 } else {
                     _productData.postValue(null)
                 }
-            }
-            .addOnFailureListener {
+            }.addOnFailureListener {
                 _productData.postValue(null)
             }
     }
 
-    /**
-     * Upload gambar baru dan hapus gambar lama (jika ada), simpan di folder productId
-     */
     fun uploadImageAndDeleteOld(imageUri: Uri, oldImageUrl: String?, sellerUid: String) {
-        // Hapus gambar lama jika ada
         if (!oldImageUrl.isNullOrEmpty()) {
             try {
                 val oldRef = storage.getReferenceFromUrl(oldImageUrl)
@@ -53,19 +45,16 @@ class EditProductViewModel : ViewModel() {
             }
         }
 
-        // Upload ke folder seller UID
         val fileName = "${System.currentTimeMillis()}.jpg"
         val ref = storage.reference.child("product_images/$sellerUid/$fileName")
 
-        ref.putFile(imageUri)
-            .addOnSuccessListener {
+        ref.putFile(imageUri).addOnSuccessListener {
                 ref.downloadUrl.addOnSuccessListener { uri ->
                     _uploadStatus.postValue(Result.success(uri.toString()))
                 }.addOnFailureListener { e ->
                     _uploadStatus.postValue(Result.failure(e))
                 }
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 _uploadStatus.postValue(Result.failure(e))
             }
     }
@@ -88,13 +77,9 @@ class EditProductViewModel : ViewModel() {
             "imageUrl" to imageUrl
         )
 
-        db.collection("products")
-            .document(productId)
-            .update(productData)
-            .addOnSuccessListener {
+        db.collection("products").document(productId).update(productData).addOnSuccessListener {
                 _updateStatus.postValue(Result.success(Unit))
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 _updateStatus.postValue(Result.failure(e))
             }
     }

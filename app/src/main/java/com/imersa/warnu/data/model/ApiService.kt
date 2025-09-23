@@ -5,7 +5,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 data class CustomerDetails(
-    val first_name: String,
+    val name: String,
     val email: String,
     val phone: String
 )
@@ -23,7 +23,7 @@ data class TransactionRequest(
     val items: List<ItemDetails>?,
     val customerDetails: CustomerDetails?,
     val userId: String?,
-    val sellerId: String? // 💡 DIUBAH: Menjadi tunggal
+    val sellerId: String?
 )
 
 data class TransactionResponse(

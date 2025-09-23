@@ -20,20 +20,19 @@ class ProductSellerAdapter(
 ) : RecyclerView.Adapter<ProductSellerAdapter.ProductViewHolder>() {
 
     inner class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val image: ImageView? = view.findViewById(R.id.ivProductImage)
-            ?: view.findViewById(R.id.ivProduk)
-        val name: TextView? = view.findViewById(R.id.tvProductName)
-            ?: view.findViewById(R.id.tvNamaProduk)
-        val harga: TextView? = view.findViewById(R.id.tvProductPrice)
-            ?: view.findViewById(R.id.tvHargaStok)
+        val image: ImageView? =
+            view.findViewById(R.id.ivProductImage) ?: view.findViewById(R.id.ivProduk)
+        val name: TextView? =
+            view.findViewById(R.id.tvProductName) ?: view.findViewById(R.id.tvNamaProduk)
+        val harga: TextView? =
+            view.findViewById(R.id.tvProductPrice) ?: view.findViewById(R.id.tvHargaStok)
         val stok: TextView? = view.findViewById(R.id.tvStokProduk)
         val btnEdit: ImageButton? = view.findViewById(R.id.btnEdit)
         val btnDelete: ImageButton? = view.findViewById(R.id.btnHapus)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(layoutResId, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
         return ProductViewHolder(view)
     }
 
@@ -46,16 +45,15 @@ class ProductSellerAdapter(
             holder.harga?.text = "Rp ${(product.price ?: 0.0).toInt()}"
             holder.stok?.text = "Stok: ${product.stock ?: 0}"
         } else {
-            holder.harga?.text = "Rp ${(product.price ?: 0.0).toInt()} - Stok: ${product.stock ?: 0}"
+            holder.harga?.text =
+                "Rp ${(product.price ?: 0.0).toInt()} - Stok: ${product.stock ?: 0}"
         }
 
         // Image load
         val imageUrl = product.imageUrl ?: ""
         if (imageUrl.isNotBlank()) {
-            Glide.with(holder.itemView.context)
-                .load(imageUrl)
-                .placeholder(R.drawable.placeholder_image)
-                .error(R.drawable.placeholder_image)
+            Glide.with(holder.itemView.context).load(imageUrl)
+                .placeholder(R.drawable.placeholder_image).error(R.drawable.placeholder_image)
                 .into(holder.image ?: return)
         } else {
             holder.image?.setImageResource(R.drawable.placeholder_image)

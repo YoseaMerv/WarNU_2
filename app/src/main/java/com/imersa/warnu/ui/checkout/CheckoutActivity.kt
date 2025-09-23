@@ -1,6 +1,5 @@
 package com.imersa.warnu.ui.checkout
 
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -9,7 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.imersa.warnu.R
-import com.imersa.warnu.data.model.*
+import com.imersa.warnu.data.model.ApiService
+import com.imersa.warnu.data.model.CartItem
+import com.imersa.warnu.data.model.CustomerDetails
+import com.imersa.warnu.data.model.ItemDetails
+import com.imersa.warnu.data.model.TransactionRequest
+import com.imersa.warnu.data.model.TransactionResponse
+import com.imersa.warnu.data.model.UserProfile
 import com.midtrans.sdk.uikit.api.model.TransactionResult
 import com.midtrans.sdk.uikit.external.UiKitApi
 import com.midtrans.sdk.uikit.internal.util.UiKitConstants
@@ -25,11 +30,12 @@ class CheckoutActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    private val uikitLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        // Cukup periksa hasilnya, tidak perlu menyimpan lagi dari sini
-        val transactionResult = result.data?.getParcelableExtra<TransactionResult>(UiKitConstants.KEY_TRANSACTION_RESULT)
-        handleTransactionResult(transactionResult)
-    }
+    private val uikitLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val transactionResult =
+                result.data?.getParcelableExtra<TransactionResult>(UiKitConstants.KEY_TRANSACTION_RESULT)
+            handleTransactionResult(transactionResult)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,11 +52,11 @@ class CheckoutActivity : AppCompatActivity() {
             return
         }
 
-        db.collection("users").document(userId).get()
-            .addOnSuccessListener { userDocument ->
+        db.collection("users").document(userId).get().addOnSuccessListener { userDocument ->
                 val userProfile = userDocument.toObject(UserProfile::class.java)
                 if (userProfile == null) {
-                    Toast.makeText(this, "Profil pengguna tidak ditemukan.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Profil pengguna tidak ditemukan.", Toast.LENGTH_SHORT)
+                        .show()
                     finish()
                     return@addOnSuccessListener
                 }
@@ -58,7 +64,8 @@ class CheckoutActivity : AppCompatActivity() {
                 db.collection("carts").document(userId).collection("items").get()
                     .addOnSuccessListener { cartSnapshot ->
                         if (cartSnapshot.isEmpty) {
-                            Toast.makeText(this, "Keranjang Anda kosong.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Keranjang Anda kosong.", Toast.LENGTH_SHORT)
+                                .show()
                             finish()
                             return@addOnSuccessListener
                         }
@@ -66,15 +73,17 @@ class CheckoutActivity : AppCompatActivity() {
                         getSnapToken(totalAmount, cartItems, userProfile)
                     }
                     .addOnFailureListener { e -> handleError("Gagal mengambil item keranjang:", e) }
-            }
-            .addOnFailureListener { e -> handleError("Gagal mengambil profil pengguna:", e) }
+            }.addOnFailureListener { e -> handleError("Gagal mengambil profil pengguna:", e) }
     }
 
-    private fun getSnapToken(totalAmount: Double, cartItems: List<CartItem>, userProfile: UserProfile) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+    private fun getSnapToken(
+        totalAmount: Double,
+        cartItems: List<CartItem>,
+        userProfile: UserProfile
+    ) {
+        val retrofit =
+            Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create())
+                .build()
         val apiService = retrofit.create(ApiService::class.java)
 
         val itemDetails = cartItems.map {
@@ -87,7 +96,7 @@ class CheckoutActivity : AppCompatActivity() {
         }
 
         val customerDetails = CustomerDetails(
-            first_name = userProfile.name ?: "Pengguna",
+            name = userProfile.name ?: "Pengguna",
             email = userProfile.email ?: "",
             phone = userProfile.phone ?: ""
         )
@@ -109,13 +118,17 @@ class CheckoutActivity : AppCompatActivity() {
         )
 
         apiService.createTransaction(request).enqueue(object : Callback<TransactionResponse> {
-            override fun onResponse(call: Call<TransactionResponse>, response: Response<TransactionResponse>) {
+            override fun onResponse(
+                call: Call<TransactionResponse>,
+                response: Response<TransactionResponse>
+            ) {
                 if (response.isSuccessful && response.body() != null) {
                     startPayment(response.body()!!.token)
                 } else {
                     handleApiError("Gagal mendapatkan token: ${response.errorBody()?.string()}")
                 }
             }
+
             override fun onFailure(call: Call<TransactionResponse>, t: Throwable) {
                 handleApiError("Koneksi Error: ${t.message}")
             }
@@ -125,15 +138,10 @@ class CheckoutActivity : AppCompatActivity() {
     private fun startPayment(snapToken: String) {
         UiKitApi.Builder()
             .withMerchantClientKey("SB-Mid-client-c3kYeww-hLgqgYq5") // Ganti dengan Client Key Anda
-            .withContext(this)
-            .withMerchantUrl(BASE_URL)
-            .enableLog(true)
-            .build()
+            .withContext(this).withMerchantUrl(BASE_URL).enableLog(true).build()
 
         UiKitApi.getDefaultInstance().startPaymentUiFlow(
-            activity = this,
-            launcher = uikitLauncher,
-            snapToken = snapToken
+            activity = this, launcher = uikitLauncher, snapToken = snapToken
         )
     }
 
@@ -141,28 +149,33 @@ class CheckoutActivity : AppCompatActivity() {
         val message = result?.status ?: "Transaksi dibatalkan"
         Toast.makeText(this, "Status: $message", Toast.LENGTH_LONG).show()
 
-        // Jika transaksi berhasil atau masih pending, cukup bersihkan keranjang.
-        // Status pembayaran akan diupdate oleh notifikasi dari Midtrans ke backend Anda.
         if (result?.status == UiKitConstants.STATUS_SUCCESS || result?.status == UiKitConstants.STATUS_PENDING) {
             clearCart()
-            setResult(Activity.RESULT_OK)
+            setResult(RESULT_OK)
         }
 
-        // Selalu tutup activity setelah selesai.
         finish()
     }
 
 
     private fun clearCart() {
         val userId = auth.currentUser?.uid ?: return
-        db.collection("carts").document(userId).collection("items")
-            .get()
+        db.collection("carts").document(userId).collection("items").get()
             .addOnSuccessListener { snapshot ->
                 val batch = db.batch()
                 snapshot.documents.forEach { batch.delete(it.reference) }
-                batch.commit()
-                    .addOnSuccessListener { Log.d("CheckoutActivity", "Keranjang berhasil dikosongkan.") }
-                    .addOnFailureListener { e -> Log.e("CheckoutActivity", "Gagal mengosongkan keranjang:", e) }
+                batch.commit().addOnSuccessListener {
+                        Log.d(
+                            "CheckoutActivity",
+                            "Keranjang berhasil dikosongkan."
+                        )
+                    }.addOnFailureListener { e ->
+                        Log.e(
+                            "CheckoutActivity",
+                            "Gagal mengosongkan keranjang:",
+                            e
+                        )
+                    }
             }
     }
 

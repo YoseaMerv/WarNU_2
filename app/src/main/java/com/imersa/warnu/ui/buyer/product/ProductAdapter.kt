@@ -16,8 +16,8 @@ class ProductAdapter(
 ) : androidx.recyclerview.widget.ListAdapter<Product, ProductAdapter.ViewHolder>(ProdukDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_product_buyer, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_product_buyer, parent, false)
         return ViewHolder(view, onItemClick)
     }
 
@@ -26,8 +26,7 @@ class ProductAdapter(
     }
 
     class ViewHolder(
-        itemView: View,
-        val onItemClick: (Product) -> Unit
+        itemView: View, val onItemClick: (Product) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
         private val imgProduk: ImageView = itemView.findViewById(R.id.imgProdukBuyer)
         private val tvNama: TextView = itemView.findViewById(R.id.tvNamaProdukBuyer)
@@ -42,10 +41,8 @@ class ProductAdapter(
             }
             tvHarga.text = priceText
 
-            Glide.with(itemView.context)
-                .load(produk.imageUrl)
-                .placeholder(R.drawable.placeholder_image)
-                .into(imgProduk)
+            Glide.with(itemView.context).load(produk.imageUrl)
+                .placeholder(R.drawable.placeholder_image).into(imgProduk)
 
             itemView.setOnClickListener {
                 onItemClick(produk)

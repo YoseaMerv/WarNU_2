@@ -1,13 +1,10 @@
 package com.imersa.warnu.ui.seller.product
 
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
@@ -21,7 +18,6 @@ import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentAddProductBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import java.io.ByteArrayOutputStream
 
 @AndroidEntryPoint
 class AddProductFragment : Fragment() {
@@ -43,19 +39,14 @@ class AddProductFragment : Fragment() {
                     scaleType = ImageView.ScaleType.FIT_CENTER
                 }
 
-                Glide.with(requireContext())
-                    .load(it)
-                    .placeholder(R.drawable.placeholder_image)
-                    .fitCenter()
-                    .into(binding.ivKategoriPreview)
+                Glide.with(requireContext()).load(it).placeholder(R.drawable.placeholder_image)
+                    .fitCenter().into(binding.ivKategoriPreview)
             }
         }
 
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAddProductBinding.inflate(inflater, container, false)
         return binding.root
@@ -68,7 +59,6 @@ class AddProductFragment : Fragment() {
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item_dropdown, categories)
         binding.actvKategori.setAdapter(adapter)
 
-        // Pakai Activity Result API untuk pilih gambar
         binding.btnPilihGambar.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
@@ -81,16 +71,10 @@ class AddProductFragment : Fragment() {
             val category = binding.actvKategori.text.toString().trim()
 
             viewModel.addProduct(
-                name,
-                price,
-                description,
-                stock,
-                category,
-                selectedImageUri
+                name, price, description, stock, category, selectedImageUri
             )
         }
 
-        // Observasi state dari ViewModel
         lifecycleScope.launchWhenStarted {
             viewModel.state.collectLatest { state ->
                 when (state) {
@@ -98,12 +82,18 @@ class AddProductFragment : Fragment() {
                     is AddProductState.Loading -> {
                         Toast.makeText(requireContext(), "Mengunggah...", Toast.LENGTH_SHORT).show()
                     }
+
                     is AddProductState.Success -> {
-                        Toast.makeText(requireContext(), "Produk berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Produk berhasil ditambahkan",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         viewModel.resetState()
                         resetForm()
                         findNavController().navigate(R.id.HomeSellerFragment)
                     }
+
                     is AddProductState.Error -> {
                         Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                         viewModel.resetState()

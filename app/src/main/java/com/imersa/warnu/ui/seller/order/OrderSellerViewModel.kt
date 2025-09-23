@@ -32,12 +32,9 @@ class OrderSellerViewModel : ViewModel() {
             return
         }
 
-        db.collection("orders")
-            // ✅ Query ini adalah kunci utamanya
-            .whereEqualTo("sellerId", currentSellerId)
+        db.collection("orders").whereEqualTo("sellerId", currentSellerId)
             .orderBy("createdAt", Query.Direction.DESCENDING) // Tampilkan yang terbaru di atas
-            .get()
-            .addOnSuccessListener { documents ->
+            .get().addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
                     _emptyState.value = true
                 } else {
@@ -46,11 +43,9 @@ class OrderSellerViewModel : ViewModel() {
                     _emptyState.value = false
                 }
                 _loading.value = false
-            }
-            .addOnFailureListener {
+            }.addOnFailureListener {
                 _loading.value = false
                 _emptyState.value = true
-                // Idealnya, di sini ada penanganan error yang lebih spesifik
             }
     }
 }

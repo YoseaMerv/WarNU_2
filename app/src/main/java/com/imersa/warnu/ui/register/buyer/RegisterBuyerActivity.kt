@@ -18,7 +18,6 @@ class RegisterBuyerActivity : AppCompatActivity() {
 
     private var selectedImageUri: Uri? = null
 
-    // Launcher untuk membuka galeri gambar
     private val imagePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -39,7 +38,6 @@ class RegisterBuyerActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        // Tambahkan listener klik pada ImageView untuk memilih gambar
         binding.cardProfileImage.setOnClickListener {
             imagePickerLauncher.launch("image/*")
         }
@@ -60,7 +58,6 @@ class RegisterBuyerActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Panggil fungsi register di ViewModel dengan menyertakan URI gambar
             viewModel.register(name, email, phone, address, password, selectedImageUri)
         }
     }
@@ -72,6 +69,7 @@ class RegisterBuyerActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.btnRegister.isEnabled = false
                 }
+
                 status.startsWith("Success") -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(this, "Registrasi berhasil!", Toast.LENGTH_LONG).show()
@@ -80,6 +78,7 @@ class RegisterBuyerActivity : AppCompatActivity() {
                     startActivity(intent)
                     finish()
                 }
+
                 status.startsWith("Error") -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnRegister.isEnabled = true

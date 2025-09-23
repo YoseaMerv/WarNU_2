@@ -22,55 +22,10 @@ class DetailProductViewModel @Inject constructor(
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
-    fun addToCart(productId: String) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-
-        // Referensi ke subkoleksi items milik user
-        val itemsRef = firestore.collection("carts")
-            .document(userId)
-            .collection("items")
-
-        // Cek apakah produk sudah ada di keranjang user
-        itemsRef.whereEqualTo("productId", productId)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    // Produk sudah ada → update quantity
-                    val docId = documents.documents[0].id
-                    val currentQty = documents.documents[0].getLong("quantity") ?: 1
-                    itemsRef.document(docId)
-                        .update("quantity", currentQty + 1)
-                        .addOnSuccessListener {
-                            _errorMessage.value = "Jumlah produk di keranjang bertambah"
-                        }
-                        .addOnFailureListener {
-                            _errorMessage.value = "Gagal menambah jumlah produk"
-                        }
-                } else {
-                    // Produk belum ada → tambah baru
-                    val cartItem = hashMapOf(
-                        "productId" to productId,
-                        "quantity" to 1
-                    )
-                    itemsRef.add(cartItem)
-                        .addOnSuccessListener {
-                            _errorMessage.value = "Produk berhasil ditambahkan ke keranjang"
-                        }
-                        .addOnFailureListener {
-                            _errorMessage.value = "Gagal menambahkan produk ke keranjang"
-                        }
-                }
-            }
-            .addOnFailureListener {
-                _errorMessage.value = "Gagal memeriksa keranjang"
-            }
-    }
 
     fun getProductById(productId: String) {
         _loading.value = true
-        firestore.collection("products")
-            .document(productId)
-            .get()
+        firestore.collection("products").document(productId).get()
             .addOnSuccessListener { document ->
                 _loading.value = false
                 if (document.exists()) {
@@ -88,8 +43,7 @@ class DetailProductViewModel @Inject constructor(
                 } else {
                     _errorMessage.value = "Produk tidak ditemukan"
                 }
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 _loading.value = false
                 _errorMessage.value = "Gagal memuat produk: ${e.message}"
             }

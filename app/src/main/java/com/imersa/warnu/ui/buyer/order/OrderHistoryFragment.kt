@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.imersa.warnu.databinding.FragmentOrderHistoryBinding // Buat layout ini
+import com.imersa.warnu.databinding.FragmentOrderHistoryBinding
 
 class OrderHistoryFragment : Fragment() {
 
@@ -19,8 +19,7 @@ class OrderHistoryFragment : Fragment() {
     private lateinit var orderAdapter: OrderHistoryAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentOrderHistoryBinding.inflate(inflater, container, false)
         return binding.root

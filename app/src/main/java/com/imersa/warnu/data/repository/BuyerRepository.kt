@@ -14,8 +14,7 @@ class ProductRepository {
 
     // Ambil semua produk (Realtime)
     fun listenProducts(onResult: (List<Product>) -> Unit, onError: (Exception) -> Unit) {
-        firestore.collection("products")
-            .addSnapshotListener { snapshot, e ->
+        firestore.collection("products").addSnapshotListener { snapshot, e ->
                 if (e != null) {
                     onError(e)
                     return@addSnapshotListener
@@ -32,10 +31,8 @@ class ProductRepository {
         val userId = auth.currentUser?.uid ?: throw Exception("User not logged in")
         val productId = product.id ?: throw Exception("Product ID not found")
 
-        val cartRef = firestore.collection("carts")
-            .document(userId)
-            .collection("items")
-            .document(productId)
+        val cartRef =
+            firestore.collection("carts").document(userId).collection("items").document(productId)
 
         firestore.runTransaction { transaction ->
             val snapshot = transaction.get(cartRef)

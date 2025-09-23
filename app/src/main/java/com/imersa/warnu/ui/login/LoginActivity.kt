@@ -3,20 +3,20 @@ package com.imersa.warnu.ui.login
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.imersa.warnu.databinding.ActivityLoginBinding
-import com.imersa.warnu.ui.buyer.main.MainBuyerActivity
-import com.imersa.warnu.ui.seller.main.MainSellerActivity
-import dagger.hilt.android.AndroidEntryPoint
-import android.text.InputType
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import com.imersa.warnu.R
+import com.imersa.warnu.databinding.ActivityLoginBinding
+import com.imersa.warnu.ui.buyer.main.MainBuyerActivity
 import com.imersa.warnu.ui.register.buyer.RegisterBuyerActivity
 import com.imersa.warnu.ui.register.seller.RegisterSellerActivity
+import com.imersa.warnu.ui.seller.main.MainSellerActivity
+import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
@@ -43,7 +43,8 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.password.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Email dan Password tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Email dan Password tidak boleh kosong", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
@@ -70,8 +71,7 @@ class LoginActivity : AppCompatActivity() {
                 InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             binding.showPassword.setImageResource(R.drawable.ic_closed_eye)
         } else {
-            binding.password.inputType =
-                InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            binding.password.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
             binding.showPassword.setImageResource(R.drawable.ic_open_eye)
         }
 
@@ -87,10 +87,12 @@ class LoginActivity : AppCompatActivity() {
                     binding.loginProgressBar.visibility = View.VISIBLE
                     binding.loginButton.isEnabled = false
                 }
+
                 is LoginState.Success -> {
                     binding.loginProgressBar.visibility = View.GONE
                     navigateToHome(state.role)
                 }
+
                 is LoginState.Error -> {
                     binding.loginProgressBar.visibility = View.GONE
                     binding.loginButton.isEnabled = true

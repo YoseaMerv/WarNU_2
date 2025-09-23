@@ -31,9 +31,7 @@ class OrderHistoryViewModel : ViewModel() {
             return
         }
 
-        // Query untuk mendapatkan pesanan milik pengguna, diurutkan dari yang terbaru
-        db.collection("orders")
-            .whereEqualTo("userId", userId)
+        db.collection("orders").whereEqualTo("userId", userId)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 _isLoading.value = false

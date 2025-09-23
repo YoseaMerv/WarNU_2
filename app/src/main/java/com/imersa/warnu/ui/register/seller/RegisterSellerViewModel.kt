@@ -18,19 +18,18 @@ class RegisterSellerViewModel : ViewModel() {
     private val _registerStatus = MutableLiveData<String>()
     val registerStatus: LiveData<String> get() = _registerStatus
 
-    // Pola untuk validasi email
     private val EMAIL_ADDRESS_PATTERN = Pattern.compile(
-        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
-                "\\@" +
-                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
-                "(" +
-                "\\." +
-                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
-                ")+"
+        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" + "\\@" + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" + "(" + "\\." + "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" + ")+"
     )
 
     fun register(
-        name: String, email: String, phone: String, address: String, storeName: String, password: String, imageUri: Uri?
+        name: String,
+        email: String,
+        phone: String,
+        address: String,
+        storeName: String,
+        password: String,
+        imageUri: Uri?
     ) {
         if (!isValidEmail(email)) {
             _registerStatus.value = "Error: Format email tidak valid."
@@ -43,8 +42,7 @@ class RegisterSellerViewModel : ViewModel() {
         }
 
         _registerStatus.value = "Loading"
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val userId = auth.currentUser?.uid
                     if (userId == null) {
@@ -53,7 +51,15 @@ class RegisterSellerViewModel : ViewModel() {
                     }
 
                     if (imageUri != null) {
-                        uploadImageAndSaveUser(userId, name, email, phone, address, storeName, imageUri)
+                        uploadImageAndSaveUser(
+                            userId,
+                            name,
+                            email,
+                            phone,
+                            address,
+                            storeName,
+                            imageUri
+                        )
                     } else {
                         saveUserToFirestore(userId, name, email, phone, address, storeName, "")
                     }
@@ -69,23 +75,41 @@ class RegisterSellerViewModel : ViewModel() {
 
 
     private fun uploadImageAndSaveUser(
-        userId: String, name: String, email: String, phone: String, address: String, storeName: String, imageUri: Uri
+        userId: String,
+        name: String,
+        email: String,
+        phone: String,
+        address: String,
+        storeName: String,
+        imageUri: Uri
     ) {
         val storageRef = storage.reference.child("profile_pictures/${userId}_profile.jpg")
 
-        storageRef.putFile(imageUri)
-            .addOnSuccessListener {
+        storageRef.putFile(imageUri).addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                    saveUserToFirestore(userId, name, email, phone, address, storeName, downloadUrl.toString())
+                    saveUserToFirestore(
+                        userId,
+                        name,
+                        email,
+                        phone,
+                        address,
+                        storeName,
+                        downloadUrl.toString()
+                    )
                 }
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 _registerStatus.value = "Error: Gagal mengunggah gambar - ${e.message}"
             }
     }
 
     private fun saveUserToFirestore(
-        userId: String, name: String, email: String, phone: String, address: String, storeName: String, photoUrl: String
+        userId: String,
+        name: String,
+        email: String,
+        phone: String,
+        address: String,
+        storeName: String,
+        photoUrl: String
     ) {
         val user = hashMapOf(
             "uid" to userId,
@@ -98,12 +122,9 @@ class RegisterSellerViewModel : ViewModel() {
             "photoUrl" to photoUrl
         )
 
-        firestore.collection("users").document(userId)
-            .set(user)
-            .addOnSuccessListener {
+        firestore.collection("users").document(userId).set(user).addOnSuccessListener {
                 _registerStatus.value = "Success"
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 _registerStatus.value = "Error: Gagal menyimpan data ke Firestore - ${e.message}"
             }
     }

@@ -21,7 +21,6 @@ class EditProfileBuyerFragment : Fragment() {
     private lateinit var viewModel: EditProfileBuyerViewModel
     private var selectedImageUri: Uri? = null
 
-    // Launcher untuk memilih gambar dari galeri
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             if (uri != null) {
@@ -42,23 +41,19 @@ class EditProfileBuyerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Set judul action bar
         requireActivity().title = "Edit Profil"
 
         setupObservers()
         setupClickListeners()
 
-        // Ambil data pengguna saat ini untuk ditampilkan di form
         viewModel.fetchUserData()
     }
 
     private fun setupClickListeners() {
-        // Tombol untuk memilih gambar profil
         binding.btnChangePhoto.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
 
-        // Tombol simpan perubahan
         binding.btnSave.setOnClickListener {
             val name = binding.etName.text.toString().trim()
             val phone = binding.etPhone.text.toString().trim()
@@ -81,10 +76,7 @@ class EditProfileBuyerFragment : Fragment() {
 
             val photoUrl = user["photourl"] as? String
             if (!photoUrl.isNullOrEmpty()) {
-                Glide.with(this)
-                    .load(photoUrl)
-                    .circleCrop()
-                    .into(binding.ivProfile)
+                Glide.with(this).load(photoUrl).circleCrop().into(binding.ivProfile)
             }
         }
 
@@ -94,11 +86,17 @@ class EditProfileBuyerFragment : Fragment() {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.btnSave.isEnabled = false
                 }
+
                 status.startsWith("Success") -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Profil berhasil diperbarui",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     findNavController().navigateUp()
                 }
+
                 status.startsWith("Error:") -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnSave.isEnabled = true
