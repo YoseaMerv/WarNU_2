@@ -29,8 +29,8 @@ class MainSellerActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private val viewModel: MainSellerViewModel by viewModels()
+
     @SuppressLint("SetTextI18n")
-    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_seller)
@@ -48,65 +48,42 @@ class MainSellerActivity : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.HomeSellerFragment,
-                R.id.EditManageFragment,
-                R.id.orderManagerFragment,
-                R.id.profileSellerFragment
+                R.id.nav_home, R.id.nav_profile, R.id.nav_manage_product, R.id.nav_order
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
 
+
         val headerView = navigationView.getHeaderView(0)
-        val textViewWelcome = headerView.findViewById<TextView>(R.id.textViewNavHeader)
+        val textViewWelcome = headerView.findViewById<TextView>(R.id.tv_nav_header)
 
         viewModel.name.observe(this) { name ->
-            textViewWelcome.text = "Selamat Datang, $name"
+            textViewWelcome.text = "Welcome, $name"
         }
-
         viewModel.userNotFound.observe(this) { notFound ->
             if (notFound) textViewWelcome.text = "Failed to load user"
         }
 
         viewModel.loadUserData()
 
-        navigationView.menu.findItem(R.id.orderHistoryFragment).isVisible = false
+        navigationView.menu.findItem(R.id.nav_order_history).isVisible = false
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
-            val handled = when (menuItem.itemId) {
-                R.id.nav_home -> {
-                    navController.navigate(R.id.HomeSellerFragment)
-                    true
-                }
+            // Tutup drawer terlebih dahulu
+            drawerLayout.closeDrawer(GravityCompat.START)
 
-                R.id.nav_manage_product -> {
-                    navController.navigate(R.id.EditManageFragment)
-                    true
-                }
-
-                R.id.nav_profile -> {
-                    navController.navigate(R.id.profileSellerFragment)
-                    true
-                }
-
-                R.id.nav_order -> {
-                    navController.navigate(R.id.orderManagerFragment)
-                    true
-                }
-
-                R.id.nav_logout -> {
-                    viewModel.logout()
-                    startActivity(Intent(this, LoginActivity::class.java))
-                    finish()
-                    true
-                }
-
-                else -> false
+            // Handle logout secara manual
+            if (menuItem.itemId == R.id.nav_logout) {
+                viewModel.logout()
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+                return@setNavigationItemSelectedListener true
             }
-            if (handled) drawerLayout.closeDrawer(GravityCompat.START)
-            handled
-        }
 
+            // Biarkan NavigationUI menangani navigasi item menu lainnya
+            return@setNavigationItemSelectedListener NavigationUI.onNavDestinationSelected(menuItem, navController)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

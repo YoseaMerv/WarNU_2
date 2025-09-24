@@ -37,4 +37,8 @@
     <string name="sign_up_as_buyer">Sign Up as Buyer</string>
     <string name="I">|</string>
     <string name="sign_up_as_seller">Sign Up as Seller</string>
+    <string name="no_products_available">No Resource Available!</string>
+    <string name="add_product">Add Product</string>
+    <string name="no_orders_yet">No Order Yet!</string>
+    <string name="description">Description</string>
 </resources>

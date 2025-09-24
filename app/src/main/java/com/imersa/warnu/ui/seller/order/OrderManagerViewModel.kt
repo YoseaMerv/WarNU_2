@@ -1,4 +1,4 @@
-package com.imersa.warnu.ui.buyer.order
+package com.imersa.warnu.ui.seller.order
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,7 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class OrderHistoryViewModel @Inject constructor(
+class OrderManagerViewModel @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
@@ -22,16 +22,16 @@ class OrderHistoryViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    fun loadOrderHistory() {
+    fun loadOrders() {
         _isLoading.value = true
-        val userId = auth.currentUser?.uid
-        if (userId == null) {
+        val sellerId = auth.currentUser?.uid
+        if (sellerId == null) {
             _isLoading.value = false
             return
         }
 
         firestore.collection("orders")
-            .whereEqualTo("userId", userId)
+            .whereEqualTo("sellerId", sellerId)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {

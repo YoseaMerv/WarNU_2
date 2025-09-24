@@ -9,9 +9,10 @@ data class Order(
     val totalAmount: Double? = null,
     val paymentStatus: String? = null,
     val createdAt: Timestamp? = null,
+    val customerName: String? = null,
+    val sellerId: String? = null,
+
     @get:PropertyName("items")
     @set:PropertyName("items")
-    var items: List<CartItem>? = null,
-    val customerName: String? = null,
-    var sellerId: String? = null
+    var items: List<CartItem>? = null
 )

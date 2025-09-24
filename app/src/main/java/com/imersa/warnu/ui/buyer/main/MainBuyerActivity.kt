@@ -51,9 +51,7 @@ class MainBuyerActivity : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.homeBuyerFragment,
-                R.id.profileBuyerFragment,
-                R.id.orderHistoryFragment
+                R.id.nav_home, R.id.nav_profile, R.id.nav_order_history
             ), drawerLayout
         )
 
@@ -61,9 +59,9 @@ class MainBuyerActivity : AppCompatActivity() {
         navigationView.setupWithNavController(navController)
 
         navigationView.getHeaderView(0)?.let { headerView ->
-            val textViewWelcome = headerView.findViewById<TextView>(R.id.textViewNavHeader)
+            val textViewWelcome = headerView.findViewById<TextView>(R.id.tv_nav_header)
             viewModel.name.observe(this) { name ->
-                textViewWelcome.text = "Selamat Datang, $name"
+                textViewWelcome.text = "Welcome, $name"
             }
             viewModel.userNotFound.observe(this) { notFound ->
                 if (notFound) textViewWelcome.text = "Failed to load user"
@@ -77,23 +75,15 @@ class MainBuyerActivity : AppCompatActivity() {
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             drawerLayout.closeDrawer(GravityCompat.START)
-            when (menuItem.itemId) {
-                R.id.nav_logout -> {
-                    viewModel.logout()
-                    startActivity(Intent(this, LoginActivity::class.java))
-                    finish()
-                    true
-                }
 
-                R.id.nav_profile -> {
-                    navController.navigate(R.id.profileBuyerFragment)
-                    true
-                }
-
-                else -> {
-                    NavigationUI.onNavDestinationSelected(menuItem, navController)
-                }
+            if (menuItem.itemId == R.id.nav_logout) {
+                viewModel.logout()
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+                return@setNavigationItemSelectedListener true
             }
+
+            return@setNavigationItemSelectedListener NavigationUI.onNavDestinationSelected(menuItem, navController)
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -103,22 +93,18 @@ class MainBuyerActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_buyer_toolbar, menu)
-
         val cartMenu = menu.findItem(R.id.action_cart)
         val currentDestination = navController.currentDestination?.id
-
-        cartMenu?.isVisible = currentDestination != R.id.cartFragment
-
+        cartMenu?.isVisible = currentDestination != R.id.nav_cart
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_cart -> {
-                navController.navigate(R.id.cartFragment)
+                navController.navigate(R.id.nav_cart)
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }

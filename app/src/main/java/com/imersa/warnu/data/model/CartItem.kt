@@ -15,4 +15,6 @@ data class CartItem(
     @get:PropertyName("sellerId")
     @set:PropertyName("sellerId")
     var sellerId: String? = null
-) : Parcelable
+) : Parcelable {
+    constructor() : this(null, null, null, 0, null, null)
+}

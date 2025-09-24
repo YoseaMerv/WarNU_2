@@ -7,39 +7,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.viewpager2.widget.ViewPager2
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.viewpager2.widget.CompositePageTransformer
+import androidx.viewpager2.widget.MarginPageTransformer
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentHomeBuyerBinding
+import com.imersa.warnu.ui.buyer.product.BannerAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.abs
 
+@AndroidEntryPoint
 class HomeBuyerFragment : Fragment() {
 
     private var _binding: FragmentHomeBuyerBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var adapter: HomeBuyerAdapter
-    private lateinit var bannerAdapter: BannerAdapter
-
     private val viewModel: HomeBuyerViewModel by viewModels()
+    private lateinit var productAdapter: HomeBuyerAdapter
 
-    private val handler = Handler(Looper.getMainLooper())
-
-    private val autoSlideRunnable = object : Runnable {
-        override fun run() {
-            val nextItem = binding.viewPagerBanner.currentItem + 1
-            binding.viewPagerBanner.setCurrentItem(nextItem, true)
-            handler.postDelayed(this, 3000)
-        }
-    }
+    private val sliderHandler = Handler(Looper.getMainLooper())
+    private lateinit var sliderRunnable: Runnable
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBuyerBinding.inflate(inflater, container, false)
         return binding.root
@@ -50,100 +44,123 @@ class HomeBuyerFragment : Fragment() {
 
         setupRecyclerView()
         setupBanner()
+        setupSearchView()
         observeViewModel()
-
-        viewModel.loadProducts()
-
-        binding.etSearch.addTextChangedListener { text ->
-            viewModel.searchProducts(text.toString())
-        }
     }
 
     private fun setupRecyclerView() {
-        adapter = HomeBuyerAdapter(onItemClick = { product ->
-            val bundle = Bundle().apply {
-                putString("productId", product.id)
-            }
-            findNavController().navigate(
-                R.id.action_homeBuyerFragment_to_detailProductFragment, bundle
-            )
-        }, onAddToCartClick = { product ->
-            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@HomeBuyerAdapter
-
-            val cartRef = FirebaseFirestore.getInstance().collection("carts").document(userId)
-                .collection("items").document(product.id!!)
-
-            FirebaseFirestore.getInstance().runTransaction { transaction ->
-                val snapshot = transaction.get(cartRef)
-                if (snapshot.exists()) {
-                    val currentQty = snapshot.getLong("quantity") ?: 0
-                    transaction.update(cartRef, "quantity", currentQty + 1)
-                } else {
-                    val cartItem = hashMapOf(
-                        "productId" to product.id,
-                        "name" to product.name,
-                        "price" to product.price,
-                        "imageUrl" to product.imageUrl,
-                        "quantity" to 1,
-                        "sellerId" to product.sellerId
-                    )
-                    transaction.set(cartRef, cartItem)
+        productAdapter = HomeBuyerAdapter(
+            onItemClick = { product ->
+                val bundle = Bundle().apply {
+                    putString("productId", product.id)
                 }
-            }.addOnSuccessListener {
-                Toast.makeText(requireContext(), "Ditambahkan ke keranjang", Toast.LENGTH_SHORT)
-                    .show()
-            }.addOnFailureListener {
-                Toast.makeText(requireContext(), "Gagal menambahkan item", Toast.LENGTH_SHORT)
-                    .show()
+                findNavController().navigate(R.id.nav_product_detail, bundle)
+            },
+            onAddToCartClick = { product ->
+                // Panggil fungsi ViewModel saat tombol diklik
+                viewModel.addToCart(product)
             }
-        })
-
-        binding.rvProdukBuyer.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.rvProdukBuyer.adapter = adapter
+        )
+        binding.rvProducts.apply {
+            layoutManager = GridLayoutManager(context, 2)
+            adapter = productAdapter
+        }
     }
 
     private fun setupBanner() {
-        val banners = listOf(
-            R.drawable.banner1, R.drawable.banner2, R.drawable.banner3
-        )
+        val bannerImages = listOf(R.drawable.banner1, R.drawable.banner2, R.drawable.banner3)
+        val bannerAdapter = BannerAdapter(bannerImages)
+        binding.vpBanner.adapter = bannerAdapter
 
-        bannerAdapter = BannerAdapter(banners)
-        binding.viewPagerBanner.adapter = bannerAdapter
-        binding.viewPagerBanner.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        val compositePageTransformer = CompositePageTransformer()
+        compositePageTransformer.addTransformer(MarginPageTransformer(40))
+        compositePageTransformer.addTransformer { page, position ->
+            val r = 1 - abs(position)
+            page.scaleY = 0.85f + r * 0.15f
+        }
+        binding.vpBanner.setPageTransformer(compositePageTransformer)
 
-        val startPosition = Int.MAX_VALUE / 2
-        binding.viewPagerBanner.setCurrentItem(startPosition, false)
-
-        handler.postDelayed(autoSlideRunnable, 3000)
+        sliderRunnable = Runnable {
+            val currentItem = binding.vpBanner.currentItem
+            val nextItem = if (currentItem == bannerAdapter.itemCount - 1) 0 else currentItem + 1
+            binding.vpBanner.setCurrentItem(nextItem, true)
+        }
     }
 
+    private fun startAutoSlider(count: Int) {
+        if (count > 1) { // Hanya mulai jika ada lebih dari 1 banner
+            sliderRunnable.let {
+                sliderHandler.postDelayed(it, 3000)
+            }
+
+            binding.vpBanner.registerOnPageChangeCallback(object :
+                androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    sliderHandler.removeCallbacks(sliderRunnable)
+                    sliderHandler.postDelayed(sliderRunnable, 3000)
+                }
+            })
+        }
+    }
+
+    private fun stopAutoSlider() {
+        sliderHandler.removeCallbacks(sliderRunnable)
+    }
+
+    // Fungsi search yang diperbaiki
+    private fun setupSearchView() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Tidak perlu aksi khusus karena pencarian sudah real-time
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Panggil fungsi search di ViewModel setiap kali teks berubah
+                viewModel.searchProducts(newText.orEmpty())
+                return true
+            }
+        })
+    }
+
+
     private fun observeViewModel() {
-        viewModel.filteredProducts.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        viewModel.products.observe(viewLifecycleOwner) { products ->
+            if (products.isEmpty()) {
+                binding.tvNoProducts.visibility = View.VISIBLE
+                binding.rvProducts.visibility = View.GONE
+            } else {
+                binding.tvNoProducts.visibility = View.GONE
+                binding.rvProducts.visibility = View.VISIBLE
+                productAdapter.submitList(products)
+            }
         }
-        viewModel.loading.observe(viewLifecycleOwner) {
-            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
-        viewModel.emptyState.observe(viewLifecycleOwner) {
-            binding.tvEmptyState.visibility = if (it) View.VISIBLE else View.GONE
-            binding.rvProdukBuyer.visibility = if (it) View.GONE else View.VISIBLE
+        viewModel.toastMessage.observe(viewLifecycleOwner) { message ->
+            message?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                viewModel.onToastMessageShown()
+            }
         }
     }
 
     override fun onPause() {
         super.onPause()
-        handler.removeCallbacks(autoSlideRunnable)
+        stopAutoSlider()
     }
 
     override fun onResume() {
         super.onResume()
-        handler.removeCallbacks(autoSlideRunnable)
-        handler.postDelayed(autoSlideRunnable, 3000)
+        (binding.vpBanner.adapter?.itemCount)?.let { startAutoSlider(it) }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        stopAutoSlider()
         _binding = null
-        handler.removeCallbacks(autoSlideRunnable)
     }
 }

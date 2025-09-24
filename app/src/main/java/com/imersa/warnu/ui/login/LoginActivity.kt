@@ -17,7 +17,6 @@ import com.imersa.warnu.ui.register.seller.RegisterSellerActivity
 import com.imersa.warnu.ui.seller.main.MainSellerActivity
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -37,64 +36,60 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        binding.loginButton.setOnClickListener {
-            val email = binding.emailInput.text.toString().trim()
-            val password = binding.password.text.toString().trim()
+        binding.btnLogin.setOnClickListener {
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Email dan Password tidak boleh kosong", Toast.LENGTH_SHORT)
+                Toast.makeText(this, "Email and Password cannot be empty", Toast.LENGTH_SHORT)
                     .show()
                 return@setOnClickListener
             }
-
             viewModel.login(email, password)
         }
 
-        binding.showPassword.setOnClickListener {
-            isPasswordVisible = togglePasswordVisibility()
+        binding.ivShowPassword.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            togglePasswordVisibility()
         }
 
-        binding.signUpBuyer.setOnClickListener {
+        binding.tvSignupBuyer.setOnClickListener {
             startActivity(Intent(this, RegisterBuyerActivity::class.java))
         }
 
-        binding.signUpSeller.setOnClickListener {
+        binding.tvSignupSeller.setOnClickListener {
             startActivity(Intent(this, RegisterSellerActivity::class.java))
         }
-
     }
 
-    private fun togglePasswordVisibility(): Boolean {
+    private fun togglePasswordVisibility() {
         if (isPasswordVisible) {
-            binding.password.inputType =
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            binding.showPassword.setImageResource(R.drawable.ic_closed_eye)
+            binding.etPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            binding.ivShowPassword.setImageResource(R.drawable.ic_open_eye)
         } else {
-            binding.password.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            binding.showPassword.setImageResource(R.drawable.ic_open_eye)
+            binding.etPassword.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            binding.ivShowPassword.setImageResource(R.drawable.ic_closed_eye)
         }
-
-        binding.password.typeface = Typeface.DEFAULT
-        binding.password.setSelection(binding.password.text?.length ?: 0)
-        return !isPasswordVisible
+        // Setel kursor ke akhir teks
+        binding.etPassword.setSelection(binding.etPassword.text?.length ?: 0)
     }
+
 
     private fun observeLoginState() {
         viewModel.loginState.observe(this) { state ->
             when (state) {
                 is LoginState.Loading -> {
-                    binding.loginProgressBar.visibility = View.VISIBLE
-                    binding.loginButton.isEnabled = false
+                    binding.pbLogin.visibility = View.VISIBLE
+                    binding.btnLogin.isEnabled = false
                 }
-
                 is LoginState.Success -> {
-                    binding.loginProgressBar.visibility = View.GONE
+                    binding.pbLogin.visibility = View.GONE
                     navigateToHome(state.role)
                 }
-
                 is LoginState.Error -> {
-                    binding.loginProgressBar.visibility = View.GONE
-                    binding.loginButton.isEnabled = true
+                    binding.pbLogin.visibility = View.GONE
+                    binding.btnLogin.isEnabled = true
                     Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
                 }
             }
@@ -106,7 +101,7 @@ class LoginActivity : AppCompatActivity() {
             "seller" -> Intent(this, MainSellerActivity::class.java)
             "buyer" -> Intent(this, MainBuyerActivity::class.java)
             else -> {
-                Toast.makeText(this, "Role tidak valid: $role", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Invalid role: $role", Toast.LENGTH_SHORT).show()
                 return
             }
         }

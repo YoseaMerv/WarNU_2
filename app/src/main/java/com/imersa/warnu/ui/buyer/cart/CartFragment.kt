@@ -1,31 +1,34 @@
 package com.imersa.warnu.ui.buyer.cart
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.imersa.warnu.data.model.CartItem
 import com.imersa.warnu.databinding.FragmentCartBinding
 import com.imersa.warnu.ui.checkout.CheckoutActivity
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.util.Locale
+import java.text.DecimalFormat
 
+@AndroidEntryPoint
 class CartFragment : Fragment() {
-
-    private val cartViewModel: CartViewModel by viewModels()
 
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
-
+    private val viewModel: CartViewModel by viewModels()
     private lateinit var cartAdapter: CartAdapter
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCartBinding.inflate(inflater, container, false)
         return binding.root
@@ -33,63 +36,87 @@ class CartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
+        observeViewModel()
 
-        observeCartItems()
-
-        setupCheckoutButton()
+        binding.btnCheckout.setOnClickListener {
+            val cartItems = cartAdapter.currentList
+            if (cartItems.isNotEmpty()) {
+                val intent = Intent(requireContext(), CheckoutActivity::class.java)
+                intent.putExtra("CART_ITEMS", Gson().toJson(cartItems))
+                startActivity(intent)
+            }
+        }
     }
 
     private fun setupRecyclerView() {
-        cartAdapter = CartAdapter(onUpdateQuantity = { cartItem, newQuantity ->
-            cartViewModel.updateCartItemQuantity(cartItem.productId ?: "", newQuantity)
-        }, onRemoveItem = { cartItem ->
-            cartViewModel.removeCartItem(cartItem.productId ?: "")
-        })
-        binding.rvCart.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+        cartAdapter = CartAdapter(
+            onIncrease = { cartItem ->
+                cartItem.productId?.let {
+                    viewModel.updateCartItemQuantity(it, cartItem.quantity + 1)
+                }
+            },
+            onDecrease = { cartItem ->
+                if (cartItem.quantity > 1) {
+                    cartItem.productId?.let {
+                        viewModel.updateCartItemQuantity(it, cartItem.quantity - 1)
+                    }
+                } else {
+                    showRemoveConfirmationDialog(cartItem)
+                }
+            },
+            onRemove = { cartItem ->
+                showRemoveConfirmationDialog(cartItem)
+            }
+        )
+        // Menggunakan ID yang sekarang sudah benar: rv_cart_items
+        binding.rvCartItems.apply {
+            layoutManager = LinearLayoutManager(context)
             adapter = cartAdapter
         }
     }
 
-    private fun observeCartItems() {
-        cartViewModel.cartItems.observe(viewLifecycleOwner) { cartItems ->
-            binding.emptyCartLayout.isVisible = cartItems.isNullOrEmpty()
-            binding.rvCart.isVisible = !cartItems.isNullOrEmpty()
-            binding.checkoutLayout.isVisible = !cartItems.isNullOrEmpty()
+    private fun showRemoveConfirmationDialog(cartItem: CartItem) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Remove Item")
+            .setMessage("Are you sure you want to remove '${cartItem.name}' from your cart?")
+            .setPositiveButton("Remove") { dialog, _ ->
+                cartItem.productId?.let {
+                    viewModel.removeCartItem(it)
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
 
-            if (!cartItems.isNullOrEmpty()) {
-                cartAdapter.submitList(cartItems)
-                updateTotalPrice(cartItems)
+    private fun observeViewModel() {
+        viewModel.cartItems.observe(viewLifecycleOwner) { items ->
+            val isEmpty = items.isNullOrEmpty()
+            // Menggunakan ID yang sekarang sudah benar
+            binding.layoutEmptyCart.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            binding.rvCartItems.visibility = if (isEmpty) View.GONE else View.VISIBLE
+            binding.layoutCheckout.visibility = if (isEmpty) View.GONE else View.VISIBLE
+
+            if (!isEmpty) {
+                cartAdapter.submitList(items)
+                updateTotalPrice(items)
             }
         }
     }
 
-    private fun updateTotalPrice(cartItems: List<CartItem>) {
-        val totalPrice = cartItems.sumOf { (it.price ?: 0.0) * it.quantity }
-        @Suppress("DEPRECATION")
-        val localeID = Locale("in", "ID")
-        val numberFormat = NumberFormat.getCurrencyInstance(localeID)
-        binding.tvTotalPrice.text = numberFormat.format(totalPrice)
-    }
+    private fun updateTotalPrice(items: List<CartItem>) {
+        val totalPrice = items.sumOf { (it.price ?: 0.0) * it.quantity }
 
-    private fun setupCheckoutButton() {
-        binding.btnCheckout.setOnClickListener {
-            val cartItems = cartViewModel.cartItems.value
+        // --- PERBAIKAN FORMAT ANGKA ---
+        // Membuat formatter khusus untuk mata uang tanpa desimal
+        val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) as DecimalFormat
+        formatter.maximumFractionDigits = 0 // Menghilangkan angka di belakang koma
+        formatter.minimumFractionDigits = 0
 
-            if (cartItems.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), "Keranjang Anda kosong", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val totalAmount = cartItems.sumOf { (it.price ?: 0.0) * it.quantity }
-
-            val intent = Intent(requireContext(), CheckoutActivity::class.java).apply {
-                putExtra("TOTAL_AMOUNT", totalAmount)
-            }
-            startActivity(intent)
-        }
+        binding.tvTotalPrice.text = formatter.format(totalPrice)
     }
 
     override fun onDestroyView() {

@@ -1,17 +1,17 @@
 package com.imersa.warnu.ui.seller.product
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.imersa.warnu.R
+import com.imersa.warnu.data.model.Product
 import com.imersa.warnu.databinding.FragmentDetailProductBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
@@ -19,125 +19,92 @@ import java.util.Locale
 
 @AndroidEntryPoint
 class DetailProductFragment : Fragment() {
-
     private var _binding: FragmentDetailProductBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: DetailProductViewModel by viewModels()
-    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
-    private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+    private var currentQuantity = 1
+    private var currentProduct: Product? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailProductBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as? AppCompatActivity)?.setSupportActionBar(binding.toolbar)
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
+
         val productId = arguments?.getString("productId")
         if (productId == null) {
-            Toast.makeText(requireContext(), "Product ID not found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Product ID not found", Toast.LENGTH_SHORT).show()
+            activity?.onBackPressedDispatcher?.onBackPressed()
             return
         }
 
-        val userId = auth.currentUser?.uid
-        if (userId != null) {
-            firestore.collection("users").document(userId).get().addOnSuccessListener { document ->
-                    if (document.exists()) {
-                        val role = document.getString("role")
-                        if (role == "buyer") {
-                            binding.fabAddToCart.visibility = View.VISIBLE
-                        } else {
-                            binding.fabAddToCart.visibility = View.GONE
-                        }
-                    }
-                }.addOnFailureListener {
-                    Toast.makeText(requireContext(), "Gagal ambil role user", Toast.LENGTH_SHORT)
-                        .show()
-                }
+        viewModel.loadProduct(productId)
+        viewModel.loadUserRole() // Panggil fungsi untuk memuat role
+        observeViewModel()
+        setupClickListeners()
+    }
+    private fun observeViewModel() {
+        viewModel.product.observe(viewLifecycleOwner) { product ->
+            product?.let {
+                currentProduct = it
+                binding.collapsingToolbar.title = it.name
+                binding.tvProductName.text = it.name
+                binding.tvProductDescription.text = it.description
+                val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+                binding.tvProductPrice.text = formatter.format(it.price ?: 0.0)
+                binding.tvProductStock.text = "Stock: ${it.stock ?: 0}"
+                Glide.with(this)
+                    .load(it.imageUrl)
+                    .placeholder(R.drawable.placeholder_image)
+                    .into(binding.ivProductImage)
+            }
+        }
+
+        viewModel.addToCartStatus.observe(viewLifecycleOwner) { status ->
+            status?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                viewModel.onStatusMessageShown()
+            }
+        }
+        viewModel.userRole.observe(viewLifecycleOwner) { role ->
+            val isBuyer = role == "buyer"
+
+            // Tampilkan/sembunyikan tombol berdasarkan role
+            binding.fabAddToCart.isVisible = isBuyer
+            binding.btnIncreaseQuantity.isVisible = isBuyer
+            binding.btnDecreaseQuantity.isVisible = isBuyer
+            binding.tvQuantity.isVisible = isBuyer
+        }
+    }
+
+    private fun setupClickListeners() {
+        binding.btnIncreaseQuantity.setOnClickListener {
+            currentQuantity++
+            binding.tvQuantity.text = currentQuantity.toString()
+        }
+
+        binding.btnDecreaseQuantity.setOnClickListener {
+            if (currentQuantity > 1) {
+                currentQuantity--
+                binding.tvQuantity.text = currentQuantity.toString()
+            }
         }
 
         binding.fabAddToCart.setOnClickListener {
-            val currentProduct = viewModel.product.value
-            val userId = auth.currentUser?.uid
-
-            if (currentProduct?.id != null && userId != null) {
-                firestore.collection("carts").document(userId).collection("items")
-                    .document(currentProduct.id).get().addOnSuccessListener { doc ->
-                        if (doc.exists()) {
-                            val currentQty = doc.getLong("quantity") ?: 0
-                            firestore.collection("carts").document(userId).collection("items")
-                                .document(currentProduct.id).update("quantity", currentQty + 1)
-                                .addOnSuccessListener {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Qty ditambah",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                        } else {
-                            val cartItem = hashMapOf(
-                                "productId" to currentProduct.id,
-                                "name" to currentProduct.name,
-                                "price" to currentProduct.price,
-                                "quantity" to 1,
-                                "sellerId" to currentProduct.sellerId,
-                                "imageUrl" to currentProduct.imageUrl
-                            )
-
-                            firestore.collection("carts").document(userId).collection("items")
-                                .document(currentProduct.id).set(cartItem).addOnSuccessListener {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Ditambahkan ke keranjang",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }.addOnFailureListener {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Gagal tambah ke cart",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                        }
-                    }
-            } else {
-                Toast.makeText(requireContext(), "Produk belum dimuat", Toast.LENGTH_SHORT).show()
+            currentProduct?.let { product ->
+                viewModel.addToCart(product, currentQuantity)
             }
         }
-
-
-        viewModel.product.observe(viewLifecycleOwner) { product ->
-            val formattedPrice =
-                @Suppress("DEPRECATION")
-                NumberFormat.getNumberInstance(Locale("id", "ID")).format(product.price)
-
-            binding.tvDetailNamaProduk.text = product.name
-            binding.tvDetailHargaProduk.text = "Rp$formattedPrice"
-            binding.tvDetailDeskripsi.text = product.description
-            binding.chipKategori.text = product.category
-            binding.chipStok.text = "Stok: ${product.stock}"
-
-            Glide.with(this).load(product.imageUrl).placeholder(R.drawable.placeholder_image)
-                .into(binding.ivDetailGambarProduk)
-        }
-
-        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
-            binding.loadingLayout.visibility = if (isLoading) View.VISIBLE else View.GONE
-            binding.contentLayout.visibility = if (isLoading) View.GONE else View.VISIBLE
-        }
-
-        viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
-            message?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        viewModel.getProductById(productId)
     }
 
     override fun onDestroyView() {

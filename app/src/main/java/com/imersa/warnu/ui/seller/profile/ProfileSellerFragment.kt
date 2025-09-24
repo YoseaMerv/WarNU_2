@@ -12,7 +12,9 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentProfileSellerBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileSellerFragment : Fragment() {
 
     private var _binding: FragmentProfileSellerBinding? = null
@@ -29,43 +31,50 @@ class ProfileSellerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.loadSellerProfile()
+        viewModel.loadUserProfile()
         setupObservers()
 
-        binding.btnEditProfil.setOnClickListener {
-            findNavController().navigate(R.id.action_profileSellerFragment_to_editProfileSellerFragment)
+        binding.btnEditProfile.setOnClickListener {
+            // Langsung ke ID fragment tujuan
+            findNavController().navigate(R.id.nav_edit_profile_seller)
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadUserProfile()
+    }
+
     private fun setupObservers() {
-        viewModel.sellerName.observe(viewLifecycleOwner) { name ->
-            binding.tvNamaValue.text = name
+        viewModel.name.observe(viewLifecycleOwner) { name ->
+            binding.tvNameValue.text = name
         }
 
-        viewModel.storeName.observe(viewLifecycleOwner) { store ->
-            binding.tvShopName.text = store
+        viewModel.storeName.observe(viewLifecycleOwner) { storeName ->
+            binding.tvStoreNameValue.text = storeName
         }
 
         viewModel.phone.observe(viewLifecycleOwner) { phone ->
-            binding.tvTeleponValue.text = phone
+            binding.tvPhoneValue.text = phone
         }
 
         viewModel.address.observe(viewLifecycleOwner) { address ->
-            binding.tvAlamatValue.text = address
+            binding.tvAddressValue.text = address
         }
 
-        viewModel.sellerEmail.observe(viewLifecycleOwner) { email ->
+        viewModel.email.observe(viewLifecycleOwner) { email ->
             binding.tvEmailValue.text = email
         }
 
         viewModel.photoUrl.observe(viewLifecycleOwner) { url ->
             if (!url.isNullOrEmpty()) {
-                Glide.with(this).load(url).centerCrop()
-                    .placeholder(R.drawable.placeholder_image) // Menggunakan placeholder yang konsisten
-                    .into(binding.ivFotoProfil)
+                Glide.with(this)
+                    .load(url)
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder_image)
+                    .into(binding.ivProfilePicture)
             } else {
-                binding.ivFotoProfil.setImageResource(R.drawable.ic_user) // fallback
+                binding.ivProfilePicture.setImageResource(R.drawable.placeholder_image)
             }
         }
 

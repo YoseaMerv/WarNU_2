@@ -12,7 +12,9 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentProfileBuyerBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileBuyerFragment : Fragment() {
 
     private var _binding: FragmentProfileBuyerBinding? = null
@@ -29,48 +31,62 @@ class ProfileBuyerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadBuyerProfile()
+        viewModel.loadUserProfile()
         setupObservers()
 
-        binding.btnEditProfil.setOnClickListener {
-            findNavController().navigate(R.id.action_profileBuyerFragment_to_editProfileBuyerFragment)
+        binding.btnEditProfile.setOnClickListener {
+            findNavController().navigate(R.id.nav_edit_profile_buyer)
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Muat ulang data setiap kali fragment ini ditampilkan kembali
+        viewModel.loadUserProfile()
+    }
+
     private fun setupObservers() {
-        viewModel.buyerName.observe(viewLifecycleOwner) { name ->
-            binding.tvNamaValue.text = name
+        viewModel.name.observe(viewLifecycleOwner) { name ->
+            binding.tvNameValue.text = name
         }
 
         viewModel.phone.observe(viewLifecycleOwner) { phone ->
-            binding.tvTeleponValue.text = phone
+            binding.tvPhoneValue.text = phone
         }
 
         viewModel.address.observe(viewLifecycleOwner) { address ->
-            binding.tvAlamatValue.text = address
+            binding.tvAddressValue.text = address
         }
 
-        viewModel.buyerEmail.observe(viewLifecycleOwner) { email ->
+        viewModel.email.observe(viewLifecycleOwner) { email ->
             binding.tvEmailValue.text = email
         }
 
         viewModel.photoUrl.observe(viewLifecycleOwner) { url ->
             if (!url.isNullOrEmpty()) {
-                Glide.with(this).load(url).centerCrop().placeholder(R.drawable.placeholder_image)
-                    .into(binding.ivFotoProfil)
+                Glide.with(this)
+                    .load(url)
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder_image)
+                    .into(binding.ivProfilePicture)
             } else {
-                binding.ivFotoProfil.setImageResource(R.drawable.placeholder_image)
-            }
-
-            viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
-                binding.progressBar.isVisible = loading
-            }
-
-            viewModel.errorMessage.observe(viewLifecycleOwner) { msg ->
-                if (msg != null) {
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                }
+                binding.ivProfilePicture.setImageResource(R.drawable.placeholder_image)
             }
         }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            binding.progressBar.isVisible = loading
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { msg ->
+            if (msg != null) {
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

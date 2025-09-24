@@ -1,4 +1,4 @@
-package com.imersa.warnu.ui.buyer.order
+package com.imersa.warnu.ui.seller.order
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -11,16 +11,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.imersa.warnu.R
 import com.imersa.warnu.data.model.Order
-import java.text.NumberFormat
-import java.text.SimpleDateFormat
-import java.util.Locale
 import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.Locale
 
-class OrderHistoryAdapter : ListAdapter<Order, OrderHistoryAdapter.OrderViewHolder>(DiffCallback()) {
+class OrderManagerAdapter : ListAdapter<Order, OrderManagerAdapter.OrderViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_order_history, parent, false)
+            .inflate(R.layout.item_orders, parent, false)
         return OrderViewHolder(view)
     }
 
@@ -29,18 +28,17 @@ class OrderHistoryAdapter : ListAdapter<Order, OrderHistoryAdapter.OrderViewHold
     }
 
     class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val tvCustomerName: TextView = itemView.findViewById(R.id.tv_customer_name)
         private val tvOrderId: TextView = itemView.findViewById(R.id.tv_order_id)
-        private val tvDate: TextView = itemView.findViewById(R.id.tv_date)
         private val tvTotalAmount: TextView = itemView.findViewById(R.id.tv_total_amount)
         private val tvStatus: TextView = itemView.findViewById(R.id.tv_status)
 
         @SuppressLint("SetTextI18n")
         fun bind(order: Order) {
-            tvOrderId.text = "Order ID: ${order.orderId}"
+            tvCustomerName.text = order.customerName
+            tvOrderId.text = order.orderId
 
-            val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-            tvDate.text = order.createdAt?.toDate()?.let { sdf.format(it) } ?: "No date"
-
+            // --- PERBAIKAN FORMAT ANGKA ---
             val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) as DecimalFormat
             formatter.maximumFractionDigits = 0
             formatter.minimumFractionDigits = 0

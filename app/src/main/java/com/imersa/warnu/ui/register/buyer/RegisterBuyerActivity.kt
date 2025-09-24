@@ -10,7 +10,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.imersa.warnu.databinding.ActivityRegisterBuyerBinding
 import com.imersa.warnu.ui.login.LoginActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegisterBuyerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBuyerBinding
@@ -32,19 +34,19 @@ class RegisterBuyerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBuyerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.hide()
 
         setupListeners()
         observeViewModel()
     }
 
     private fun setupListeners() {
-        binding.cardProfileImage.setOnClickListener {
+        binding.cvProfileImage.setOnClickListener {
             imagePickerLauncher.launch("image/*")
         }
         binding.ivProfilePicture.setOnClickListener {
             imagePickerLauncher.launch("image/*")
         }
-
 
         binding.btnRegister.setOnClickListener {
             val name = binding.etName.text.toString().trim()
@@ -54,7 +56,7 @@ class RegisterBuyerActivity : AppCompatActivity() {
             val password = binding.etPassword.text.toString().trim()
 
             if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Semua kolom wajib diisi", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -69,16 +71,14 @@ class RegisterBuyerActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.btnRegister.isEnabled = false
                 }
-
                 status.startsWith("Success") -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this, "Registrasi berhasil!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Registration successful!", Toast.LENGTH_LONG).show()
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                     finish()
                 }
-
                 status.startsWith("Error") -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnRegister.isEnabled = true

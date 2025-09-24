@@ -8,12 +8,16 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class EditProfileBuyerViewModel : ViewModel() {
+@HiltViewModel
+class EditProfileBuyerViewModel @Inject constructor(
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage
+) : ViewModel() {
 
-    private val db = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
-    private val storage = FirebaseStorage.getInstance()
     private val userId = auth.currentUser?.uid
 
     private val _updateStatus = MutableLiveData<String>()
@@ -26,21 +30,22 @@ class EditProfileBuyerViewModel : ViewModel() {
 
     fun fetchUserData() {
         if (userId == null) {
-            _updateStatus.value = "Error: User tidak ditemukan."
+            _updateStatus.value = "Error: User not found."
             return
         }
-        db.collection("users").document(userId).get()
+        firestore.collection("users").document(userId).get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
                     val data = document.data ?: emptyMap()
                     _userData.value = data
-                    oldPhotoUrl = data["photourl"] as? String
+                    // Gunakan "profileImageUrl" sesuai dengan standar baru kita
+                    oldPhotoUrl = data["profileImageUrl"] as? String
                 } else {
-                    _updateStatus.value = "Error: Data pengguna tidak ditemukan."
+                    _updateStatus.value = "Error: User data not found."
                 }
             }
             .addOnFailureListener { e ->
-                _updateStatus.value = "Error: Gagal mengambil data - ${e.message}"
+                _updateStatus.value = "Error: Failed to fetch data - ${e.message}"
             }
     }
 
@@ -48,24 +53,25 @@ class EditProfileBuyerViewModel : ViewModel() {
         context: Context, name: String, phone: String, address: String, imageUri: Uri?
     ) {
         if (userId == null) {
-            _updateStatus.value = "Error: User tidak ditemukan."
+            _updateStatus.value = "Error: User not found."
             return
         }
 
         _updateStatus.value = "Loading"
 
         if (imageUri != null) {
+            // Validasi file gambar sederhana
             try {
                 val inputStream = context.contentResolver.openInputStream(imageUri)
                 val fileSize = inputStream?.available() ?: 0
                 inputStream?.close()
 
                 if (fileSize <= 0) {
-                    _updateStatus.value = "Error: File gambar tidak valid."
+                    _updateStatus.value = "Error: Invalid image file."
                     return
                 }
             } catch (e: Exception) {
-                _updateStatus.value = "Error: Tidak bisa membaca file - ${e.message}"
+                _updateStatus.value = "Error: Cannot read file - ${e.message}"
                 return
             }
 
@@ -86,14 +92,16 @@ class EditProfileBuyerViewModel : ViewModel() {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                     updateUserData(userId, name, phone, address, downloadUrl.toString())
 
-                    // 🔥 Hapus foto lama setelah sukses update (kalau ada)
+                    // Hapus foto lama setelah sukses update
                     oldPhotoUrl?.let { url ->
-                        deleteOldPhoto(url)
+                        if (url.isNotEmpty()) {
+                            deleteOldPhoto(url)
+                        }
                     }
                 }
             }
             .addOnFailureListener { e ->
-                _updateStatus.value = "Error: Gagal mengunggah gambar - ${e.message}"
+                _updateStatus.value = "Error: Failed to upload image - ${e.message}"
             }
     }
 
@@ -107,27 +115,26 @@ class EditProfileBuyerViewModel : ViewModel() {
         )
 
         if (photoUrl != null) {
-            userUpdates["photourl"] = photoUrl
+            // Gunakan "profileImageUrl" agar konsisten
+            userUpdates["profileImageUrl"] = photoUrl
         }
 
-        db.collection("users").document(userId).update(userUpdates)
+        firestore.collection("users").document(userId).update(userUpdates)
             .addOnSuccessListener {
                 _updateStatus.value = "Success"
             }
             .addOnFailureListener { e ->
-                _updateStatus.value = "Error: Gagal memperbarui data - ${e.message}"
+                _updateStatus.value = "Error: Failed to update data - ${e.message}"
             }
     }
 
     private fun deleteOldPhoto(url: String) {
+        // Blok try-catch untuk mencegah crash jika URL tidak valid
         try {
             val oldRef = storage.getReferenceFromUrl(url)
             oldRef.delete()
-                .addOnSuccessListener {
-                }
-                .addOnFailureListener {
-                }
         } catch (e: Exception) {
+            // Gagal menghapus foto lama, tidak perlu memberitahu user
         }
     }
 }

@@ -29,9 +29,9 @@ class ProductAdapter(
     class ViewHolder(
         itemView: View, val onItemClick: (Product) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
-        private val imgProduk: ImageView = itemView.findViewById(R.id.imgProdukBuyer)
-        private val tvNama: TextView = itemView.findViewById(R.id.tvNamaProdukBuyer)
-        private val tvHarga: TextView = itemView.findViewById(R.id.tvHargaProdukBuyer)
+        private val imgProduk: ImageView = itemView.findViewById(R.id.iv_product_buyer)
+        private val tvNama: TextView = itemView.findViewById(R.id.tv_product_name_buyer)
+        private val tvHarga: TextView = itemView.findViewById(R.id.tv_product_price_buyer)
 
         @SuppressLint("DefaultLocale")
         fun bind(produk: Product) {
