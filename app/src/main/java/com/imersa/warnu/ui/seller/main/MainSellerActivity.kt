@@ -47,7 +47,12 @@ class MainSellerActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.HomeSellerFragment, R.id.EditManageFragment), drawerLayout
+            setOf(
+                R.id.HomeSellerFragment,
+                R.id.EditManageFragment,
+                R.id.orderManagerFragment,
+                R.id.profileSellerFragment
+            ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)

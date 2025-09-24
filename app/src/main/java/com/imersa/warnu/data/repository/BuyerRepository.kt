@@ -8,7 +8,6 @@ class ProductRepository {
 
     private val firestore = Firebase.firestore
 
-    // Ambil semua produk (Realtime)
     fun listenProducts(onResult: (List<Product>) -> Unit, onError: (Exception) -> Unit) {
         firestore.collection("products").addSnapshotListener { snapshot, e ->
                 if (e != null) {

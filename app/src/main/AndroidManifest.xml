@@ -22,10 +22,6 @@
         <activity
             android:name=".ui.checkout.CheckoutActivity"
             android:exported="false" />
-        <!-- maps activity -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAKkkbBGEObhmQImjAJsGN06xqvSe4jedU" />
         <activity
             android:name=".SplashActivity"
             android:exported="true"

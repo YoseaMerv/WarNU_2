@@ -52,6 +52,8 @@ class MainBuyerActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.homeBuyerFragment,
+                R.id.profileBuyerFragment,
+                R.id.orderHistoryFragment
             ), drawerLayout
         )
 
