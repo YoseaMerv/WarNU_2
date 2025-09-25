@@ -9,10 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.imersa.warnu.R
 import com.imersa.warnu.data.model.Product
 import com.imersa.warnu.databinding.FragmentDetailProductBinding
+import com.imersa.warnu.ui.seller.main.MainSellerActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.util.Locale
@@ -25,6 +29,7 @@ class DetailProductFragment : Fragment() {
     private val viewModel: DetailProductViewModel by viewModels()
     private var currentQuantity = 1
     private var currentProduct: Product? = null
+    private var defaultTitle: CharSequence? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,9 +42,20 @@ class DetailProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as? AppCompatActivity)?.setSupportActionBar(binding.toolbar)
-        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.toolbar.setNavigationOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
+        val appCompatActivity = requireActivity() as AppCompatActivity
+        val actionBar = appCompatActivity.supportActionBar
+
+        // Simpan title lama dan hide ActionBar Activity
+        defaultTitle = actionBar?.title
+        actionBar?.hide()
+
+        // Pasang toolbar fragment
+        appCompatActivity.setSupportActionBar(binding.toolbarDetail)
+        appCompatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.toolbarDetail.setNavigationOnClickListener {
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        }
 
         val productId = arguments?.getString("productId")
         if (productId == null) {
@@ -49,15 +65,16 @@ class DetailProductFragment : Fragment() {
         }
 
         viewModel.loadProduct(productId)
-        viewModel.loadUserRole() // Panggil fungsi untuk memuat role
+        viewModel.loadUserRole()
         observeViewModel()
         setupClickListeners()
     }
+
+
     private fun observeViewModel() {
         viewModel.product.observe(viewLifecycleOwner) { product ->
             product?.let {
                 currentProduct = it
-                binding.collapsingToolbar.title = it.name
                 binding.tvProductName.text = it.name
                 binding.tvProductDescription.text = it.description
                 val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
@@ -67,6 +84,7 @@ class DetailProductFragment : Fragment() {
                     .load(it.imageUrl)
                     .placeholder(R.drawable.placeholder_image)
                     .into(binding.ivProductImage)
+                binding.collapsingToolbar.title = it.name
             }
         }
 
@@ -78,8 +96,6 @@ class DetailProductFragment : Fragment() {
         }
         viewModel.userRole.observe(viewLifecycleOwner) { role ->
             val isBuyer = role == "buyer"
-
-            // Tampilkan/sembunyikan tombol berdasarkan role
             binding.fabAddToCart.isVisible = isBuyer
             binding.btnIncreaseQuantity.isVisible = isBuyer
             binding.btnDecreaseQuantity.isVisible = isBuyer
@@ -107,8 +123,28 @@ class DetailProductFragment : Fragment() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = defaultTitle
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        val appCompatActivity = requireActivity() as AppCompatActivity
+
+        val mainToolbar = appCompatActivity.findViewById<Toolbar>(R.id.seller_toolbar)
+
+        appCompatActivity.setSupportActionBar(mainToolbar)
+        appCompatActivity.supportActionBar?.show()
+
+        val navController = (requireActivity()
+            .supportFragmentManager
+            .findFragmentById(R.id.fragment_container_seller) as NavHostFragment).navController
+
+        appCompatActivity.setupActionBarWithNavController(
+            navController,
+            (requireActivity() as MainSellerActivity).appBarConfiguration
+        )
         _binding = null
     }
 }

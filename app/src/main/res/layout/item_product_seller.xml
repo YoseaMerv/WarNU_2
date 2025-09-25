@@ -13,15 +13,16 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_product_seller"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
+            android:contentDescription="@string/product_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/placeholder_image"
-            android:contentDescription="@string/product_name"/>
+            app:shapeAppearanceOverlay="@style/RoundedImageStyle"
+            tools:src="@drawable/placeholder_image" />
 
         <TextView
             android:id="@+id/tv_product_name_seller"

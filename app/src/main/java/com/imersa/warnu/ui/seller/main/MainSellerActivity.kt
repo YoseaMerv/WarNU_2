@@ -27,7 +27,7 @@ class MainSellerActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    lateinit var appBarConfiguration: AppBarConfiguration
     private val viewModel: MainSellerViewModel by viewModels()
 
     @SuppressLint("SetTextI18n")
@@ -53,7 +53,6 @@ class MainSellerActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
-
 
         val headerView = navigationView.getHeaderView(0)
         val textViewWelcome = headerView.findViewById<TextView>(R.id.tv_nav_header)

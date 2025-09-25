@@ -94,7 +94,6 @@ class CheckoutActivity : AppCompatActivity() {
         }
     }
 
-
     private fun startCheckout(cartItems: List<CartItem>) {
         val totalAmount = cartItems.sumOf { (it.price ?: 0.0) * it.quantity }
         val orderId = "order-${UUID.randomUUID()}"

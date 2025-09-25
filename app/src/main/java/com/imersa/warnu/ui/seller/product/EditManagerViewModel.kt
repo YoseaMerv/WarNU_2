@@ -48,10 +48,8 @@ class EditManagerViewModel @Inject constructor(
     fun deleteProduct(productId: String, imageUrl: String?) {
         viewModelScope.launch {
             try {
-                // Hapus dari Firestore
                 firestore.collection("products").document(productId).delete().await()
 
-                // Hapus dari Storage jika ada URL
                 if (!imageUrl.isNullOrEmpty()) {
                     storage.getReferenceFromUrl(imageUrl).delete().await()
                 }

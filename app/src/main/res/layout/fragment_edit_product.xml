@@ -98,17 +98,20 @@
                 android:inputType="textMultiLine"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_product_image_preview"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:scaleType="centerCrop"
+            android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@id/til_description"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:shapeAppearanceOverlay="@style/RoundedImageStyle"
             tools:src="@drawable/placeholder_image" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_select_new_image"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -116,9 +119,12 @@
             android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@id/iv_product_image_preview"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:backgroundTint="@color/green"
+            app:cornerRadius="12dp"
+            android:textColor="@android:color/white"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save_changes"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -126,7 +132,10 @@
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@id/btn_select_new_image"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:backgroundTint="@color/green"
+            app:cornerRadius="12dp"
+            android:textColor="@android:color/white"/>
 
         <ProgressBar
             android:id="@+id/progress_bar"
