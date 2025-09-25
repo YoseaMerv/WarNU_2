@@ -106,8 +106,16 @@ class DetailProductFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnIncreaseQuantity.setOnClickListener {
-            currentQuantity++
-            binding.tvQuantity.text = currentQuantity.toString()
+            // Cek apakah stok produk ada dan apakah kuantitas saat ini kurang dari stok
+            currentProduct?.stock?.let { stock ->
+                if (currentQuantity < stock) {
+                    currentQuantity++
+                    binding.tvQuantity.text = currentQuantity.toString()
+                } else {
+                    // Tampilkan pesan jika stok sudah maksimum
+                    Toast.makeText(context, "You have reached the maximum stock", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         binding.btnDecreaseQuantity.setOnClickListener {

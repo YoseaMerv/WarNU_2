@@ -16,15 +16,13 @@ import com.imersa.warnu.data.model.Product
 import java.text.NumberFormat
 import java.util.Locale
 
-// Tambahkan lambda onAddToCartClick
 class HomeBuyerAdapter(
-    private val onItemClick: (Product) -> Unit,
-    private val onAddToCartClick: (Product) -> Unit
+    private val onItemClick: (Product) -> Unit
 ) : ListAdapter<Product, HomeBuyerAdapter.ProductViewHolder>(ProductDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_product_buyer, parent, false)
-        return ProductViewHolder(view, onItemClick, onAddToCartClick)
+        return ProductViewHolder(view, onItemClick)
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
@@ -33,15 +31,12 @@ class HomeBuyerAdapter(
 
     class ProductViewHolder(
         itemView: View,
-        private val onItemClick: (Product) -> Unit,
-        private val onAddToCartClick: (Product) -> Unit
+        private val onItemClick: (Product) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val ivProductImage: ImageView = itemView.findViewById(R.id.iv_product_buyer)
         private val tvProductName: TextView = itemView.findViewById(R.id.tv_product_name_buyer)
         private val tvProductPrice: TextView = itemView.findViewById(R.id.tv_product_price_buyer)
-        // Referensi ke tombol baru
-        private val btnAddToCart: Button = itemView.findViewById(R.id.btn_add_to_cart)
 
         @SuppressLint("SetTextI18n")
         fun bind(product: Product) {
@@ -54,14 +49,8 @@ class HomeBuyerAdapter(
                 .placeholder(R.drawable.placeholder_image)
                 .into(ivProductImage)
 
-            // Listener untuk seluruh item
             itemView.setOnClickListener {
                 onItemClick(product)
-            }
-
-            // Listener khusus untuk tombol "Add to Cart"
-            btnAddToCart.setOnClickListener {
-                onAddToCartClick(product)
             }
         }
     }

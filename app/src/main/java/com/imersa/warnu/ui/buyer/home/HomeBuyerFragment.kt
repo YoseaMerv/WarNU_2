@@ -55,10 +55,6 @@ class HomeBuyerFragment : Fragment() {
                     putString("productId", product.id)
                 }
                 findNavController().navigate(R.id.nav_product_detail, bundle)
-            },
-            onAddToCartClick = { product ->
-                // Panggil fungsi ViewModel saat tombol diklik
-                viewModel.addToCart(product)
             }
         )
         binding.rvProducts.apply {
@@ -139,12 +135,6 @@ class HomeBuyerFragment : Fragment() {
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        }
-        viewModel.toastMessage.observe(viewLifecycleOwner) { message ->
-            message?.let {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                viewModel.onToastMessageShown()
-            }
         }
     }
 

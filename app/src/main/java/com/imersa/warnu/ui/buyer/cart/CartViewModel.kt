@@ -16,14 +16,40 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
-) : ViewModel() {
+    private val firestore: FirebaseFirestore,
 
+) : ViewModel() {
+    private val _toastMessage = MutableLiveData<String?>()
+    val toastMessage: LiveData<String?> = _toastMessage
     private val _cartItems = MutableLiveData<List<CartItem>>()
     val cartItems: LiveData<List<CartItem>> = _cartItems
 
     init {
         loadCartItems()
+    }
+
+    fun increaseCartItemQuantity(cartItem: CartItem) {
+        val userId = auth.currentUser?.uid ?: return
+        val productId = cartItem.productId ?: return
+
+        viewModelScope.launch {
+            try {
+                val productDocument = firestore.collection("products").document(productId).get().await()
+                val productStock = productDocument.getLong("stock")?.toInt() ?: 0
+
+                if (cartItem.quantity < productStock) {
+                    updateCartItemQuantity(productId, cartItem.quantity + 1)
+                } else {
+                    _toastMessage.postValue("Maximum stock reached for this item.")
+                }
+            } catch (e: Exception) {
+                _toastMessage.postValue("Failed to check stock: ${e.message}")
+            }
+        }
+    }
+
+    fun onToastMessageShown() {
+        _toastMessage.value = null
     }
 
     private fun loadCartItems() {

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -49,12 +50,12 @@ class CartFragment : Fragment() {
         }
     }
 
+    // app/src/main/java/com/imersa/warnu/ui/buyer/cart/CartFragment.kt
+
     private fun setupRecyclerView() {
         cartAdapter = CartAdapter(
             onIncrease = { cartItem ->
-                cartItem.productId?.let {
-                    viewModel.updateCartItemQuantity(it, cartItem.quantity + 1)
-                }
+                viewModel.increaseCartItemQuantity(cartItem)
             },
             onDecrease = { cartItem ->
                 if (cartItem.quantity > 1) {
@@ -76,6 +77,28 @@ class CartFragment : Fragment() {
         }
     }
 
+    private fun observeViewModel() {
+        viewModel.cartItems.observe(viewLifecycleOwner) { items ->
+            val isEmpty = items.isNullOrEmpty()
+            // Menggunakan ID yang sekarang sudah benar
+            binding.layoutEmptyCart.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            binding.rvCartItems.visibility = if (isEmpty) View.GONE else View.VISIBLE
+            binding.layoutCheckout.visibility = if (isEmpty) View.GONE else View.VISIBLE
+
+            if (!isEmpty) {
+                cartAdapter.submitList(items)
+                updateTotalPrice(items)
+            }
+        }
+
+        viewModel.toastMessage.observe(viewLifecycleOwner) { message ->
+            message?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                viewModel.onToastMessageShown()
+            }
+        }
+    }
+
     private fun showRemoveConfirmationDialog(cartItem: CartItem) {
         AlertDialog.Builder(requireContext())
             .setTitle("Remove Item")
@@ -90,21 +113,6 @@ class CartFragment : Fragment() {
                 dialog.dismiss()
             }
             .show()
-    }
-
-    private fun observeViewModel() {
-        viewModel.cartItems.observe(viewLifecycleOwner) { items ->
-            val isEmpty = items.isNullOrEmpty()
-            // Menggunakan ID yang sekarang sudah benar
-            binding.layoutEmptyCart.visibility = if (isEmpty) View.VISIBLE else View.GONE
-            binding.rvCartItems.visibility = if (isEmpty) View.GONE else View.VISIBLE
-            binding.layoutCheckout.visibility = if (isEmpty) View.GONE else View.VISIBLE
-
-            if (!isEmpty) {
-                cartAdapter.submitList(items)
-                updateTotalPrice(items)
-            }
-        }
     }
 
     private fun updateTotalPrice(items: List<CartItem>) {
