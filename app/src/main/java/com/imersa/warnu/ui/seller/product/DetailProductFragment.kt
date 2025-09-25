@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.imersa.warnu.R
 import com.imersa.warnu.data.model.Product
 import com.imersa.warnu.databinding.FragmentDetailProductBinding
+import com.imersa.warnu.ui.buyer.main.MainBuyerActivity
 import com.imersa.warnu.ui.seller.main.MainSellerActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
@@ -132,19 +133,45 @@ class DetailProductFragment : Fragment() {
         super.onDestroyView()
         val appCompatActivity = requireActivity() as AppCompatActivity
 
-        val mainToolbar = appCompatActivity.findViewById<Toolbar>(R.id.seller_toolbar)
+        when (viewModel.userRole.value) {
+            "seller" -> {
+                val mainToolbar = appCompatActivity.findViewById<Toolbar>(R.id.seller_toolbar)
+                mainToolbar?.let {
+                    appCompatActivity.setSupportActionBar(it)
+                    appCompatActivity.supportActionBar?.show()
+                }
 
-        appCompatActivity.setSupportActionBar(mainToolbar)
-        appCompatActivity.supportActionBar?.show()
+                val navHostFragment = appCompatActivity.supportFragmentManager
+                    .findFragmentById(R.id.fragment_container_seller) as? NavHostFragment
 
-        val navController = (requireActivity()
-            .supportFragmentManager
-            .findFragmentById(R.id.fragment_container_seller) as NavHostFragment).navController
+                navHostFragment?.let { navController ->
+                    appCompatActivity.setupActionBarWithNavController(
+                        navController.navController,
+                        (requireActivity() as MainSellerActivity).appBarConfiguration
+                    )
+                }
+            }
 
-        appCompatActivity.setupActionBarWithNavController(
-            navController,
-            (requireActivity() as MainSellerActivity).appBarConfiguration
-        )
+            "buyer" -> {
+                val mainToolbar = appCompatActivity.findViewById<Toolbar>(R.id.buyer_toolbar)
+                mainToolbar?.let {
+                    appCompatActivity.setSupportActionBar(it)
+                    appCompatActivity.supportActionBar?.show()
+                }
+
+                val navHostFragment = appCompatActivity.supportFragmentManager
+                    .findFragmentById(R.id.fragment_container_buyer) as? NavHostFragment
+
+                navHostFragment?.let { navController ->
+                    appCompatActivity.setupActionBarWithNavController(
+                        navController.navController,
+                        (requireActivity() as MainBuyerActivity).appBarConfiguration
+                    )
+                }
+            }
+        }
+
         _binding = null
     }
+
 }

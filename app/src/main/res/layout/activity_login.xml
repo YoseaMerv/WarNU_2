@@ -97,15 +97,6 @@
                 android:src="@drawable/ic_closed_eye" />
         </FrameLayout>
 
-        <TextView
-            android:id="@+id/tv_forgot_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="16dp"
-            android:text="@string/forgot_password"
-            android:textColor="#2563EB" />
-
         <Button
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
@@ -129,36 +120,43 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="32dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/don_t_have_an_account"
-                android:textColor="#6B7280" />
+                android:textColor="#6B7280"
+                android:layout_gravity="center_horizontal"/>
 
-            <TextView
-                android:id="@+id/tv_signup_buyer"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:text="@string/sign_up_as_buyer"
-                android:textColor="#2563EB" />
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:text="@string/I"
-                android:textColor="#9CA3AF" />
+                <TextView
+                    android:id="@+id/tv_signup_buyer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_up_as_buyer"
+                    android:textColor="#2563EB" />
 
-            <TextView
-                android:id="@+id/tv_signup_seller"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sign_up_as_seller"
-                android:textColor="#2563EB" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:text="|"
+                    android:textColor="#9CA3AF" />
+
+                <TextView
+                    android:id="@+id/tv_signup_seller"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_up_as_seller"
+                    android:textColor="#2563EB" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

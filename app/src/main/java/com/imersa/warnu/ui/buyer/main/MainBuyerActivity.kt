@@ -29,7 +29,7 @@ class MainBuyerActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    lateinit var appBarConfiguration: AppBarConfiguration
 
     private val viewModel: MainBuyerViewModel by viewModels()
 
@@ -51,7 +51,7 @@ class MainBuyerActivity : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_profile, R.id.nav_order_history
+                R.id.nav_home, R.id.nav_profile, R.id.nav_order_history, R.id.nav_cart
             ), drawerLayout
         )
 
