@@ -5,7 +5,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 data class CustomerDetails(
-    val name: String?,
+    val first_name: String?,
     val email: String?,
     val phone: String?
 )

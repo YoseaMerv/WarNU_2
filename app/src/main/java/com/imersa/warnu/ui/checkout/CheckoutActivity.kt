@@ -1,3 +1,5 @@
+// CheckoutActivity.kt
+
 package com.imersa.warnu.ui.checkout
 
 import android.annotation.SuppressLint
@@ -15,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.imersa.warnu.data.model.CartItem
+import com.imersa.warnu.data.model.*
 import com.imersa.warnu.databinding.ActivityCheckoutBinding
 import com.imersa.warnu.ui.buyer.cart.CartViewModel
 import com.imersa.warnu.ui.buyer.main.MainBuyerActivity
@@ -27,21 +29,29 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @AndroidEntryPoint
 class CheckoutActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCheckoutBinding
-    private val client = OkHttpClient()
-    private val gson = Gson()
-
     private val cartViewModel: CartViewModel by viewModels()
-
 
     @Inject
     lateinit var auth: FirebaseAuth
     @Inject
     lateinit var firestore: FirebaseFirestore
+
+    // Gunakan Retrofit untuk komunikasi yang lebih bersih
+    private val apiService: ApiService by lazy {
+        Retrofit.Builder()
+            // PENTING: Ganti dengan URL backend Anda yang sudah di-deploy
+            .baseUrl("https://warnu-f1434.et.r.appspot.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService::class.java)
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,14 +60,13 @@ class CheckoutActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        // Tampilkan ProgressBar di awal
         binding.progressBar.visibility = View.VISIBLE
         setupWebView()
 
         val cartItemsJson = intent.getStringExtra("CART_ITEMS")
         if (cartItemsJson != null) {
             val itemType = object : TypeToken<List<CartItem>>() {}.type
-            val cartItems: List<CartItem> = gson.fromJson(cartItemsJson, itemType)
+            val cartItems: List<CartItem> = Gson().fromJson(cartItemsJson, itemType)
             startCheckout(cartItems)
         } else {
             Toast.makeText(this, "Cart is empty.", Toast.LENGTH_SHORT).show()
@@ -70,14 +79,11 @@ class CheckoutActivity : AppCompatActivity() {
         binding.webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
-                // Halaman mulai dimuat, sembunyikan ProgressBar
                 binding.progressBar.visibility = View.GONE
             }
 
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                Log.d("WebViewRedirect", "Redirecting to: $url")
                 if (url != null) {
-                    // Cek URL callback dari Midtrans
                     if (url.contains("finish")) {
                         navigateToHome("Payment Successful")
                         return true
@@ -105,79 +111,67 @@ class CheckoutActivity : AppCompatActivity() {
             return
         }
 
+        // Ambil sellerId dari item pertama di keranjang
+        val sellerId = cartItems.firstOrNull()?.sellerId
+        if (sellerId == null) {
+            Toast.makeText(this, "Seller information is missing.", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
         firestore.collection("users").document(userId).get()
             .addOnSuccessListener { document ->
-                val userName = document.getString("name") ?: "Customer"
-                val userEmail = document.getString("email") ?: ""
+                val userName = document.getString("name")
+                val userEmail = document.getString("email")
+                val userPhone = document.getString("phone")
 
-                val customerDetails = mapOf("first_name" to userName, "email" to userEmail)
-                val itemDetails = cartItems.map {
-                    mapOf(
-                        "id" to it.productId,
-                        "price" to it.price,
-                        "quantity" to it.quantity,
-                        "name" to it.name
-                    )
-                }
-                val sellerId = cartItems.firstOrNull()?.sellerId
-
-                val transactionRequest = mapOf(
-                    "orderId" to orderId,
-                    "totalAmount" to totalAmount,
-                    "items" to itemDetails,
-                    "customerDetails" to customerDetails,
-                    "userId" to userId,
-                    "sellerId" to sellerId
+                val customerDetails = CustomerDetails(
+                    first_name = userName,
+                    email = userEmail,
+                    phone = userPhone
                 )
 
-                // Pastikan IP address sudah benar (10.0.2.2 untuk emulator standar)
-                val request = Request.Builder()
-                    .url("http://10.0.2.2:3000/create-transaction")
-                    .post(gson.toJson(transactionRequest).toRequestBody("application/json".toMediaType()))
-                    .build()
+                val itemDetails = cartItems.map {
+                    ItemDetails(
+                        id = it.productId!!,
+                        price = it.price!!,
+                        quantity = it.quantity,
+                        name = it.name!!
+                    )
+                }
 
-                client.newCall(request).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        Log.e("CheckoutActivity", "onFailure: ${e.message}")
-                        runOnUiThread {
-                            Toast.makeText(this@CheckoutActivity, "Failed to connect to server. Please check your connection and server status.", Toast.LENGTH_LONG).show()
+                val transactionRequest = TransactionRequest(
+                    orderId = orderId,
+                    totalAmount = totalAmount,
+                    items = itemDetails,
+                    customerDetails = customerDetails,
+                    userId = userId,
+                    sellerId = sellerId
+                )
+
+                // Memanggil API menggunakan Retrofit
+                apiService.createTransaction(transactionRequest).enqueue(object : retrofit2.Callback<TransactionResponse> {
+                    override fun onResponse(call: retrofit2.Call<TransactionResponse>, response: retrofit2.Response<TransactionResponse>) {
+                        if (response.isSuccessful) {
+                            val token = response.body()?.token
+                            if (!token.isNullOrEmpty()) {
+                                val midtransUrl = "https://app.sandbox.midtrans.com/snap/v2/vtweb/$token"
+                                binding.webView.loadUrl(midtransUrl)
+                            } else {
+                                Toast.makeText(this@CheckoutActivity, "Failed to get payment token.", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                        } else {
+                            Log.e("CheckoutActivity", "Server returned an error. Code: ${response.code()}")
+                            Toast.makeText(this@CheckoutActivity, "Server returned an error.", Toast.LENGTH_SHORT).show()
                             finish()
                         }
                     }
 
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.isSuccessful) {
-                            val responseBody = response.body?.string()
-                            if (responseBody != null) {
-                                try {
-                                    val token = JSONObject(responseBody).getString("token")
-                                    if (token.isNotEmpty()) {
-                                        runOnUiThread {
-                                            val midtransUrl = "https://app.sandbox.midtrans.com/snap/v2/vtweb/$token"
-                                            binding.webView.loadUrl(midtransUrl)
-                                        }
-                                    } else {
-                                        // Kasus jika token kosong
-                                        runOnUiThread {
-                                            Toast.makeText(this@CheckoutActivity, "Failed to get payment token.", Toast.LENGTH_SHORT).show()
-                                            finish()
-                                        }
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e("CheckoutActivity", "Error parsing JSON: ${e.message}")
-                                    runOnUiThread {
-                                        Toast.makeText(this@CheckoutActivity, "Invalid response from server.", Toast.LENGTH_SHORT).show()
-                                        finish()
-                                    }
-                                }
-                            }
-                        } else {
-                            Log.e("CheckoutActivity", "onResponse but not successful. Code: ${response.code}")
-                            runOnUiThread {
-                                Toast.makeText(this@CheckoutActivity, "Server returned an error.", Toast.LENGTH_SHORT).show()
-                                finish()
-                            }
-                        }
+                    override fun onFailure(call: retrofit2.Call<TransactionResponse>, t: Throwable) {
+                        Log.e("CheckoutActivity", "onFailure: ${t.message}")
+                        Toast.makeText(this@CheckoutActivity, "Failed to connect to server.", Toast.LENGTH_LONG).show()
+                        finish()
                     }
                 })
             }

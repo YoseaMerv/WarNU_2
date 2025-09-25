@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.imersa.warnu.R
 import com.imersa.warnu.data.model.Product
@@ -46,11 +46,9 @@ class DetailProductFragment : Fragment() {
         val appCompatActivity = requireActivity() as AppCompatActivity
         val actionBar = appCompatActivity.supportActionBar
 
-        // Simpan title lama dan hide ActionBar Activity
         defaultTitle = actionBar?.title
         actionBar?.hide()
 
-        // Pasang toolbar fragment
         appCompatActivity.setSupportActionBar(binding.toolbarDetail)
         appCompatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -91,10 +89,13 @@ class DetailProductFragment : Fragment() {
 
         viewModel.addToCartStatus.observe(viewLifecycleOwner) { status ->
             status?.let {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, it, Toast.LENGTH_LONG).show() // Durasi diubah ke LONG
                 viewModel.onStatusMessageShown()
+                // Aktifkan kembali tombol setelah proses selesai
+                binding.fabAddToCart.isEnabled = true
             }
         }
+
         viewModel.userRole.observe(viewLifecycleOwner) { role ->
             val isBuyer = role == "buyer"
             binding.fabAddToCart.isVisible = isBuyer
@@ -106,13 +107,11 @@ class DetailProductFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnIncreaseQuantity.setOnClickListener {
-            // Cek apakah stok produk ada dan apakah kuantitas saat ini kurang dari stok
             currentProduct?.stock?.let { stock ->
                 if (currentQuantity < stock) {
                     currentQuantity++
                     binding.tvQuantity.text = currentQuantity.toString()
                 } else {
-                    // Tampilkan pesan jika stok sudah maksimum
                     Toast.makeText(context, "You have reached the maximum stock", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -127,6 +126,8 @@ class DetailProductFragment : Fragment() {
 
         binding.fabAddToCart.setOnClickListener {
             currentProduct?.let { product ->
+                // Nonaktifkan tombol untuk mencegah klik ganda
+                binding.fabAddToCart.isEnabled = false
                 viewModel.addToCart(product, currentQuantity)
             }
         }
@@ -141,45 +142,22 @@ class DetailProductFragment : Fragment() {
         super.onDestroyView()
         val appCompatActivity = requireActivity() as AppCompatActivity
 
-        when (viewModel.userRole.value) {
-            "seller" -> {
-                val mainToolbar = appCompatActivity.findViewById<Toolbar>(R.id.seller_toolbar)
-                mainToolbar?.let {
-                    appCompatActivity.setSupportActionBar(it)
-                    appCompatActivity.supportActionBar?.show()
-                }
+        // Logika untuk mengembalikan toolbar activity utama
+        val mainToolbarId = if (viewModel.userRole.value == "seller") R.id.seller_toolbar else R.id.buyer_toolbar
+        val mainNavHostId = if (viewModel.userRole.value == "seller") R.id.fragment_container_seller else R.id.fragment_container_buyer
+        val mainAppBarConfig = if (viewModel.userRole.value == "seller") (requireActivity() as? MainSellerActivity)?.appBarConfiguration else (requireActivity() as? MainBuyerActivity)?.appBarConfiguration
 
-                val navHostFragment = appCompatActivity.supportFragmentManager
-                    .findFragmentById(R.id.fragment_container_seller) as? NavHostFragment
+        val mainToolbar = appCompatActivity.findViewById<Toolbar>(mainToolbarId)
+        mainToolbar?.let {
+            appCompatActivity.setSupportActionBar(it)
+            appCompatActivity.supportActionBar?.show()
+        }
 
-                navHostFragment?.let { navController ->
-                    appCompatActivity.setupActionBarWithNavController(
-                        navController.navController,
-                        (requireActivity() as MainSellerActivity).appBarConfiguration
-                    )
-                }
-            }
-
-            "buyer" -> {
-                val mainToolbar = appCompatActivity.findViewById<Toolbar>(R.id.buyer_toolbar)
-                mainToolbar?.let {
-                    appCompatActivity.setSupportActionBar(it)
-                    appCompatActivity.supportActionBar?.show()
-                }
-
-                val navHostFragment = appCompatActivity.supportFragmentManager
-                    .findFragmentById(R.id.fragment_container_buyer) as? NavHostFragment
-
-                navHostFragment?.let { navController ->
-                    appCompatActivity.setupActionBarWithNavController(
-                        navController.navController,
-                        (requireActivity() as MainBuyerActivity).appBarConfiguration
-                    )
-                }
-            }
+        val navHostFragment = appCompatActivity.supportFragmentManager.findFragmentById(mainNavHostId) as? NavHostFragment
+        if (navHostFragment != null && mainAppBarConfig != null) {
+            appCompatActivity.setupActionBarWithNavController(navHostFragment.navController, mainAppBarConfig)
         }
 
         _binding = null
     }
-
 }
