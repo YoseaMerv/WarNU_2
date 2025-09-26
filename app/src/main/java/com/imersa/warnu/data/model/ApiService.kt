@@ -16,7 +16,8 @@ data class ItemDetails(
     val id: String,
     val price: Double,
     val quantity: Int,
-    val name: String
+    val name: String,
+    val imageUrl: String?
 )
 
 data class TransactionRequest(

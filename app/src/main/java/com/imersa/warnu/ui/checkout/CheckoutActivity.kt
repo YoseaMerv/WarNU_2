@@ -22,6 +22,7 @@ import com.imersa.warnu.databinding.ActivityCheckoutBinding
 import com.imersa.warnu.ui.buyer.cart.CartViewModel
 import com.imersa.warnu.ui.buyer.main.MainBuyerActivity
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
@@ -130,12 +131,14 @@ class CheckoutActivity : AppCompatActivity() {
                     phone = userPhone
                 )
 
+                // --- SESUAIKAN BAGIAN INI ---
                 val itemDetails = cartItems.map {
                     ItemDetails(
                         id = it.productId!!,
                         price = it.price!!,
                         quantity = it.quantity,
-                        name = it.name!!
+                        name = it.name!!,
+                        imageUrl = it.imageUrl // <-- TAMBAHKAN IMAGE URL DI SINI
                     )
                 }
 
@@ -149,7 +152,6 @@ class CheckoutActivity : AppCompatActivity() {
                     address = userAddress
                 )
 
-                // Memanggil API menggunakan Retrofit
                 apiService.createTransaction(transactionRequest).enqueue(object : retrofit2.Callback<TransactionResponse> {
                     override fun onResponse(call: retrofit2.Call<TransactionResponse>, response: retrofit2.Response<TransactionResponse>) {
                         if (response.isSuccessful) {
@@ -162,8 +164,14 @@ class CheckoutActivity : AppCompatActivity() {
                                 finish()
                             }
                         } else {
-                            Log.e("CheckoutActivity", "Server returned an error. Code: ${response.code()}")
-                            Toast.makeText(this@CheckoutActivity, "Server returned an error.", Toast.LENGTH_SHORT).show()
+                            // Menampilkan pesan error dari backend jika ada
+                            val errorBody = response.errorBody()?.string()
+                            val errorMessage = try {
+                                JSONObject(errorBody!!).getString("error")
+                            } catch (e: Exception) {
+                                "An unknown server error occurred."
+                            }
+                            Toast.makeText(this@CheckoutActivity, errorMessage, Toast.LENGTH_LONG).show()
                             finish()
                         }
                     }
