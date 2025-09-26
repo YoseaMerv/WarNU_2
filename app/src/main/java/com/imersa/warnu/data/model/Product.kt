@@ -6,10 +6,10 @@ data class Product(
     val name: String? = null,
     val price: Double? = null,
     val description: String? = null,
-    val stock: Int? = 0,
+    val stock: Int? = null,
     val imageUrl: String? = null,
     val category: String? = null
 ) {
     // Constructor kosong diperlukan untuk Firestore
-    constructor() : this(null, null, null, null, null, 0, null, null)
+    constructor() : this(null, null, null, null, null, null, null, null)
 }

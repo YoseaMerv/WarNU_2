@@ -50,7 +50,6 @@ class CartFragment : Fragment() {
         }
     }
 
-    // app/src/main/java/com/imersa/warnu/ui/buyer/cart/CartFragment.kt
 
     private fun setupRecyclerView() {
         cartAdapter = CartAdapter(
@@ -70,7 +69,6 @@ class CartFragment : Fragment() {
                 showRemoveConfirmationDialog(cartItem)
             }
         )
-        // Menggunakan ID yang sekarang sudah benar: rv_cart_items
         binding.rvCartItems.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = cartAdapter
@@ -118,10 +116,8 @@ class CartFragment : Fragment() {
     private fun updateTotalPrice(items: List<CartItem>) {
         val totalPrice = items.sumOf { (it.price ?: 0.0) * it.quantity }
 
-        // --- PERBAIKAN FORMAT ANGKA ---
-        // Membuat formatter khusus untuk mata uang tanpa desimal
         val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) as DecimalFormat
-        formatter.maximumFractionDigits = 0 // Menghilangkan angka di belakang koma
+        formatter.maximumFractionDigits = 0
         formatter.minimumFractionDigits = 0
 
         binding.tvTotalPrice.text = formatter.format(totalPrice)

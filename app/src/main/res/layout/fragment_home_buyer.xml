@@ -14,13 +14,10 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vp_banner"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_height="210dp"
+            android:layout_margin="8dp"
             android:clipChildren="false"
-            android:clipToPadding="false"
-            android:paddingStart="40dp"
-            android:paddingEnd="40dp" />
+            android:clipToPadding="false" />
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/search_view"

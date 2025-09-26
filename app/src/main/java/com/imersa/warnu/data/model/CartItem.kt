@@ -11,7 +11,6 @@ data class CartItem(
     val price: Double? = null,
     var quantity: Int = 0,
     val imageUrl: String? = null,
-
     @get:PropertyName("sellerId")
     @set:PropertyName("sellerId")
     var sellerId: String? = null
