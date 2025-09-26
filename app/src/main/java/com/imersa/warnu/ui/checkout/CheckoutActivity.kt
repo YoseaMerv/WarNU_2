@@ -22,15 +22,10 @@ import com.imersa.warnu.databinding.ActivityCheckoutBinding
 import com.imersa.warnu.ui.buyer.cart.CartViewModel
 import com.imersa.warnu.ui.buyer.main.MainBuyerActivity
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
-import java.io.IOException
-import java.util.*
-import javax.inject.Inject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CheckoutActivity : AppCompatActivity() {
@@ -43,10 +38,8 @@ class CheckoutActivity : AppCompatActivity() {
     @Inject
     lateinit var firestore: FirebaseFirestore
 
-    // Gunakan Retrofit untuk komunikasi yang lebih bersih
     private val apiService: ApiService by lazy {
         Retrofit.Builder()
-            // PENTING: Ganti dengan URL backend Anda yang sudah di-deploy
             .baseUrl("https://warnu-f1434.et.r.appspot.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -111,7 +104,6 @@ class CheckoutActivity : AppCompatActivity() {
             return
         }
 
-        // Ambil sellerId dari item pertama di keranjang
         val sellerId = cartItems.firstOrNull()?.sellerId
         if (sellerId == null) {
             Toast.makeText(this, "Seller information is missing.", Toast.LENGTH_SHORT).show()
@@ -124,6 +116,13 @@ class CheckoutActivity : AppCompatActivity() {
                 val userName = document.getString("name")
                 val userEmail = document.getString("email")
                 val userPhone = document.getString("phone")
+                val userAddress = document.getString("address")
+
+                if (userAddress.isNullOrEmpty()) {
+                    Toast.makeText(this, "Please update your address in your profile.", Toast.LENGTH_LONG).show()
+                    finish()
+                    return@addOnSuccessListener
+                }
 
                 val customerDetails = CustomerDetails(
                     first_name = userName,
@@ -146,7 +145,8 @@ class CheckoutActivity : AppCompatActivity() {
                     items = itemDetails,
                     customerDetails = customerDetails,
                     userId = userId,
-                    sellerId = sellerId
+                    sellerId = sellerId,
+                    address = userAddress
                 )
 
                 // Memanggil API menggunakan Retrofit

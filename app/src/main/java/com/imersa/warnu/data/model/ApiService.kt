@@ -1,3 +1,5 @@
+// ApiService.kt
+
 package com.imersa.warnu.data.model
 
 import retrofit2.Call
@@ -18,18 +20,18 @@ data class ItemDetails(
 )
 
 data class TransactionRequest(
-    val orderId: String?,
-    val totalAmount: Double?,
-    val items: List<ItemDetails>?,
-    val customerDetails: CustomerDetails?,
-    val userId: String?,
-    val sellerId: String?
+    val orderId: String,
+    val totalAmount: Double,
+    val items: List<ItemDetails>,
+    val customerDetails: CustomerDetails,
+    val userId: String,
+    val sellerId: String,
+    val address: String?
 )
 
 data class TransactionResponse(
     val token: String
 )
-
 
 interface ApiService {
     @POST("create-transaction")
