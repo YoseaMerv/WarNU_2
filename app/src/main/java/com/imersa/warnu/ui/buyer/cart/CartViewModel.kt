@@ -78,11 +78,9 @@ class CartViewModel @Inject constructor(
 
         firestore.collection("carts").document(userId).collection("items").document(productId)
             .update("quantity", newQuantity).addOnFailureListener {
-                // Handle failure if needed
             }
     }
 
-    // Nama fungsi disesuaikan dengan kode Anda
     fun removeCartItem(productId: String) {
         val userId = auth.currentUser?.uid ?: return
 
@@ -100,14 +98,12 @@ class CartViewModel @Inject constructor(
                 val cartItemsSnapshot = firestore.collection("carts").document(userId)
                     .collection("items").get().await()
 
-                // Gunakan batch write untuk menghapus semua dokumen secara efisien
                 val batch: WriteBatch = firestore.batch()
                 for (document in cartItemsSnapshot.documents) {
                     batch.delete(document.reference)
                 }
                 batch.commit().await()
             } catch (e: Exception) {
-                // Handle error jika diperlukan
             }
         }
     }

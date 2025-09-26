@@ -61,7 +61,7 @@ class CartAdapter(
 
             btnIncrease.setOnClickListener { onIncrease(cartItem) }
             btnDecrease.setOnClickListener { onDecrease(cartItem) }
-            btnRemove.setOnClickListener { onRemove(cartItem) } // Listener untuk tombol hapus
+            btnRemove.setOnClickListener { onRemove(cartItem) }
         }
     }
 

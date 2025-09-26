@@ -55,7 +55,6 @@ class DetailProductViewModel @Inject constructor(
         }
     }
 
-    // --- FUNGSI UTAMA YANG DIPERBAIKI ---
     fun addToCart(product: Product, quantityToAdd: Int) {
         val userId = auth.currentUser?.uid
         if (userId == null) {

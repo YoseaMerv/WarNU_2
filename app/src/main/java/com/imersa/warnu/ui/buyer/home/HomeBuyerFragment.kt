@@ -84,7 +84,7 @@ class HomeBuyerFragment : Fragment() {
     }
 
     private fun startAutoSlider(count: Int) {
-        if (count > 1) { // Hanya mulai jika ada lebih dari 1 banner
+        if (count > 1) {
             sliderRunnable.let {
                 sliderHandler.postDelayed(it, 3000)
             }
@@ -108,12 +108,10 @@ class HomeBuyerFragment : Fragment() {
     private fun setupSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                // Tidak perlu aksi khusus karena pencarian sudah real-time
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                // Panggil fungsi search di ViewModel setiap kali teks berubah
                 viewModel.searchProducts(newText.orEmpty())
                 return true
             }
