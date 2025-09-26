@@ -25,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -96,9 +97,12 @@ class CheckoutActivity : AppCompatActivity() {
 
     private fun startCheckout(cartItems: List<CartItem>) {
         val totalAmount = cartItems.sumOf { (it.price ?: 0.0) * it.quantity }
-        val orderId = "order-${UUID.randomUUID()}"
-        val userId = auth.currentUser?.uid
 
+        val timestamp = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.getDefault()).format(Date())
+        val randomDigits = (1000..9999).random()
+        val orderId = "WARNU-ORDER-$timestamp-$randomDigits"
+
+        val userId = auth.currentUser?.uid
         if (userId == null) {
             Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show()
             finish()

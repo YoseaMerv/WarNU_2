@@ -11,7 +11,7 @@ data class Order(
     val createdAt: Timestamp? = null,
     val customerName: String? = null,
     val sellerId: String? = null,
-
+    val orderStatus : String? = null,
     @get:PropertyName("items")
     @set:PropertyName("items")
     var items: List<CartItem>? = null

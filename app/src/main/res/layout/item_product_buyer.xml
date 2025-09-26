@@ -10,60 +10,43 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:paddingBottom="8dp">
 
-        <!-- Gambar produk -->
         <ImageView
             android:id="@+id/iv_product_buyer"
             android:layout_width="0dp"
             android:layout_height="150dp"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/product_name"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:src="@drawable/placeholder_image" />
+            tools:src="@drawable/placeholder_image"
+            android:contentDescription="@string/product_name" />
 
-        <!-- Nama produk -->
         <TextView
             android:id="@+id/tv_product_name_buyer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:maxLines="2"
             android:ellipsize="end"
+            android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/iv_product_buyer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Product Name" />
 
-        <!-- Harga -->
         <TextView
             android:id="@+id/tv_product_price_buyer"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="@color/green"
-            android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/tv_product_name_buyer"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_product_name_buyer"
             tools:text="Rp 150,000" />
 
-        <!-- Stock -->
-        <TextView
-            android:id="@+id/tv_product_stock_buyer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textStyle="normal"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"
-            app:layout_constraintTop_toBottomOf="@id/tv_product_price_buyer"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:text="Stock: 50" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

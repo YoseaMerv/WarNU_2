@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
 import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentHomeBuyerBinding
 import com.imersa.warnu.ui.buyer.product.BannerAdapter
@@ -64,45 +65,71 @@ class HomeBuyerFragment : Fragment() {
     }
 
     private fun setupBanner() {
-        val bannerImages = listOf(R.drawable.banner1, R.drawable.banner2, R.drawable.banner3)
-        val bannerAdapter = BannerAdapter(bannerImages)
-        binding.vpBanner.adapter = bannerAdapter
+        val banners = listOf(R.drawable.banner1, R.drawable.banner2, R.drawable.banner3)
+        val fakeList = mutableListOf<Int>()
 
-        val compositePageTransformer = CompositePageTransformer()
-        compositePageTransformer.addTransformer(MarginPageTransformer(40))
-        compositePageTransformer.addTransformer { page, position ->
-            val r = 1 - abs(position)
-            page.scaleY = 0.85f + r * 0.15f
+
+        fakeList.add(banners.last())
+        fakeList.addAll(banners)
+        fakeList.add(banners.first())
+
+        val adapter = BannerAdapter(fakeList)
+        binding.vpBanner.adapter = adapter
+        binding.vpBanner.setCurrentItem(1, false) // mulai di item pertama yang asli
+
+        val compositePageTransformer = CompositePageTransformer().apply {
+            addTransformer(MarginPageTransformer(40))
+            addTransformer { page, position ->
+                val r = 1 - abs(position)
+                page.scaleY = 0.85f + r * 0.15f
+            }
         }
         binding.vpBanner.setPageTransformer(compositePageTransformer)
 
+        // Auto-slide
         sliderRunnable = Runnable {
-            val currentItem = binding.vpBanner.currentItem
-            val nextItem = if (currentItem == bannerAdapter.itemCount - 1) 0 else currentItem + 1
-            binding.vpBanner.setCurrentItem(nextItem, true)
+            binding.vpBanner.currentItem = binding.vpBanner.currentItem + 1
+            sliderHandler.postDelayed(sliderRunnable!!, 5000)
         }
-    }
 
-    private fun startAutoSlider(count: Int) {
-        if (count > 1) {
-            sliderRunnable.let {
-                sliderHandler.postDelayed(it, 3000)
+        // Looping saat user swipe
+        binding.vpBanner.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                restartAutoSlide()
             }
 
-            binding.vpBanner.registerOnPageChangeCallback(object :
-                androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    sliderHandler.removeCallbacks(sliderRunnable)
-                    sliderHandler.postDelayed(sliderRunnable, 3000)
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+                if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                    val itemCount = adapter.itemCount
+                    when (binding.vpBanner.currentItem) {
+                        0 -> binding.vpBanner.setCurrentItem(itemCount - 2, false)
+                        itemCount - 1 -> binding.vpBanner.setCurrentItem(1, false)
+                    }
                 }
-            })
-        }
+            }
+        })
+
+        startAutoSlide()
     }
 
-    private fun stopAutoSlider() {
-        sliderHandler.removeCallbacks(sliderRunnable)
+    private fun startAutoSlide() {
+        sliderRunnable?.let { sliderHandler.postDelayed(it, 5000) }
     }
+
+    // Stop auto-slide
+    private fun stopAutoSlide() {
+        sliderRunnable?.let { sliderHandler.removeCallbacks(it) }
+    }
+
+    // Restart auto-slide saat user swipe
+    private fun restartAutoSlide() {
+        stopAutoSlide()
+        startAutoSlide()
+    }
+
+
 
     // Fungsi search yang diperbaiki
     private fun setupSearchView() {
@@ -136,19 +163,10 @@ class HomeBuyerFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        stopAutoSlider()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        (binding.vpBanner.adapter?.itemCount)?.let { startAutoSlider(it) }
-    }
-
     override fun onDestroyView() {
+        stopAutoSlide()
         super.onDestroyView()
-        stopAutoSlider()
         _binding = null
     }
+
 }

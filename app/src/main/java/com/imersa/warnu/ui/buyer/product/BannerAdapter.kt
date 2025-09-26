@@ -15,11 +15,9 @@ class BannerAdapter(private val bannerImages: List<Int>) :
             .inflate(R.layout.item_banner, parent, false)
         return BannerViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: BannerViewHolder, position: Int) {
         holder.bind(bannerImages[position])
     }
-
     override fun getItemCount(): Int = bannerImages.size
 
     class BannerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

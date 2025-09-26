@@ -15,19 +15,24 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
 
-class OrderManagerAdapter : ListAdapter<Order, OrderManagerAdapter.OrderViewHolder>(DiffCallback()) {
+// 1. Tambahkan listener pada constructor adapter
+class OrderManagerAdapter(
+    private val onItemClick: (Order) -> Unit
+) : ListAdapter<Order, OrderManagerAdapter.OrderViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_orders, parent, false)
-        return OrderViewHolder(view)
+        // 2. Kirim listener ke ViewHolder
+        return OrderViewHolder(view, onItemClick)
     }
 
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    // 3. Tambahkan listener pada constructor ViewHolder
+    class OrderViewHolder(itemView: View, private val onItemClick: (Order) -> Unit) : RecyclerView.ViewHolder(itemView) {
         private val tvCustomerName: TextView = itemView.findViewById(R.id.tv_customer_name)
         private val tvOrderId: TextView = itemView.findViewById(R.id.tv_order_id)
         private val tvTotalAmount: TextView = itemView.findViewById(R.id.tv_total_amount)
@@ -38,7 +43,6 @@ class OrderManagerAdapter : ListAdapter<Order, OrderManagerAdapter.OrderViewHold
             tvCustomerName.text = order.customerName
             tvOrderId.text = order.orderId
 
-            // --- PERBAIKAN FORMAT ANGKA ---
             val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) as DecimalFormat
             formatter.maximumFractionDigits = 0
             formatter.minimumFractionDigits = 0
@@ -52,6 +56,11 @@ class OrderManagerAdapter : ListAdapter<Order, OrderManagerAdapter.OrderViewHold
                 else -> R.drawable.status_cancelled_background
             }
             tvStatus.background = ContextCompat.getDrawable(itemView.context, statusBackground)
+
+            // 4. Set OnClickListener pada item view
+            itemView.setOnClickListener {
+                onItemClick(order)
+            }
         }
     }
 

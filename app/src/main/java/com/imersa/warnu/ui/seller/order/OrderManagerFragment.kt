@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentSellerOrdersBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,11 +42,13 @@ class OrderManagerFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        orderAdapter = OrderManagerAdapter()
-        binding.rvOrders.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = orderAdapter
+        orderAdapter = OrderManagerAdapter { order ->
+            val bundle = Bundle().apply { putString("orderId", order.orderId) }
+            findNavController().navigate(R.id.nav_detail_order, bundle)
         }
+
+        binding.rvOrders.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvOrders.adapter = orderAdapter
     }
 
     private fun observeViewModel() {
@@ -61,3 +66,4 @@ class OrderManagerFragment : Fragment() {
         _binding = null
     }
 }
+

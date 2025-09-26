@@ -86,7 +86,6 @@ class CartViewModel @Inject constructor(
 
         firestore.collection("carts").document(userId).collection("items").document(productId).delete()
             .addOnFailureListener {
-                // Handle failure if needed
             }
     }
     fun clearCart() {

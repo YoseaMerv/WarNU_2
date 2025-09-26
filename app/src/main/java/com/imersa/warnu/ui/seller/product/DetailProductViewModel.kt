@@ -98,7 +98,7 @@ class DetailProductViewModel @Inject constructor(
                     productId = product.id,
                     name = product.name,
                     price = product.price,
-                    quantity = quantityInCart + quantityToAdd, // Jumlahkan kuantitas
+                    quantity = quantityInCart + quantityToAdd,
                     imageUrl = product.imageUrl,
                     sellerId = product.sellerId
                 )
