@@ -1,3 +1,4 @@
+// app/src/main/java/com/imersa/warnu/ui/seller/product/AddProductViewModel.kt
 package com.imersa.warnu.ui.seller.product
 
 import android.net.Uri
@@ -12,20 +13,21 @@ import com.imersa.warnu.data.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.*
 import javax.inject.Inject
 
 sealed class AddProductState {
     object Idle : AddProductState()
     object Loading : AddProductState()
-    object Success : AddProductState()
+    data class Success(val message: String) : AddProductState()
     data class Error(val message: String) : AddProductState()
 }
 
 @HiltViewModel
 class AddProductViewModel @Inject constructor(
-    private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    private val storage: FirebaseStorage,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private val _state = MutableLiveData<AddProductState>(AddProductState.Idle)
@@ -39,50 +41,48 @@ class AddProductViewModel @Inject constructor(
         description: String,
         imageUri: Uri?
     ) {
-        val userId = auth.currentUser?.uid
-        if (userId == null) {
-            _state.value = AddProductState.Error("User not authenticated.")
+        if (name.isBlank() || priceStr.isBlank() || stockStr.isBlank() || category.isBlank() || description.isBlank() || imageUri == null) {
+            _state.value = AddProductState.Error("All fields and image must be filled.")
             return
         }
-        if (name.isBlank() || priceStr.isBlank() || stockStr.isBlank() || category.isBlank() || description.isBlank() || imageUri == null) {
-            _state.value = AddProductState.Error("All fields must be filled and image must be selected.")
+        val price = priceStr.toDoubleOrNull()
+        val stock = stockStr.toIntOrNull()
+        if (price == null || stock == null) {
+            _state.value = AddProductState.Error("Price and stock must be valid numbers.")
             return
         }
 
         _state.value = AddProductState.Loading
-
         viewModelScope.launch {
             try {
-                val imageUrl = uploadProductImage(userId, imageUri)
-                saveProductToFirestore(userId, name, priceStr.toDouble(), stockStr.toInt(), category, description, imageUrl)
-                _state.postValue(AddProductState.Success)
+                val sellerId = auth.currentUser?.uid ?: throw Exception("User not logged in.")
+
+                val userDocument = firestore.collection("users").document(sellerId).get().await()
+                val storeName = userDocument.getString("storeName") ?: throw Exception("Store name not found.")
+
+                val imageFileName = "products/${UUID.randomUUID()}"
+                val storageRef = storage.reference.child(imageFileName)
+                val uploadTask = storageRef.putFile(imageUri).await()
+                val imageUrl = uploadTask.storage.downloadUrl.await().toString()
+
+                val product = Product(
+                    name = name,
+                    price = price,
+                    description = description,
+                    stock = stock,
+                    category = category,
+                    imageUrl = imageUrl,
+                    sellerId = sellerId,
+                    storeName = storeName
+                )
+
+                firestore.collection("products").add(product).await()
+                _state.postValue(AddProductState.Success("Product added successfully!"))
+
             } catch (e: Exception) {
-                _state.postValue(AddProductState.Error(e.message ?: "An unknown error occurred."))
+                _state.postValue(AddProductState.Error(e.message ?: "Failed to add product."))
             }
         }
-    }
-
-    private suspend fun uploadProductImage(userId: String, imageUri: Uri): String {
-        val fileName = "${System.currentTimeMillis()}_${userId}"
-        val storageRef = storage.reference.child("product_images/$fileName")
-        val uploadTask = storageRef.putFile(imageUri).await()
-        return uploadTask.storage.downloadUrl.await().toString()
-    }
-
-    private suspend fun saveProductToFirestore(
-        userId: String, name: String, price: Double, stock: Int, category: String, description: String, imageUrl: String
-    ) {
-        val newProduct = Product(
-            sellerId = userId,
-            name = name,
-            price = price,
-            stock = stock,
-            category = category,
-            description = description,
-            imageUrl = imageUrl
-        )
-        // Firestore akan generate ID otomatis
-        firestore.collection("products").add(newProduct).await()
     }
 
     fun resetState() {

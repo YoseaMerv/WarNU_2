@@ -17,7 +17,7 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
 
-class OrderDetailAdapter : ListAdapter<CartItem, OrderDetailAdapter.ProductViewHolder>(DiffCallback()) {
+class DetailOrderAdapter : ListAdapter<CartItem, DetailOrderAdapter.ProductViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = LayoutInflater.from(parent.context)

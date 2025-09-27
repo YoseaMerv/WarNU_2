@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.imersa.warnu.R
 import com.imersa.warnu.data.model.Order
 import com.imersa.warnu.databinding.FragmentDetailOrderBinding
 import com.imersa.warnu.ui.seller.profile.UpdateStatus
@@ -27,7 +26,7 @@ class DetailOrderFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: DetailOrderViewModel by viewModels()
-    private lateinit var productAdapter: OrderDetailAdapter
+    private lateinit var productAdapter: DetailOrderAdapter
     private var orderId: String? = null
 
     override fun onCreateView(
@@ -57,7 +56,7 @@ class DetailOrderFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        productAdapter = OrderDetailAdapter()
+        productAdapter = DetailOrderAdapter()
         binding.rvOrderProducts.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = productAdapter
@@ -65,12 +64,12 @@ class DetailOrderFragment : Fragment() {
     }
 
     private fun setupStatusDropdown() {
-        val statuses = listOf("Pending", "Processing", "Shipped", "Completed", "Cancelled")
+        val statuses = listOf("pending", "processing", "shipped", "completed", "cancelled")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, statuses)
         binding.dropdownOrderStatus.setAdapter(adapter)
 
-        // Default value "Pending"
-        binding.dropdownOrderStatus.setText("Pending", false)
+        // Default value "pending"
+        binding.dropdownOrderStatus.setText("pending", false)
     }
 
     private fun observeViewModel() {

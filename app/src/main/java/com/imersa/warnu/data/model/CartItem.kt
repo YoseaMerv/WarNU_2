@@ -13,7 +13,9 @@ data class CartItem(
     val imageUrl: String? = null,
     @get:PropertyName("sellerId")
     @set:PropertyName("sellerId")
-    var sellerId: String? = null
+    var sellerId: String? = null,
+    val storeName: String? = null
 ) : Parcelable {
-    constructor() : this(null, null, null, 0, null, null)
+    // Konstruktor no-argument diperlukan oleh Firestore
+    constructor() : this(null, null, null, 0, null, null, null)
 }

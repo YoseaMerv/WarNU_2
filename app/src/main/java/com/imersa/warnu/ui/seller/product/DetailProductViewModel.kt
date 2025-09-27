@@ -99,7 +99,8 @@ class DetailProductViewModel @Inject constructor(
                     price = product.price,
                     quantity = quantityInCart + quantityToAdd,
                     imageUrl = product.imageUrl,
-                    sellerId = product.sellerId
+                    sellerId = product.sellerId,
+                    storeName = product.storeName
                 )
 
                 cartItemRef.set(cartItem).await()

@@ -1,5 +1,3 @@
-// CheckoutActivity.kt
-
 package com.imersa.warnu.ui.checkout
 
 import android.annotation.SuppressLint
@@ -25,8 +23,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -48,6 +44,7 @@ class CheckoutActivity : AppCompatActivity() {
             .create(ApiService::class.java)
     }
 
+    // ... (onCreate dan setupWebView tetap sama)
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,23 +92,11 @@ class CheckoutActivity : AppCompatActivity() {
         }
     }
 
+
     private fun startCheckout(cartItems: List<CartItem>) {
-        val totalAmount = cartItems.sumOf { (it.price ?: 0.0) * it.quantity }
-
-        val timestamp = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.getDefault()).format(Date())
-        val randomDigits = (1000..9999).random()
-        val orderId = "WARNU-ORDER-$timestamp-$randomDigits"
-
         val userId = auth.currentUser?.uid
         if (userId == null) {
             Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show()
-            finish()
-            return
-        }
-
-        val sellerId = cartItems.firstOrNull()?.sellerId
-        if (sellerId == null) {
-            Toast.makeText(this, "Seller information is missing.", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -130,34 +115,51 @@ class CheckoutActivity : AppCompatActivity() {
                 }
 
                 val customerDetails = CustomerDetails(
-                    first_name = userName,
+                    name = userName,
                     email = userEmail,
                     phone = userPhone
                 )
 
-                // --- SESUAIKAN BAGIAN INI ---
-                val itemDetails = cartItems.map {
-                    ItemDetails(
-                        id = it.productId!!,
-                        price = it.price!!,
-                        quantity = it.quantity,
-                        name = it.name!!,
-                        imageUrl = it.imageUrl // <-- TAMBAHKAN IMAGE URL DI SINI
-                    )
-                }
+                // --- LOGIKA UTAMA YANG DIPERBAIKI ---
+                val allItemDetails: List<ItemDetails>
+                try {
+                    // Validasi data sebelum mapping
+                    for (item in cartItems) {
+                        if (item.productId.isNullOrBlank() || item.sellerId.isNullOrBlank() || item.storeName.isNullOrBlank() || item.name.isNullOrBlank() || item.price == null) {
+                            throw IllegalArgumentException("Incomplete product data in cart for item: ${item.name}")
+                        }
+                    }
 
-                val transactionRequest = TransactionRequest(
-                    orderId = orderId,
-                    totalAmount = totalAmount,
-                    items = itemDetails,
+                    // Mapping data
+                    allItemDetails = cartItems.map {
+                        ItemDetails(
+                            id = it.productId!!,
+                            price = it.price!!,
+                            quantity = it.quantity,
+                            name = it.name!!,
+                            imageUrl = it.imageUrl,
+                            sellerId = it.sellerId,
+                            storeName = it.storeName
+                        )
+                    }
+                } catch (e: Exception) {
+                    Log.e("CheckoutActivity", "Data Mapping Error: ${e.message}")
+                    Toast.makeText(this, "Error preparing transaction: ${e.message}", Toast.LENGTH_LONG).show()
+                    finish()
+                    return@addOnSuccessListener
+                }
+                // --- SELESAI PERBAIKAN ---
+
+                val transactionRequest = MultiVendorTransactionRequest(
+                    allItems = allItemDetails,
                     customerDetails = customerDetails,
                     userId = userId,
-                    sellerId = sellerId,
                     address = userAddress
                 )
 
-                apiService.createTransaction(transactionRequest).enqueue(object : retrofit2.Callback<TransactionResponse> {
+                apiService.createMultiVendorTransaction(transactionRequest).enqueue(object : retrofit2.Callback<TransactionResponse> {
                     override fun onResponse(call: retrofit2.Call<TransactionResponse>, response: retrofit2.Response<TransactionResponse>) {
+                        binding.progressBar.visibility = View.GONE
                         if (response.isSuccessful) {
                             val token = response.body()?.token
                             if (!token.isNullOrEmpty()) {
@@ -168,26 +170,23 @@ class CheckoutActivity : AppCompatActivity() {
                                 finish()
                             }
                         } else {
-                            // Menampilkan pesan error dari backend jika ada
                             val errorBody = response.errorBody()?.string()
-                            val errorMessage = try {
-                                JSONObject(errorBody!!).getString("error")
-                            } catch (e: Exception) {
-                                "An unknown server error occurred."
-                            }
-                            Toast.makeText(this@CheckoutActivity, errorMessage, Toast.LENGTH_LONG).show()
+                            val errorMessage = try { JSONObject(errorBody!!).getString("error") } catch (e: Exception) { "Unknown server error." }
+                            Toast.makeText(this@CheckoutActivity, "Checkout failed: $errorMessage", Toast.LENGTH_LONG).show()
                             finish()
                         }
                     }
 
                     override fun onFailure(call: retrofit2.Call<TransactionResponse>, t: Throwable) {
-                        Log.e("CheckoutActivity", "onFailure: ${t.message}")
-                        Toast.makeText(this@CheckoutActivity, "Failed to connect to server.", Toast.LENGTH_LONG).show()
+                        binding.progressBar.visibility = View.GONE
+                        Log.e("CheckoutActivity", "API Call Failure", t) // Log error lengkap
+                        Toast.makeText(this@CheckoutActivity, "Failed to connect to server: ${t.message}", Toast.LENGTH_LONG).show()
                         finish()
                     }
                 })
             }
             .addOnFailureListener {
+                binding.progressBar.visibility = View.GONE
                 Toast.makeText(this, "Failed to get user data.", Toast.LENGTH_SHORT).show()
                 finish()
             }

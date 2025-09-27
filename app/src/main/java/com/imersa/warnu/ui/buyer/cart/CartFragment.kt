@@ -1,3 +1,4 @@
+// app/src/main/java/com/imersa/warnu/ui/buyer/cart/CartFragment.kt
 package com.imersa.warnu.ui.buyer.cart
 
 import android.app.AlertDialog
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,9 +17,9 @@ import com.imersa.warnu.data.model.CartItem
 import com.imersa.warnu.databinding.FragmentCartBinding
 import com.imersa.warnu.ui.checkout.CheckoutActivity
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
-import java.text.DecimalFormat
 
 @AndroidEntryPoint
 class CartFragment : Fragment() {
@@ -41,26 +43,24 @@ class CartFragment : Fragment() {
         observeViewModel()
 
         binding.btnCheckout.setOnClickListener {
-            val cartItems = cartAdapter.currentList
-            if (cartItems.isNotEmpty()) {
-                val intent = Intent(requireContext(), CheckoutActivity::class.java)
-                intent.putExtra("CART_ITEMS", Gson().toJson(cartItems))
-                startActivity(intent)
+            val allOriginalItems = viewModel.getOriginalCartItems()
+            if (allOriginalItems.isNotEmpty()) {
+                startCheckoutActivity(allOriginalItems)
+            } else {
+                Toast.makeText(requireContext(), "Your cart is empty.", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-
     private fun setupRecyclerView() {
         cartAdapter = CartAdapter(
+            cartViewItems = emptyList(),
             onIncrease = { cartItem ->
                 viewModel.increaseCartItemQuantity(cartItem)
             },
             onDecrease = { cartItem ->
                 if (cartItem.quantity > 1) {
-                    cartItem.productId?.let {
-                        viewModel.updateCartItemQuantity(it, cartItem.quantity - 1)
-                    }
+                    viewModel.updateCartItemQuantity(cartItem.productId!!, cartItem.quantity - 1)
                 } else {
                     showRemoveConfirmationDialog(cartItem)
                 }
@@ -76,17 +76,19 @@ class CartFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.cartItems.observe(viewLifecycleOwner) { items ->
+        viewModel.cartViewItems.observe(viewLifecycleOwner) { items ->
             val isEmpty = items.isNullOrEmpty()
-            // Menggunakan ID yang sekarang sudah benar
-            binding.layoutEmptyCart.visibility = if (isEmpty) View.VISIBLE else View.GONE
-            binding.rvCartItems.visibility = if (isEmpty) View.GONE else View.VISIBLE
-            binding.layoutCheckout.visibility = if (isEmpty) View.GONE else View.VISIBLE
+            binding.layoutEmptyCart.isVisible = isEmpty
+            binding.rvCartItems.isVisible = !isEmpty
+            binding.layoutCheckout.isVisible = !isEmpty
+            cartAdapter.updateData(items ?: emptyList())
+        }
 
-            if (!isEmpty) {
-                cartAdapter.submitList(items)
-                updateTotalPrice(items)
-            }
+        viewModel.totalPrice.observe(viewLifecycleOwner) { total ->
+            val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) as DecimalFormat
+            formatter.maximumFractionDigits = 0
+            formatter.minimumFractionDigits = 0
+            binding.tvTotalPrice.text = formatter.format(total)
         }
 
         viewModel.toastMessage.observe(viewLifecycleOwner) { message ->
@@ -102,9 +104,7 @@ class CartFragment : Fragment() {
             .setTitle("Remove Item")
             .setMessage("Are you sure you want to remove '${cartItem.name}' from your cart?")
             .setPositiveButton("Remove") { dialog, _ ->
-                cartItem.productId?.let {
-                    viewModel.removeCartItem(it)
-                }
+                viewModel.removeCartItem(cartItem.productId!!)
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel") { dialog, _ ->
@@ -113,14 +113,11 @@ class CartFragment : Fragment() {
             .show()
     }
 
-    private fun updateTotalPrice(items: List<CartItem>) {
-        val totalPrice = items.sumOf { (it.price ?: 0.0) * it.quantity }
-
-        val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) as DecimalFormat
-        formatter.maximumFractionDigits = 0
-        formatter.minimumFractionDigits = 0
-
-        binding.tvTotalPrice.text = formatter.format(totalPrice)
+    private fun startCheckoutActivity(cartItems: List<CartItem>) {
+        val intent = Intent(requireActivity(), CheckoutActivity::class.java).apply {
+            putExtra("CART_ITEMS", Gson().toJson(cartItems))
+        }
+        startActivity(intent)
     }
 
     override fun onDestroyView() {
