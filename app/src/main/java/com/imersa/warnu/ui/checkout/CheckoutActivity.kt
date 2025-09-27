@@ -114,48 +114,33 @@ class CheckoutActivity : AppCompatActivity() {
                     return@addOnSuccessListener
                 }
 
+                // --- PERBAIKI PEMBUATAN OBJEK INI ---
                 val customerDetails = CustomerDetails(
+                    userId = userId, // Masukkan userId di sini
                     name = userName,
                     email = userEmail,
-                    phone = userPhone
+                    phone = userPhone,
+                    address = userAddress // Masukkan address di sini
                 )
 
-                // --- LOGIKA UTAMA YANG DIPERBAIKI ---
-                val allItemDetails: List<ItemDetails>
-                try {
-                    // Validasi data sebelum mapping
-                    for (item in cartItems) {
-                        if (item.productId.isNullOrBlank() || item.sellerId.isNullOrBlank() || item.storeName.isNullOrBlank() || item.name.isNullOrBlank() || item.price == null) {
-                            throw IllegalArgumentException("Incomplete product data in cart for item: ${item.name}")
-                        }
-                    }
-
-                    // Mapping data
-                    allItemDetails = cartItems.map {
-                        ItemDetails(
-                            id = it.productId!!,
-                            price = it.price!!,
-                            quantity = it.quantity,
-                            name = it.name!!,
-                            imageUrl = it.imageUrl,
-                            sellerId = it.sellerId,
-                            storeName = it.storeName
-                        )
-                    }
-                } catch (e: Exception) {
-                    Log.e("CheckoutActivity", "Data Mapping Error: ${e.message}")
-                    Toast.makeText(this, "Error preparing transaction: ${e.message}", Toast.LENGTH_LONG).show()
-                    finish()
-                    return@addOnSuccessListener
+                val allItemDetails = cartItems.map {
+                    ItemDetails(
+                        id = it.productId!!,
+                        price = it.price!!,
+                        quantity = it.quantity,
+                        name = it.name!!,
+                        imageUrl = it.imageUrl,
+                        sellerId = it.sellerId,
+                        storeName = it.storeName
+                    )
                 }
-                // --- SELESAI PERBAIKAN ---
 
+                // Request disederhanakan sesuai ApiService.kt
                 val transactionRequest = MultiVendorTransactionRequest(
                     allItems = allItemDetails,
-                    customerDetails = customerDetails,
-                    userId = userId,
-                    address = userAddress
+                    customerDetails = customerDetails
                 )
+                // --- SELESAI PERBAIKAN ---
 
                 apiService.createMultiVendorTransaction(transactionRequest).enqueue(object : retrofit2.Callback<TransactionResponse> {
                     override fun onResponse(call: retrofit2.Call<TransactionResponse>, response: retrofit2.Response<TransactionResponse>) {
@@ -179,7 +164,7 @@ class CheckoutActivity : AppCompatActivity() {
 
                     override fun onFailure(call: retrofit2.Call<TransactionResponse>, t: Throwable) {
                         binding.progressBar.visibility = View.GONE
-                        Log.e("CheckoutActivity", "API Call Failure", t) // Log error lengkap
+                        Log.e("CheckoutActivity", "API Call Failure", t)
                         Toast.makeText(this@CheckoutActivity, "Failed to connect to server: ${t.message}", Toast.LENGTH_LONG).show()
                         finish()
                     }

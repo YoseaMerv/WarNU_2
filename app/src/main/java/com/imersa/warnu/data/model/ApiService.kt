@@ -6,9 +6,11 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 data class CustomerDetails(
+    val userId: String,
     val name: String?,
     val email: String?,
-    val phone: String?
+    val phone: String?,
+    val address: String?
 )
 
 data class ItemDetails(
@@ -17,15 +19,13 @@ data class ItemDetails(
     val quantity: Int,
     val name: String,
     val imageUrl: String?,
-    val sellerId: String?, // Tambahkan field ini
-    val storeName: String? // Tambahkan field ini
+    val sellerId: String?,
+    val storeName: String?
 )
 
 data class MultiVendorTransactionRequest(
     val allItems: List<ItemDetails>,
-    val customerDetails: CustomerDetails,
-    val userId: String,
-    val address: String?
+    val customerDetails: CustomerDetails
 )
 
 data class TransactionResponse(
