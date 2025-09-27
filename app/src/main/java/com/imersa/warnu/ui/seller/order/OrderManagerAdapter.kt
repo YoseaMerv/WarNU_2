@@ -43,8 +43,8 @@ class OrderManagerAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(order: Order) {
             // Set customer name & order ID
-            tvCustomerName.text = order.customerName
-            tvOrderId.text = order.orderId
+            tvCustomerName.text = order.customerName ?: "Pembeli"
+            tvOrderId.text = order.orderId ?: "-"
 
             // Format total amount
             val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) as DecimalFormat
@@ -52,16 +52,16 @@ class OrderManagerAdapter(
             formatter.minimumFractionDigits = 0
             tvTotalAmount.text = formatter.format(order.totalAmount ?: 0.0)
 
-            // Set status text & background berdasarkan orderStatus
-            val status = order.orderStatus ?: "Pending" // default jika null
-            tvStatus.text = status
+            // Status
+            val status = order.orderStatus ?: "pending"
+            tvStatus.text = status.replaceFirstChar { it.uppercase() }
 
-            val statusBackground = when (status) {
-                "Pending" -> R.drawable.status_pending_background
-                "Processing" -> R.drawable.status_processing_background
-                "Shipped" -> R.drawable.status_shipped_background
-                "Completed" -> R.drawable.status_completed_background
-                "Cancelled" -> R.drawable.status_cancelled_background
+            val statusBackground = when (status.lowercase()) {
+                "pending" -> R.drawable.status_pending_background
+                "processing" -> R.drawable.status_processing_background
+                "shipped" -> R.drawable.status_shipped_background
+                "completed" -> R.drawable.status_completed_background
+                "cancelled" -> R.drawable.status_cancelled_background
                 else -> R.drawable.status_pending_background
             }
             tvStatus.background = ContextCompat.getDrawable(itemView.context, statusBackground)
@@ -70,9 +70,7 @@ class OrderManagerAdapter(
             itemView.setOnClickListener { onItemClick(order) }
         }
     }
-
-
-    class DiffCallback : DiffUtil.ItemCallback<Order>() {
+        class DiffCallback : DiffUtil.ItemCallback<Order>() {
         override fun areItemsTheSame(oldItem: Order, newItem: Order): Boolean {
             return oldItem.orderId == newItem.orderId
         }

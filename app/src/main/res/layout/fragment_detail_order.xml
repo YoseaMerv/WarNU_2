@@ -13,6 +13,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Buyer Info -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,7 +43,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Data Pembeli"
+                        android:text="Buyer Information"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -52,24 +53,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    tools:text="Nama: Yosea Merv" />
+                    tools:text="Name: John Doe" />
 
                 <TextView
                     android:id="@+id/tv_buyer_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    tools:text="Telepon: 0812-3456-7890" />
+                    tools:text="Phone: +62 812-3456-7890" />
 
                 <TextView
                     android:id="@+id/tv_buyer_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    tools:text="Alamat: Jl. Melati No. 12, Jakarta" />
+                    tools:text="Address: Jl. Melati No. 12, Jakarta" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Product Details -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -100,7 +102,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Detail Produk"
+                        android:text="Product Details"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -120,10 +122,11 @@
                     android:paddingTop="8dp"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    tools:text="Total: Rp 150.000" />
+                    tools:text="Total: Rp 150,000" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Payment Info -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -154,7 +157,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Informasi Pembayaran"
+                        android:text="Payment Information"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -164,7 +167,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    tools:text="Metode: Transfer Bank" />
+                    tools:text="Method: Bank Transfer" />
 
                 <TextView
                     android:id="@+id/tv_payment_status"
@@ -175,6 +178,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Order Status -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -205,7 +209,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="Status Pesanan"
+                        android:text="Order Status"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -215,14 +219,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:hint="Pilih status">
+                    android:hint="Select status">
 
                     <AutoCompleteTextView
                         android:id="@+id/dropdown_order_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        tools:text="Proceed" />
+                        tools:text="Processing" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.button.MaterialButton

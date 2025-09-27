@@ -80,11 +80,12 @@ class DetailOrderFragment : Fragment() {
         viewModel.updateStatus.observe(viewLifecycleOwner) { status ->
             when (status) {
                 is UpdateStatus.Success -> {
-                    Toast.makeText(context, "Status pesanan berhasil diperbarui", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Order status updated successfully", Toast.LENGTH_SHORT).show()
                     binding.btnUpdateStatus.isEnabled = true
+                    findNavController().popBackStack()
                 }
                 is UpdateStatus.Error -> {
-                    Toast.makeText(context, "Gagal: ${status.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Failed: ${status.message}", Toast.LENGTH_SHORT).show()
                     binding.btnUpdateStatus.isEnabled = true
                 }
                 is UpdateStatus.Loading -> {
@@ -110,8 +111,8 @@ class DetailOrderFragment : Fragment() {
 
     private fun populateUi(order: Order) {
         binding.tvBuyerName.text = "Nama: ${order.customerName ?: "Tidak tersedia"}"
-        binding.tvBuyerPhone.text = "Telepon: (Data belum tersedia)"
-        binding.tvBuyerAddress.text = "Alamat: (Data belum tersedia)"
+        binding.tvBuyerPhone.text = "Telepon: ${order.customerPhone ?: "Tidak tersedia"}"
+        binding.tvBuyerAddress.text = "Alamat: ${order.address ?: "Tidak tersedia"}"
 
         productAdapter.submitList(order.items)
 
@@ -121,10 +122,13 @@ class DetailOrderFragment : Fragment() {
         binding.tvTotalPrice.text = "Total: ${formatter.format(order.totalAmount ?: 0.0)}"
 
         binding.tvPaymentMethod.text = "Metode: Midtrans"
-        binding.tvPaymentStatus.text = "Status: ${order.orderStatus?.replaceFirstChar { it.uppercase() } ?: "N/A"}"
+        binding.tvPaymentStatus.text =
+            "Status: ${order.paymentStatus?.replaceFirstChar { it.uppercase() } ?: "N/A"}"
 
-        binding.dropdownOrderStatus.setText(order.orderStatus, false)
+        val statusValue = order.orderStatus ?: "pending"
+        binding.dropdownOrderStatus.setText(statusValue, false)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -4,15 +4,23 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.PropertyName
 
 data class Order(
-    val orderId: String? = null,
-    val userId: String? = null,
-    val totalAmount: Double? = null,
-    val paymentStatus: String? = null,
-    val createdAt: Timestamp? = null,
-    val customerName: String? = null,
-    val sellerId: String? = null,
-    val orderStatus : String? = null,
+    var orderId: String? = null,
+    var userId: String? = null,
+    var totalAmount: Double? = null,
+    var paymentStatus: String? = null,
+    val customerPhone: String? = null,
+    val address: String? = null,
+    var createdAt: Timestamp? = null,
+    var customerName: String? = null,
+    var sellerId: String? = null,
+    var orderStatus: String? = null,
+
     @get:PropertyName("items")
     @set:PropertyName("items")
-    var items: List<CartItem>? = null
-)
+    var items: ArrayList<CartItem>? = null
+) {
+    // no-arg constructor buat Firestore
+    constructor() : this(null, null, null, null, null, null, null, null, null)
+}
+
+

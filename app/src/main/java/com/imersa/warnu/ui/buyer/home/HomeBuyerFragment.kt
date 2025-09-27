@@ -68,7 +68,6 @@ class HomeBuyerFragment : Fragment() {
         val banners = listOf(R.drawable.banner1, R.drawable.banner2, R.drawable.banner3)
         val fakeList = mutableListOf<Int>()
 
-
         fakeList.add(banners.last())
         fakeList.addAll(banners)
         fakeList.add(banners.first())

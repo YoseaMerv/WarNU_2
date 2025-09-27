@@ -1,4 +1,3 @@
-// app/src/main/java/com/imersa/warnu/ui/seller/order/OrderDetailAdapter.kt
 package com.imersa.warnu.ui.seller.order
 
 import android.annotation.SuppressLint
@@ -37,7 +36,7 @@ class DetailOrderAdapter : ListAdapter<CartItem, DetailOrderAdapter.ProductViewH
 
         @SuppressLint("SetTextI18n")
         fun bind(item: CartItem) {
-            tvName.text = item.name
+            tvName.text = item.name ?: "Produk"
             tvQuantity.text = "Jumlah: ${item.quantity}"
 
             val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) as DecimalFormat
@@ -48,6 +47,7 @@ class DetailOrderAdapter : ListAdapter<CartItem, DetailOrderAdapter.ProductViewH
             Glide.with(itemView.context)
                 .load(item.imageUrl)
                 .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.placeholder_image) // biar aman kalau gagal load
                 .into(ivProduct)
         }
     }
