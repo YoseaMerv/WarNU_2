@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.imersa.warnu.R
 import com.imersa.warnu.databinding.FragmentOrderHistoryBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,8 +42,11 @@ class OrderHistoryFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        orderAdapter = OrderHistoryAdapter()
-        // Menggunakan ID yang benar dari layout
+        orderAdapter = OrderHistoryAdapter { order ->
+            val bundle = bundleOf("orderId" to order.orderId)
+            findNavController().navigate(R.id.nav_detail_order_buyer, bundle)
+        }
+
         binding.rvOrderHistory.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = orderAdapter
@@ -49,12 +55,10 @@ class OrderHistoryFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.orders.observe(viewLifecycleOwner) { orders ->
-            // Menggunakan ID yang benar dari layout
             binding.tvNoOrders.visibility = if (orders.isEmpty()) View.VISIBLE else View.GONE
             orderAdapter.submitList(orders)
         }
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            // Menggunakan ID yang benar dari layout
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
     }
@@ -64,3 +68,4 @@ class OrderHistoryFragment : Fragment() {
         _binding = null
     }
 }
+

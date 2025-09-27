@@ -20,6 +20,7 @@
         android:name="com.imersa.warnu.ui.buyer.order.OrderHistoryFragment"
         android:label="Order History"
         tools:layout="@layout/fragment_order_history" />
+    <!-- TAG ACTION TELAH DIHAPUS DARI SINI -->
     <fragment
         android:id="@+id/nav_cart"
         android:name="com.imersa.warnu.ui.buyer.cart.CartFragment"
@@ -35,4 +36,13 @@
         android:name="com.imersa.warnu.ui.buyer.profile.EditProfileBuyerFragment"
         android:label="Edit Profile"
         tools:layout="@layout/fragment_edit_profile_buyer" />
+
+    <fragment
+        android:id="@+id/nav_detail_order_buyer"
+        android:name="com.imersa.warnu.ui.buyer.order.DetailOrderBuyerFragment"
+        android:label="Order Detail"
+        tools:layout="@layout/fragment_detail_order_buyer"/>
+
+
 </navigation>
+
