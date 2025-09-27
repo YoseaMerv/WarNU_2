@@ -42,7 +42,7 @@ class DetailOrderViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 firestore.collection("orders").document(orderId)
-                    .update("orderStatus", newStatus.lowercase(Locale.getDefault()))
+                    .update("orderStatus", (Locale.getDefault()))
                     .await()
                 _updateStatus.postValue(UpdateStatus.Success)
             } catch (e: Exception) {

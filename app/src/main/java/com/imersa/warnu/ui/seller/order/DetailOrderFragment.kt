@@ -65,9 +65,12 @@ class DetailOrderFragment : Fragment() {
     }
 
     private fun setupStatusDropdown() {
-        val statuses = listOf("Pending", "Diproses", "Dikirim", "Selesai", "Dibatalkan")
+        val statuses = listOf("Pending", "Processing", "Shipped", "Completed", "Cancelled")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, statuses)
         binding.dropdownOrderStatus.setAdapter(adapter)
+
+        // Default value "Pending"
+        binding.dropdownOrderStatus.setText("Pending", false)
     }
 
     private fun observeViewModel() {

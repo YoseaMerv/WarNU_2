@@ -74,12 +74,11 @@ class DetailProductViewModel @Inject constructor(
                 val cartItemRef = firestore.collection("carts").document(userId)
                     .collection("items").document(productId)
 
-                // Ambil stok produk terbaru langsung dari database untuk data paling akurat
                 val productRef = firestore.collection("products").document(productId)
                 val productSnapshot = productRef.get().await()
                 val currentStock = productSnapshot.toObject(Product::class.java)?.stock ?: 0
 
-                // Ambil item yang sudah ada di keranjang
+
                 val existingCartItemSnapshot = cartItemRef.get().await()
                 val quantityInCart = if (existingCartItemSnapshot.exists()) {
                     existingCartItemSnapshot.toObject(CartItem::class.java)?.quantity ?: 0

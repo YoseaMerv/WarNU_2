@@ -32,7 +32,9 @@ class OrderManagerAdapter(
     }
 
     // 3. Tambahkan listener pada constructor ViewHolder
-    class OrderViewHolder(itemView: View, private val onItemClick: (Order) -> Unit) : RecyclerView.ViewHolder(itemView) {
+    class OrderViewHolder(itemView: View, private val onItemClick: (Order) -> Unit) :
+        RecyclerView.ViewHolder(itemView) {
+
         private val tvCustomerName: TextView = itemView.findViewById(R.id.tv_customer_name)
         private val tvOrderId: TextView = itemView.findViewById(R.id.tv_order_id)
         private val tvTotalAmount: TextView = itemView.findViewById(R.id.tv_total_amount)
@@ -40,29 +42,35 @@ class OrderManagerAdapter(
 
         @SuppressLint("SetTextI18n")
         fun bind(order: Order) {
+            // Set customer name & order ID
             tvCustomerName.text = order.customerName
             tvOrderId.text = order.orderId
 
+            // Format total amount
             val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) as DecimalFormat
             formatter.maximumFractionDigits = 0
             formatter.minimumFractionDigits = 0
-
             tvTotalAmount.text = formatter.format(order.totalAmount ?: 0.0)
 
-            tvStatus.text = order.paymentStatus?.replaceFirstChar { it.uppercase() }
-            val statusBackground = when (order.paymentStatus) {
-                "settlement" -> R.drawable.status_settlement_background
-                "pending" -> R.drawable.status_pending_background
-                else -> R.drawable.status_cancelled_background
+            // Set status text & background berdasarkan orderStatus
+            val status = order.orderStatus ?: "Pending" // default jika null
+            tvStatus.text = status
+
+            val statusBackground = when (status) {
+                "Pending" -> R.drawable.status_pending_background
+                "Processing" -> R.drawable.status_processing_background
+                "Shipped" -> R.drawable.status_shipped_background
+                "Completed" -> R.drawable.status_completed_background
+                "Cancelled" -> R.drawable.status_cancelled_background
+                else -> R.drawable.status_pending_background
             }
             tvStatus.background = ContextCompat.getDrawable(itemView.context, statusBackground)
 
-            // 4. Set OnClickListener pada item view
-            itemView.setOnClickListener {
-                onItemClick(order)
-            }
+            // Set click listener
+            itemView.setOnClickListener { onItemClick(order) }
         }
     }
+
 
     class DiffCallback : DiffUtil.ItemCallback<Order>() {
         override fun areItemsTheSame(oldItem: Order, newItem: Order): Boolean {
