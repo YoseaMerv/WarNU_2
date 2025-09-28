@@ -46,7 +46,8 @@ class RegisterSellerViewModel @Inject constructor(
 
                 var imageUrl: String? = null
                 if (imageUri != null) {
-                    val storageRef = storage.reference.child("profile_pictures/$userId")
+                    // kalau tiap user cuma punya 1 foto profil → aman ditimpa tiap update
+                    val storageRef = storage.reference.child("profile_pictures/$userId/profile.jpg")
                     val uploadTask = storageRef.putFile(imageUri).await()
                     imageUrl = uploadTask.storage.downloadUrl.await().toString()
                 }

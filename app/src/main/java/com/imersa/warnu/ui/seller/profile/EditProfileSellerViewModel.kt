@@ -62,7 +62,8 @@ class EditProfileSellerViewModel @Inject constructor(
             try {
                 val currentImageUrl = _userProfile.value?.profileImageUrl
                 val imageUrl = if (newImageUri != null) {
-                    val storageRef = storage.reference.child("profile_pictures/$userId")
+                    val storageRef = storage.reference.child("profile_pictures/$userId/profile.jpg")
+
                     // Hapus foto lama jika ada sebelum upload yang baru
                     currentImageUrl?.let { if(it.isNotEmpty()) storage.getReferenceFromUrl(it).delete().await() }
                     val uploadTask = storageRef.putFile(newImageUri).await()

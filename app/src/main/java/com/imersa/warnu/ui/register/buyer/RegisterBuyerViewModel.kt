@@ -39,7 +39,7 @@ class RegisterBuyerViewModel @Inject constructor(
 
                 var imageUrl: String? = null
                 if (imageUri != null) {
-                    val storageRef = storage.reference.child("profile_pictures/$userId")
+                    val storageRef = storage.reference.child("profile_pictures/$userId/profile.jpg")
                     val uploadTask = storageRef.putFile(imageUri).await()
                     imageUrl = uploadTask.storage.downloadUrl.await().toString()
                 }
