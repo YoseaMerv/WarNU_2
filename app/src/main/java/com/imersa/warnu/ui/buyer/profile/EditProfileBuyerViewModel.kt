@@ -84,8 +84,7 @@ class EditProfileBuyerViewModel @Inject constructor(
     private fun uploadImageAndUpdateUser(
         userId: String, name: String, phone: String, address: String, imageUri: Uri
     ) {
-        val storageRef =
-            storage.reference.child("profile_pictures/${userId}_${System.currentTimeMillis()}.jpg")
+        val storageRef = storage.reference.child("profile_pictures/$userId/profile.jpg")
 
         storageRef.putFile(imageUri)
             .addOnSuccessListener {
@@ -134,4 +133,5 @@ class EditProfileBuyerViewModel @Inject constructor(
         } catch (e: Exception) {
         }
     }
+
 }
