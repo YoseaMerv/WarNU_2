@@ -91,7 +91,6 @@ class HomeBuyerFragment : Fragment() {
             sliderHandler.postDelayed(sliderRunnable!!, 5000)
         }
 
-        // Looping saat user swipe
         binding.vpBanner.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -117,20 +116,15 @@ class HomeBuyerFragment : Fragment() {
         sliderRunnable?.let { sliderHandler.postDelayed(it, 5000) }
     }
 
-    // Stop auto-slide
     private fun stopAutoSlide() {
         sliderRunnable?.let { sliderHandler.removeCallbacks(it) }
     }
 
-    // Restart auto-slide saat user swipe
     private fun restartAutoSlide() {
         stopAutoSlide()
         startAutoSlide()
     }
 
-
-
-    // Fungsi search yang diperbaiki
     private fun setupSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

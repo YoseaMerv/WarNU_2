@@ -31,7 +31,6 @@ class OrderGroupAdapter(private val itemsBySeller: Map<String?, List<CartItem>>)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // Menggunakan layout item_order_seller_group.xml
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_order_seller_group, parent, false)
         return ViewHolder(view)

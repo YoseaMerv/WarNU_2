@@ -35,7 +35,6 @@ class ProfileSellerFragment : Fragment() {
         setupObservers()
 
         binding.btnEditProfile.setOnClickListener {
-            // Langsung ke ID fragment tujuan
             findNavController().navigate(R.id.nav_edit_profile_seller)
         }
     }

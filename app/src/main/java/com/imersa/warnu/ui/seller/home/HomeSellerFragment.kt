@@ -58,7 +58,6 @@ class HomeSellerFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("productId", product.id)
                 }
-                // Langsung ke ID fragment tujuan
                 findNavController().navigate(R.id.nav_product_detail, bundle)
             }
         )

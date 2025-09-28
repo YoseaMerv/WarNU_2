@@ -69,10 +69,9 @@ class MainSellerActivity : AppCompatActivity() {
         navigationView.menu.findItem(R.id.nav_order_history).isVisible = false
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
-            // Tutup drawer terlebih dahulu
+
             drawerLayout.closeDrawer(GravityCompat.START)
 
-            // Handle logout secara manual
             if (menuItem.itemId == R.id.nav_logout) {
                 viewModel.logout()
                 startActivity(Intent(this, LoginActivity::class.java))
@@ -80,7 +79,6 @@ class MainSellerActivity : AppCompatActivity() {
                 return@setNavigationItemSelectedListener true
             }
 
-            // Biarkan NavigationUI menangani navigasi item menu lainnya
             return@setNavigationItemSelectedListener NavigationUI.onNavDestinationSelected(menuItem, navController)
         }
     }

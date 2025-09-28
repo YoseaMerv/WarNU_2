@@ -71,7 +71,7 @@ class LoginActivity : AppCompatActivity() {
                 InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             binding.ivShowPassword.setImageResource(R.drawable.ic_closed_eye)
         }
-        // Setel kursor ke akhir teks
+
         binding.etPassword.setSelection(binding.etPassword.text?.length ?: 0)
     }
 

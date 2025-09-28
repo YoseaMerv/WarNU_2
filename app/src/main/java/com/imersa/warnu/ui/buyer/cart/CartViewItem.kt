@@ -1,4 +1,3 @@
-// app/src/main/java/com/imersa/warnu/ui/buyer/cart/CartViewItem.kt
 package com.imersa.warnu.ui.buyer.cart
 
 import com.imersa.warnu.data.model.CartItem

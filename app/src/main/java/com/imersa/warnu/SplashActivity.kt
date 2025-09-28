@@ -36,7 +36,6 @@ class SplashActivity : AppCompatActivity() {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         }
 
-        // Delay for 2 seconds before checking the user session
         Handler(Looper.getMainLooper()).postDelayed({
             checkUserSession()
         }, 2000)
@@ -56,16 +55,13 @@ class SplashActivity : AppCompatActivity() {
                             navigateTo(MainSellerActivity::class.java)
                         }
                     } else {
-                        // If user document is not found, direct to Login
                         navigateTo(LoginActivity::class.java)
                     }
                 }
                 .addOnFailureListener {
-                    // If data fetch fails, direct to Login
                     navigateTo(LoginActivity::class.java)
                 }
         } else {
-            // If no user is logged in, direct to Login
             navigateTo(LoginActivity::class.java)
         }
     }

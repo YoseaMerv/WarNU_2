@@ -15,7 +15,6 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
 
-// 1. Tambahkan listener pada constructor adapter
 class OrderManagerAdapter(
     private val onItemClick: (Order) -> Unit
 ) : ListAdapter<Order, OrderManagerAdapter.OrderViewHolder>(DiffCallback()) {
@@ -23,7 +22,6 @@ class OrderManagerAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_orders, parent, false)
-        // 2. Kirim listener ke ViewHolder
         return OrderViewHolder(view, onItemClick)
     }
 
@@ -31,7 +29,6 @@ class OrderManagerAdapter(
         holder.bind(getItem(position))
     }
 
-    // 3. Tambahkan listener pada constructor ViewHolder
     class OrderViewHolder(itemView: View, private val onItemClick: (Order) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
 
@@ -66,7 +63,6 @@ class OrderManagerAdapter(
             }
             tvStatus.background = ContextCompat.getDrawable(itemView.context, statusBackground)
 
-            // Set click listener
             itemView.setOnClickListener { onItemClick(order) }
         }
     }

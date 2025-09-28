@@ -41,7 +41,6 @@ class ProfileBuyerFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Muat ulang data setiap kali fragment ini ditampilkan kembali
         viewModel.loadUserProfile()
     }
 

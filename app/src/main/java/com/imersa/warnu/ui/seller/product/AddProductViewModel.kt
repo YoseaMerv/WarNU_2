@@ -65,7 +65,11 @@ class AddProductViewModel @Inject constructor(
                 val uploadTask = storageRef.putFile(imageUri).await()
                 val imageUrl = uploadTask.storage.downloadUrl.await().toString()
 
+                val newProductRef = firestore.collection("products").document()
+                val productId = newProductRef.id
+
                 val product = Product(
+                    id = productId,
                     name = name,
                     price = price,
                     description = description,
@@ -76,7 +80,7 @@ class AddProductViewModel @Inject constructor(
                     storeName = storeName
                 )
 
-                firestore.collection("products").add(product).await()
+                newProductRef.set(product).await()
                 _state.postValue(AddProductState.Success("Product added successfully!"))
 
             } catch (e: Exception) {

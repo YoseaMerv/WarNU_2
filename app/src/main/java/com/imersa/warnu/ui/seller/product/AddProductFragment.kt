@@ -91,7 +91,7 @@ class AddProductFragment : Fragment() {
                     Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                     viewModel.resetState()
                 }
-                else -> { /* Idle or Loading */ }
+                else -> {}
             }
         }
     }

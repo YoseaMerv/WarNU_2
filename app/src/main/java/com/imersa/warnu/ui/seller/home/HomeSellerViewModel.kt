@@ -38,8 +38,6 @@ class HomeSellerViewModel @Inject constructor(
                     .whereEqualTo("sellerId", userId)
                     .get()
                     .await()
-
-                // --- PERBAIKAN: Menggunakan .copy() untuk menyalin ID ---
                 val productList = snapshot.documents.mapNotNull { document ->
                     val product = document.toObject(Product::class.java)
                     // Salin objek produk dan tambahkan ID dari dokumennya
@@ -48,7 +46,6 @@ class HomeSellerViewModel @Inject constructor(
 
                 _products.postValue(productList)
             } catch (e: Exception) {
-                // Handle error
             } finally {
                 _isLoading.postValue(false)
             }

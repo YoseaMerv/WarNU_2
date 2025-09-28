@@ -91,8 +91,6 @@ class DetailProductViewModel @Inject constructor(
                     _addToCartStatus.postValue("Not enough stock. You have $quantityInCart item(s) in your cart.")
                     return@launch
                 }
-
-                // Jika validasi lolos, update atau buat item baru di keranjang
                 val cartItem = CartItem(
                     productId = product.id,
                     name = product.name,

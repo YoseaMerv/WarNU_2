@@ -19,7 +19,6 @@ data class Order(
     @set:PropertyName("items")
     var items: ArrayList<CartItem>? = null
 ) {
-    // no-arg constructor buat Firestore
     constructor() : this(null, null, null, null, null, null, null, null, null)
 }
 

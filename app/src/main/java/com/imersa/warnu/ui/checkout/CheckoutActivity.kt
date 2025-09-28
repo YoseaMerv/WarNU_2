@@ -43,8 +43,6 @@ class CheckoutActivity : AppCompatActivity() {
             .build()
             .create(ApiService::class.java)
     }
-
-    // ... (onCreate dan setupWebView tetap sama)
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +64,7 @@ class CheckoutActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
         binding.webView.settings.javaScriptEnabled = true
         binding.webView.webViewClient = object : WebViewClient() {
@@ -114,13 +113,12 @@ class CheckoutActivity : AppCompatActivity() {
                     return@addOnSuccessListener
                 }
 
-                // --- PERBAIKI PEMBUATAN OBJEK INI ---
                 val customerDetails = CustomerDetails(
-                    userId = userId, // Masukkan userId di sini
+                    userId = userId,
                     name = userName,
                     email = userEmail,
                     phone = userPhone,
-                    address = userAddress // Masukkan address di sini
+                    address = userAddress
                 )
 
                 val allItemDetails = cartItems.map {
@@ -134,13 +132,11 @@ class CheckoutActivity : AppCompatActivity() {
                         storeName = it.storeName
                     )
                 }
-
-                // Request disederhanakan sesuai ApiService.kt
                 val transactionRequest = MultiVendorTransactionRequest(
                     allItems = allItemDetails,
                     customerDetails = customerDetails
                 )
-                // --- SELESAI PERBAIKAN ---
+
 
                 apiService.createMultiVendorTransaction(transactionRequest).enqueue(object : retrofit2.Callback<TransactionResponse> {
                     override fun onResponse(call: retrofit2.Call<TransactionResponse>, response: retrofit2.Response<TransactionResponse>) {

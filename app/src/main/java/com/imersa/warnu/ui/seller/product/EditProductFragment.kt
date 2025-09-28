@@ -94,9 +94,7 @@ class EditProductFragment : Fragment() {
             product?.let {
                 binding.etProductName.setText(it.name)
 
-                // --- PERBAIKAN FORMAT ANGKA DI SINI ---
                 val price = it.price ?: 0.0
-                // Hapus .0 dari harga
                 val formatter = DecimalFormat("#")
                 binding.etPrice.setText(formatter.format(price))
 
@@ -123,7 +121,7 @@ class EditProductFragment : Fragment() {
                     Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                     viewModel.resetState()
                 }
-                else -> { /* Idle or Loading */ }
+                else -> {  }
             }
         }
     }

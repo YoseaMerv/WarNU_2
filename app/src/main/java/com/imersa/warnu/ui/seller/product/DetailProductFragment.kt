@@ -89,7 +89,7 @@ class DetailProductFragment : Fragment() {
 
         viewModel.addToCartStatus.observe(viewLifecycleOwner) { status ->
             status?.let {
-                Toast.makeText(context, it, Toast.LENGTH_LONG).show() // Durasi diubah ke LONG
+                Toast.makeText(context, it, Toast.LENGTH_LONG).show()
                 viewModel.onStatusMessageShown()
                 // Aktifkan kembali tombol setelah proses selesai
                 binding.fabAddToCart.isEnabled = true

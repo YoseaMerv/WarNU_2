@@ -92,7 +92,6 @@ class EditProfileBuyerViewModel @Inject constructor(
                 storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                     updateUserData(userId, name, phone, address, downloadUrl.toString())
 
-                    // Hapus foto lama setelah sukses update
                     oldPhotoUrl?.let { url ->
                         if (url.isNotEmpty()) {
                             deleteOldPhoto(url)
@@ -129,12 +128,10 @@ class EditProfileBuyerViewModel @Inject constructor(
     }
 
     private fun deleteOldPhoto(url: String) {
-        // Blok try-catch untuk mencegah crash jika URL tidak valid
         try {
             val oldRef = storage.getReferenceFromUrl(url)
             oldRef.delete()
         } catch (e: Exception) {
-            // Gagal menghapus foto lama, tidak perlu memberitahu user
         }
     }
 }

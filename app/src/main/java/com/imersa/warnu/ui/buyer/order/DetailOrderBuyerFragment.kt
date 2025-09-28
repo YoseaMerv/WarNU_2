@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -77,7 +76,7 @@ class DetailOrderBuyerFragment : Fragment() {
         formatter.minimumFractionDigits = 0
         binding.tvTotalPrice.text = formatter.format(order.totalAmount ?: 0.0)
 
-        binding.tvPaymentMethod.text = "BCA VA" // Example, you might want to get this from your order data
+        binding.tvPaymentMethod.text = "BCA VA"
         binding.tvOrderStatus.text = order.orderStatus
 
         val statusBackground = when (order.orderStatus) {

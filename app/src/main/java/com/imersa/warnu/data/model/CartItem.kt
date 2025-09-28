@@ -16,6 +16,5 @@ data class CartItem(
     var sellerId: String? = null,
     val storeName: String? = null
 ) : Parcelable {
-    // Konstruktor no-argument diperlukan oleh Firestore
     constructor() : this(null, null, null, 0, null, null, null)
 }

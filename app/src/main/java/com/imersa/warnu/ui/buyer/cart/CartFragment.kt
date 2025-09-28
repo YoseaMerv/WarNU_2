@@ -1,4 +1,3 @@
-// app/src/main/java/com/imersa/warnu/ui/buyer/cart/CartFragment.kt
 package com.imersa.warnu.ui.buyer.cart
 
 import android.app.AlertDialog

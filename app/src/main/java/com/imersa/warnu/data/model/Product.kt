@@ -11,6 +11,5 @@ data class Product(
     val category: String? = null,
     val storeName: String? = null
 ) {
-    // Constructor kosong diperlukan untuk Firestore
     constructor() : this(null, null, null, null, null, null, null, null, null)
 }

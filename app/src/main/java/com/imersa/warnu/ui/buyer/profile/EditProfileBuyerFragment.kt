@@ -42,7 +42,7 @@ class EditProfileBuyerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.fetchUserData() // Panggil fungsi untuk mengambil data
+        viewModel.fetchUserData()
         observeViewModel()
         setupListeners()
     }

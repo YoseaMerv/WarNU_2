@@ -1,4 +1,3 @@
-// app/src/main/java/com/imersa/warnu/ui/buyer/cart/CartAdapter.kt
 package com.imersa.warnu.ui.buyer.cart
 
 import android.view.LayoutInflater

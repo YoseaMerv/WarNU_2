@@ -67,7 +67,6 @@ class ProductSellerAdapter(
         fun bind(product: Product) {
             tvProductName?.text = product.name
 
-            // --- PERBAIKAN FORMAT ANGKA ---
             val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID")) as DecimalFormat
             formatter.maximumFractionDigits = 0
             formatter.minimumFractionDigits = 0

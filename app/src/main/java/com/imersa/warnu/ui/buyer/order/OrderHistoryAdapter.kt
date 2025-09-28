@@ -52,7 +52,6 @@ class OrderHistoryAdapter(private val onItemClick: (Order) -> Unit) :
             tvTotalAmount.text = formatter.format(order.totalAmount ?: 0.0)
 
             val status = order.orderStatus ?: "pending"
-            // Tampilkan status dengan huruf kapital
             tvStatus.text = status.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
             val statusBackground = when (status.lowercase(Locale.getDefault())) {
                 "pending" -> R.drawable.status_pending_background
