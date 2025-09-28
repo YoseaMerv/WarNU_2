@@ -60,7 +60,7 @@ class AddProductViewModel @Inject constructor(
                 val userDocument = firestore.collection("users").document(sellerId).get().await()
                 val storeName = userDocument.getString("storeName") ?: throw Exception("Store name not found.")
 
-                val imageFileName = "products/${UUID.randomUUID()}"
+                val imageFileName = "product_images/${UUID.randomUUID()}"
                 val storageRef = storage.reference.child(imageFileName)
                 val uploadTask = storageRef.putFile(imageUri).await()
                 val imageUrl = uploadTask.storage.downloadUrl.await().toString()
