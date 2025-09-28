@@ -1,4 +1,3 @@
-// app/src/main/java/com/imersa/warnu/ui/buyer/cart/CartViewModel.kt
 package com.imersa.warnu.ui.buyer.cart
 
 import androidx.lifecycle.LiveData
@@ -8,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.imersa.warnu.data.model.CartItem
+import com.imersa.warnu.data.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -67,8 +67,21 @@ class CartViewModel @Inject constructor(
     }
 
     fun increaseCartItemQuantity(cartItem: CartItem) {
-        cartItem.productId?.let {
-            updateCartItemQuantity(it, cartItem.quantity + 1)
+        val productId = cartItem.productId ?: return
+        viewModelScope.launch {
+            try {
+                val productDoc = firestore.collection("products").document(productId).get().await()
+                val product = productDoc.toObject(Product::class.java)
+                val availableStock = product?.stock ?: 0
+
+                if (cartItem.quantity < availableStock) {
+                    updateCartItemQuantity(productId, cartItem.quantity + 1)
+                } else {
+                    _toastMessage.postValue("Not enough stock, only $availableStock items left.")
+                }
+            } catch (e: Exception) {
+                _toastMessage.postValue("Failed to verify product stock.")
+            }
         }
     }
 

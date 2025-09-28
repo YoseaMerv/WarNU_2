@@ -16,7 +16,6 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-// Tambahkan listener pada constructor
 class OrderHistoryAdapter(private val onItemClick: (Order) -> Unit) :
     ListAdapter<Order, OrderHistoryAdapter.OrderViewHolder>(DiffCallback()) {
 
@@ -28,7 +27,6 @@ class OrderHistoryAdapter(private val onItemClick: (Order) -> Unit) :
 
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
         val order = getItem(position)
-        // Set listener pada item view
         holder.itemView.setOnClickListener {
             onItemClick(order)
         }
@@ -53,15 +51,16 @@ class OrderHistoryAdapter(private val onItemClick: (Order) -> Unit) :
             formatter.minimumFractionDigits = 0
             tvTotalAmount.text = formatter.format(order.totalAmount ?: 0.0)
 
-            val status = order.orderStatus ?: "Pending"
-            tvStatus.text = status
-
-            val statusBackground = when (status) {
-                "Pending" -> R.drawable.status_pending_background
-                "Processing" -> R.drawable.status_processing_background
-                "Shipped" -> R.drawable.status_shipped_background
-                "Completed" -> R.drawable.status_completed_background
-                "Cancelled" -> R.drawable.status_cancelled_background
+            val status = order.orderStatus ?: "pending"
+            // Tampilkan status dengan huruf kapital
+            tvStatus.text = status.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+            val statusBackground = when (status.lowercase(Locale.getDefault())) {
+                "pending" -> R.drawable.status_pending_background
+                "processing" -> R.drawable.status_processing_background
+                "shipped" -> R.drawable.status_shipped_background
+                "completed" -> R.drawable.status_completed_background
+                "cancelled" -> R.drawable.status_cancelled_background
+                "settlement" -> R.drawable.status_settlement_background
                 else -> R.drawable.status_pending_background
             }
             tvStatus.background = ContextCompat.getDrawable(itemView.context, statusBackground)

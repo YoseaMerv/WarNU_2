@@ -51,7 +51,7 @@ class MainBuyerActivity : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_profile, R.id.nav_order_history, R.id.nav_cart
+                R.id.nav_home, R.id.nav_profile, R.id.nav_order_history
             ), drawerLayout
         )
 
@@ -88,6 +88,11 @@ class MainBuyerActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             invalidateOptionsMenu()
+            if (destination.id == R.id.nav_cart) {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            } else {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            }
         }
     }
 

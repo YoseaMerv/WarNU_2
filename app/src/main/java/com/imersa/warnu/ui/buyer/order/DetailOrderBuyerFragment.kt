@@ -81,11 +81,11 @@ class DetailOrderBuyerFragment : Fragment() {
         binding.tvOrderStatus.text = order.orderStatus
 
         val statusBackground = when (order.orderStatus) {
-            "Pending" -> R.drawable.status_pending_background
-            "Processing" -> R.drawable.status_processing_background
-            "Shipped" -> R.drawable.status_shipped_background
-            "Completed" -> R.drawable.status_completed_background
-            "Cancelled" -> R.drawable.status_cancelled_background
+            "pending" -> R.drawable.status_pending_background
+            "processing" -> R.drawable.status_processing_background
+            "shipped" -> R.drawable.status_shipped_background
+            "completed" -> R.drawable.status_completed_background
+            "cancelled" -> R.drawable.status_cancelled_background
             else -> R.drawable.status_pending_background
         }
         binding.tvOrderStatus.setBackgroundResource(statusBackground)

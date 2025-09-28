@@ -16,9 +16,9 @@ import com.imersa.warnu.data.model.Product
 import java.text.NumberFormat
 import java.util.Locale
 
-class HomeBuyerAdapter(
-    private val onItemClick: (Product) -> Unit
-) : ListAdapter<Product, HomeBuyerAdapter.ProductViewHolder>(ProductDiffCallback()) {
+    class HomeBuyerAdapter(
+        private val onItemClick: (Product) -> Unit
+    ) : ListAdapter<Product, HomeBuyerAdapter.ProductViewHolder>(ProductDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_product_buyer, parent, false)
@@ -37,13 +37,14 @@ class HomeBuyerAdapter(
         private val ivProductImage: ImageView = itemView.findViewById(R.id.iv_product_buyer)
         private val tvProductName: TextView = itemView.findViewById(R.id.tv_product_name_buyer)
         private val tvProductPrice: TextView = itemView.findViewById(R.id.tv_product_price_buyer)
+        private val tvStoreName: TextView = itemView.findViewById(R.id.tv_store_name_buyer)
 
         @SuppressLint("SetTextI18n")
         fun bind(product: Product) {
             tvProductName.text = product.name
             val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
             tvProductPrice.text = formatter.format(product.price)
-
+            tvStoreName.text = product.storeName ?: "Toko Tidak Dikenal"
             Glide.with(itemView.context)
                 .load(product.imageUrl)
                 .placeholder(R.drawable.placeholder_image)
