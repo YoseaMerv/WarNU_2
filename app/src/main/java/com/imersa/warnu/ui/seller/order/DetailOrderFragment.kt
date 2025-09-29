@@ -121,7 +121,7 @@ class DetailOrderFragment : Fragment() {
         formatter.minimumFractionDigits = 0
         binding.tvTotalPrice.text = "Total: ${formatter.format(order.totalAmount ?: 0.0)}"
 
-        binding.tvPaymentMethod.text = "Metode: Midtrans"
+        binding.tvPaymentMethod.text = "Metode: BCA VA"
         binding.tvPaymentStatus.text =
             "Status: ${order.paymentStatus?.replaceFirstChar { it.uppercase() } ?: "N/A"}"
 

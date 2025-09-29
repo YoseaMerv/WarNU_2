@@ -1,15 +1,24 @@
 package com.imersa.warnu.ui.buyer.profile
 
-import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.imersa.warnu.data.model.UserProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+
+// Definisikan status langsung di sini
+sealed class UpdateStatus {
+    object Idle : UpdateStatus()
+    object Loading : UpdateStatus()
+    object Success : UpdateStatus()
+    data class Error(val message: String) : UpdateStatus()
+}
 
 @HiltViewModel
 class EditProfileBuyerViewModel @Inject constructor(
@@ -18,120 +27,104 @@ class EditProfileBuyerViewModel @Inject constructor(
     private val storage: FirebaseStorage
 ) : ViewModel() {
 
-    private val userId = auth.currentUser?.uid
+    private val _user = MutableLiveData<UserProfile>()
+    val user: LiveData<UserProfile> = _user
 
-    private val _updateStatus = MutableLiveData<String>()
-    val updateStatus: LiveData<String> get() = _updateStatus
-
-    private val _userData = MutableLiveData<Map<String, Any>>()
-    val userData: LiveData<Map<String, Any>> get() = _userData
-
-    private var oldPhotoUrl: String? = null
+    // Gunakan UpdateStatus yang baru didefinisikan
+    private val _updateStatus = MutableLiveData<UpdateStatus>()
+    val updateStatus: LiveData<UpdateStatus> = _updateStatus
 
     fun fetchUserData() {
-        if (userId == null) {
-            _updateStatus.value = "Error: User not found."
-            return
-        }
+        val userId = auth.currentUser?.uid ?: return
+        _updateStatus.value = UpdateStatus.Loading
         firestore.collection("users").document(userId).get()
             .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val data = document.data ?: emptyMap()
-                    _userData.value = data
-                    // Gunakan "profileImageUrl" sesuai dengan standar baru kita
-                    oldPhotoUrl = data["profileImageUrl"] as? String
+                val userProfile = document.toObject(UserProfile::class.java)
+                if (userProfile != null) {
+                    _user.value = userProfile
+                    _updateStatus.value = UpdateStatus.Idle // Selesai loading, kembali ke idle
                 } else {
-                    _updateStatus.value = "Error: User data not found."
+                    _updateStatus.value = UpdateStatus.Error("User data not found")
                 }
             }
-            .addOnFailureListener { e ->
-                _updateStatus.value = "Error: Failed to fetch data - ${e.message}"
+            .addOnFailureListener {
+                _updateStatus.value = UpdateStatus.Error(it.message ?: "Failed to fetch data")
             }
     }
 
-    fun updateUser(
-        context: Context, name: String, phone: String, address: String, imageUri: Uri?
-    ) {
-        if (userId == null) {
-            _updateStatus.value = "Error: User not found."
+    fun updateUser(name: String, phone: String, address: String, newImageUri: Uri?) {
+        _updateStatus.value = UpdateStatus.Loading
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            _updateStatus.value = UpdateStatus.Error("User not logged in")
             return
         }
 
-        _updateStatus.value = "Loading"
+        val oldImageUrl = _user.value?.profileImageUrl
 
-        if (imageUri != null) {
-            // Validasi file gambar sederhana
-            try {
-                val inputStream = context.contentResolver.openInputStream(imageUri)
-                val fileSize = inputStream?.available() ?: 0
-                inputStream?.close()
+        // Jika ada gambar baru yang dipilih
+        if (newImageUri != null) {
+            val imageRef = storage.reference.child("profile_pictures/${currentUser.uid}/profile.jpg")
 
-                if (fileSize <= 0) {
-                    _updateStatus.value = "Error: Invalid image file."
-                    return
-                }
-            } catch (e: Exception) {
-                _updateStatus.value = "Error: Cannot read file - ${e.message}"
-                return
-            }
-
-            uploadImageAndUpdateUser(userId, name, phone, address, imageUri)
-        } else {
-            updateUserData(userId, name, phone, address, null)
-        }
-    }
-
-    private fun uploadImageAndUpdateUser(
-        userId: String, name: String, phone: String, address: String, imageUri: Uri
-    ) {
-        val storageRef = storage.reference.child("profile_pictures/$userId/profile.jpg")
-
-        storageRef.putFile(imageUri)
-            .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                    updateUserData(userId, name, phone, address, downloadUrl.toString())
-
-                    oldPhotoUrl?.let { url ->
-                        if (url.isNotEmpty()) {
-                            deleteOldPhoto(url)
-                        }
+            // 1. UPLOAD GAMBAR BARU DULU
+            imageRef.putFile(newImageUri)
+                .addOnSuccessListener {
+                    // 2. JIKA UPLOAD SUKSES, AMBIL URL DOWNLOADNYA
+                    imageRef.downloadUrl.addOnSuccessListener { newDownloadUrl ->
+                        val updatedData = mapOf(
+                            "name" to name,
+                            "phoneNumber" to phone,
+                            "address" to address,
+                            "profilePictureUrl" to newDownloadUrl.toString()
+                        )
+                        // 3. UPDATE DATA DI FIRESTORE
+                        updateFirestoreData(currentUser.uid, updatedData, oldImageUrl)
+                    }.addOnFailureListener { e ->
+                        _updateStatus.value = UpdateStatus.Error("Failed to get new image URL: ${e.message}")
                     }
                 }
-            }
-            .addOnFailureListener { e ->
-                _updateStatus.value = "Error: Failed to upload image - ${e.message}"
-            }
+                .addOnFailureListener { e ->
+                    _updateStatus.value = UpdateStatus.Error("Image upload failed: ${e.message}")
+                }
+        } else {
+            // Jika tidak ada gambar baru (hanya update data teks)
+            val updatedData = mapOf(
+                "name" to name,
+                "phoneNumber" to phone,
+                "address" to address
+            )
+            updateFirestoreData(currentUser.uid, updatedData, null) // Tidak ada gambar lama yang perlu dihapus
+        }
     }
 
-    private fun updateUserData(
-        userId: String, name: String, phone: String, address: String, photoUrl: String?
-    ) {
-        val userUpdates = mutableMapOf<String, Any>(
-            "name" to name,
-            "phone" to phone,
-            "address" to address
-        )
-
-        if (photoUrl != null) {
-            // Gunakan "profileImageUrl" agar konsisten
-            userUpdates["profileImageUrl"] = photoUrl
-        }
-
-        firestore.collection("users").document(userId).update(userUpdates)
+    private fun updateFirestoreData(userId: String, data: Map<String, Any>, oldImageUrl: String?) {
+        firestore.collection("users").document(userId).update(data)
             .addOnSuccessListener {
-                _updateStatus.value = "Success"
+                // 4. SETELAH SEMUA BERHASIL, BARU HAPUS GAMBAR LAMA
+                if (!oldImageUrl.isNullOrEmpty()) {
+                    deleteOldProfilePicture(oldImageUrl)
+                }
+                _updateStatus.value = UpdateStatus.Success
             }
             .addOnFailureListener { e ->
-                _updateStatus.value = "Error: Failed to update data - ${e.message}"
+                _updateStatus.value = UpdateStatus.Error("Failed to update profile data: ${e.message}")
             }
     }
 
-    private fun deleteOldPhoto(url: String) {
+    private fun deleteOldProfilePicture(imageUrl: String) {
+        // Fungsi ini aman karena hanya dipanggil setelah semua proses update berhasil
         try {
-            val oldRef = storage.getReferenceFromUrl(url)
-            oldRef.delete()
+            val oldImageRef = storage.getReferenceFromUrl(imageUrl)
+            oldImageRef.delete()
+                .addOnSuccessListener { Log.d("EditProfileVM", "Old picture deleted successfully.") }
+                .addOnFailureListener { e -> Log.e("EditProfileVM", "Failed to delete old picture: ${e.message}") }
         } catch (e: Exception) {
+            // Tangani jika URL tidak valid, dll.
+            Log.e("EditProfileVM", "Error deleting old picture from URL: ${e.message}")
         }
     }
 
+    fun resetStatus() {
+        _updateStatus.value = UpdateStatus.Idle
+    }
 }
