@@ -32,6 +32,6 @@ data class TransactionResponse(
 )
 
 interface ApiService {
-    @POST("api/create-multivendor-transaction")
+    @POST("create-multivendor-transaction")
     fun createMultiVendorTransaction(@Body request: MultiVendorTransactionRequest): Call<TransactionResponse>
 }
