@@ -55,39 +55,44 @@ class EditProfileBuyerFragment : Fragment() {
             val name = binding.etName.text.toString().trim()
             val phone = binding.etPhone.text.toString().trim()
             val address = binding.etAddress.text.toString().trim()
-            viewModel.updateUser(requireContext(), name, phone, address, selectedImageUri)
+            viewModel.updateUser(name, phone, address, selectedImageUri)
         }
     }
 
     private fun observeViewModel() {
-        viewModel.userData.observe(viewLifecycleOwner) { data ->
-            binding.etName.setText(data["name"] as? String)
-            binding.etPhone.setText(data["phone"] as? String)
-            binding.etAddress.setText(data["address"] as? String)
+        viewModel.user.observe(viewLifecycleOwner) { user ->
+            binding.etName.setText(user.name)
+            binding.etPhone.setText(user.phone)
+            binding.etAddress.setText(user.address)
 
-            val imageUrl = data["profileImageUrl"] as? String
             Glide.with(this)
-                .load(imageUrl)
+                .load(user.profileImageUrl)
                 .placeholder(R.drawable.placeholder_image)
                 .into(binding.ivProfile)
         }
 
         viewModel.updateStatus.observe(viewLifecycleOwner) { status ->
-            when {
-                status.equals("Loading") -> {
+            when (status) {
+                is UpdateStatus.Idle -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnSave.isEnabled = true
+                }
+                is UpdateStatus.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.btnSave.isEnabled = false
                 }
-                status.equals("Success") -> {
+                is UpdateStatus.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnSave.isEnabled = true
                     Toast.makeText(requireContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show()
                     findNavController().popBackStack()
+                    viewModel.resetStatus()
                 }
-                status.startsWith("Error") -> {
+                is UpdateStatus.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnSave.isEnabled = true
-                    Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), status.message, Toast.LENGTH_SHORT).show()
+                    viewModel.resetStatus()
                 }
             }
         }
