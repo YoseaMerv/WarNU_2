@@ -1,4 +1,3 @@
-// app/src/main/java/com/imersa/warnu/data/model/ApiService.kt
 package com.imersa.warnu.data.model
 
 import retrofit2.Call
@@ -33,6 +32,6 @@ data class TransactionResponse(
 )
 
 interface ApiService {
-    @POST("create-multivendor-transaction")
+    @POST("api/create-multivendor-transaction")
     fun createMultiVendorTransaction(@Body request: MultiVendorTransactionRequest): Call<TransactionResponse>
 }
